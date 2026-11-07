@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INNOVA CHEAT · ULTIMATE v6</title>
+<title>INNOVA CHEAT · ULTIMATE v7</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
   :root {
@@ -83,6 +83,10 @@
   .tag.vip{background:rgba(255,0,229,.15);color:var(--neon2);border:1px solid var(--neon2)}
   .tag.ver{background:rgba(255,255,255,.05);color:#8899aa;border:1px solid #2a3545}
 
+  /* THÔNG TIN KEY ĐÃ ĐĂNG NHẬP */
+  .user-info{display:none;flex-direction:column;gap:2px;font-size:0.65rem;color:#8899aa;font-family:'Courier New',monospace;margin-top:6px;background:rgba(0,0,0,0.4);padding:6px 10px;border-radius:8px;border:1px solid #1a2230}
+  .user-info span{color:var(--neon3);font-weight:700}
+
   .tabs{display:flex;gap:6px;padding:6px;background:var(--card-bg);border:1px solid rgba(0,240,255,.2);border-radius:16px;overflow-x:auto;scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}
   .tab{flex-shrink:0;padding:9px 14px;border:none;border-radius:10px;background:transparent;color:#5e7a94;font-weight:700;font-size:.72rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:.25s;display:flex;align-items:center;gap:5px}
@@ -148,11 +152,20 @@
   .log-line .err{color:#ff4466}
   .log-line .info{color:var(--neon)}
 
+  /* GALLERY FIX */
   .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .gallery a{display:block;aspect-ratio:1/1;border-radius:12px;overflow:hidden;border:1px solid rgba(0,240,255,.15);transition:.25s;position:relative}
+  .gallery a{display:block;aspect-ratio:1/1;border-radius:12px;overflow:hidden;border:1px solid rgba(0,240,255,.15);transition:.25s;position:relative;cursor:pointer}
   .gallery a:hover{border-color:var(--neon);box-shadow:0 0 18px rgba(0,240,255,.5);transform:translateY(-2px)}
   .gallery img{width:100%;height:100%;object-fit:cover;transition:.3s;display:block}
   .gallery a:hover img{transform:scale(1.12)}
+  
+  /* LIGHTBOX */
+  .lightbox{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px);opacity:0;transition:opacity 0.3s ease}
+  .lightbox.show{display:flex;opacity:1}
+  .lightbox img{max-width:100%;max-height:90vh;border-radius:12px;border:2px solid var(--neon);box-shadow:0 0 30px rgba(0,240,255,0.5);transform:scale(0.9);transition:transform 0.3s ease}
+  .lightbox.show img{transform:scale(1)}
+  .lightbox-close{position:absolute;top:20px;right:20px;color:#fff;font-size:24px;cursor:pointer;background:rgba(0,240,255,0.2);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--neon);transition:0.2s}
+  .lightbox-close:hover{background:var(--neon);color:#000}
 
   .glitch{position:relative}
   .glitch::after{content:attr(data-text);position:absolute;left:0;top:0;width:100%;color:var(--neon2);opacity:.7;clip-path:polygon(0 0,100% 0,100% 45%,0 45%);animation:gt 2.5s infinite linear alternate-reverse;pointer-events:none}
@@ -165,11 +178,17 @@
 </head>
 <body>
 
+<!-- LIGHTBOX XEM ẢNH -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-close" id="lightboxClose">✕</div>
+  <img id="lightboxImg" src="" alt="Preview">
+</div>
+
 <div class="lock-screen" id="lockScreen">
   <div class="lock-box">
     <div class="lock-logo">
       <h1>INNOVA</h1>
-      <p>▸ CHEAT ULTIMATE v6 ◂</p>
+      <p>▸ CHEAT ULTIMATE v7 ◂</p>
     </div>
     <div class="verify-section">
       <div class="verify-header">XÁC THỰC THIẾT BỊ</div>
@@ -211,7 +230,12 @@
       <div class="sub">
         <span class="tag pro">CHEAT</span>
         <span class="tag vip">ULTIMATE</span>
-        <span class="tag ver">v6.0</span>
+        <span class="tag ver">v7.0</span>
+      </div>
+      <!-- HIỂN THỊ THÔNG TIN KEY ĐÃ ĐĂNG NHẬP -->
+      <div class="user-info" id="userInfo">
+        <div>Thiết bị: <span id="uiDevice">...</span></div>
+        <div>Hạn dùng: <span id="uiExpiry">...</span></div>
       </div>
     </div>
   </div>
@@ -228,9 +252,11 @@
     <button class="tab active" data-tab="combat"><span class="ico">⚔️</span>COMBAT</button>
     <button class="tab" data-tab="movement"><span class="ico">🏃</span>MOVEMENT</button>
     <button class="tab" data-tab="visual"><span class="ico">🎨</span>VISUAL</button>
+    <button class="tab" data-tab="camera"><span class="ico">📷</span>CAM 360</button>
     <button class="tab" data-tab="misc"><span class="ico">⚙️</span>MISC</button>
   </div>
 
+  <!-- TAB COMBAT -->
   <div class="panel active" id="panel-combat">
     <div class="section">
       <div class="section-title">COMBAT MODULES</div>
@@ -239,9 +265,11 @@
       <div class="cheat-item"><div class="cheat-icon">🔥</div><div class="cheat-info"><div class="name">Rapid Fire</div><div class="desc">Bắn siêu nhanh</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="Rapid Fire"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">🎮</div><div class="cheat-info"><div class="name">No Recoil</div><div class="desc">Không giật súng</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="No Recoil"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">📦</div><div class="cheat-info"><div class="name">Infinite Ammo</div><div class="desc">Đạn vô hạn</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="Infinite Ammo"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🔄</div><div class="cheat-info"><div class="name">Fast Reload</div><div class="desc">Nạp đạn tức thì</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="Fast Reload"><span class="slider"></span></label></div>
     </div>
   </div>
 
+  <!-- TAB MOVEMENT -->
   <div class="panel" id="panel-movement">
     <div class="section">
       <div class="section-title">MOVEMENT MODULES</div>
@@ -249,9 +277,11 @@
       <div class="cheat-item"><div class="cheat-icon">🕊️</div><div class="cheat-info"><div class="name">Fly Mode</div><div class="desc">Bay lượn tự do</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="Fly"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">🌀</div><div class="cheat-info"><div class="name">Teleport</div><div class="desc">Dịch chuyển tức thời</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="Teleport"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">🦘</div><div class="cheat-info"><div class="name">High Jump</div><div class="desc">Nhảy cao</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="High Jump"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🐇</div><div class="cheat-info"><div class="name">Bunny Hop</div><div class="desc">Tự động nhảy liên tục</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="Bunny Hop"><span class="slider"></span></label></div>
     </div>
   </div>
 
+  <!-- TAB VISUAL -->
   <div class="panel" id="panel-visual">
     <div class="section">
       <div class="section-title">VISUAL MODULES</div>
@@ -259,9 +289,23 @@
       <div class="cheat-item"><div class="cheat-icon">🎨</div><div class="cheat-info"><div class="name">Chams</div><div class="desc">Đổi màu địch</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="Chams"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">📡</div><div class="cheat-info"><div class="name">Radar Hack</div><div class="desc">Hiện địch trên radar</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="Radar"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">🌫️</div><div class="cheat-info"><div class="name">No Fog</div><div class="desc">Bỏ sương mù</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="No Fog"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🖱️</div><div class="cheat-info"><div class="name">Custom Crosshair</div><div class="desc">Tâm ngắm tùy chỉnh</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="Crosshair"><span class="slider"></span></label></div>
     </div>
   </div>
 
+  <!-- TAB CAMERA 360 -->
+  <div class="panel" id="panel-camera">
+    <div class="section">
+      <div class="section-title">CAMERA MODULES</div>
+      <div class="cheat-item"><div class="cheat-icon">🔄</div><div class="cheat-info"><div class="name">Xoay 360°</div><div class="desc">Góc nhìn thứ 3 xoay quanh nhân vật</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="Xoay 360"><span class="slider"></span></label></div>
+      <div class="adjust-box"><div class="adjust-row"><span>Góc xoay</span><input type="range" min="0" max="360" value="180" data-target="cam-angle"><span class="adjust-val" id="cam-angle-val">180°</span></div></div>
+      
+      <div class="cheat-item"><div class="cheat-icon">🔭</div><div class="cheat-info"><div class="name">Zoom FOV</div><div class="desc">Thay đổi tầm nhìn xa gần</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="Zoom"><span class="slider"></span></label></div>
+      <div class="adjust-box"><div class="adjust-row"><span>FOV</span><input type="range" min="30" max="120" value="90" data-target="cam-fov"><span class="adjust-val" id="cam-fov-val">90</span></div></div>
+    </div>
+  </div>
+
+  <!-- TAB MISC -->
   <div class="panel" id="panel-misc">
     <div class="section">
       <div class="section-title">MISC MODULES</div>
@@ -291,20 +335,33 @@
   </div>
 
   <div class="section">
-    <div class="section-title">HÌNH ẢNH</div>
+    <div class="section-title">HÌNH ẢNH GIỚI THIỆU</div>
     <div class="gallery">
-      <a href="https://files.catbox.moe/6m40hb.jpeg" target="_blank"><img src="https://files.catbox.moe/6m40hb.jpeg" alt="P1" loading="lazy"></a>
-      <a href="https://files.catbox.moe/8doodg.jpeg" target="_blank"><img src="https://files.catbox.moe/8doodg.jpeg" alt="P2" loading="lazy"></a>
-      <a href="https://files.catbox.moe/4noh59.jpeg" target="_blank"><img src="https://files.catbox.moe/4noh59.jpeg" alt="P3" loading="lazy"></a>
-      <a href="https://files.catbox.moe/idgu3n.jpeg" target="_blank"><img src="https://files.catbox.moe/idgu3n.jpeg" alt="P4" loading="lazy"></a>
-      <a href="https://files.catbox.moe/g50cgx.jpeg" target="_blank"><img src="https://files.catbox.moe/g50cgx.jpeg" alt="P5" loading="lazy"></a>
+      <a href="javascript:void(0)" onclick="openLightbox('https://files.catbox.moe/6m40hb.jpeg')"><img src="https://files.catbox.moe/6m40hb.jpeg" alt="P1" loading="lazy"></a>
+      <a href="javascript:void(0)" onclick="openLightbox('https://files.catbox.moe/8doodg.jpeg')"><img src="https://files.catbox.moe/8doodg.jpeg" alt="P2" loading="lazy"></a>
+      <a href="javascript:void(0)" onclick="openLightbox('https://files.catbox.moe/4noh59.jpeg')"><img src="https://files.catbox.moe/4noh59.jpeg" alt="P3" loading="lazy"></a>
+      <a href="javascript:void(0)" onclick="openLightbox('https://files.catbox.moe/idgu3n.jpeg')"><img src="https://files.catbox.moe/idgu3n.jpeg" alt="P4" loading="lazy"></a>
+      <a href="javascript:void(0)" onclick="openLightbox('https://files.catbox.moe/g50cgx.jpeg')"><img src="https://files.catbox.moe/g50cgx.jpeg" alt="P5" loading="lazy"></a>
     </div>
   </div>
 </div>
 
 <script>
+// HÀM MỞ ẢNH LIGHTBOX
+function openLightbox(src) {
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightboxImg').src = src;
+  lb.classList.add('show');
+}
+document.getElementById('lightboxClose').addEventListener('click', ()=>{
+  document.getElementById('lightbox').classList.remove('show');
+});
+document.getElementById('lightbox').addEventListener('click', (e)=>{
+  if(e.target.id === 'lightbox') document.getElementById('lightbox').classList.remove('show');
+});
+
 (function(){
-  // ✅ ĐÃ GẮN CỨNG LINK SERVER RENDER CỦA BẠN VÀO ĐÂY
+  // ✅ LINK SERVER RENDER CỦA BẠN
   const SERVER_URL = 'https://innova-key.onrender.com';
 
   // Particles
@@ -332,11 +389,10 @@
     while(consoleEl.children.length > 60) consoleEl.removeChild(consoleEl.firstChild);
   }
 
-  // Device ID
   function getDeviceId(){
     let id = localStorage.getItem('INNOVA_DEVICE_ID');
     if(!id){
-      id = 'DEV-' + Math.random().toString(36).slice(2,10).toUpperCase() + '-' + Date.now().toString(36).toUpperCase();
+      id = 'DEV-' + Math.random().toString(36).slice(2,8).toUpperCase();
       localStorage.setItem('INNOVA_DEVICE_ID', id);
     }
     return id;
@@ -410,7 +466,7 @@
     document.body.appendChild(btn);
   }
 
-  // Unlock Logic
+  // Unlock Logic (Kiểm tra key + hiển thị thông tin)
   unlockBtn.addEventListener('click', async ()=>{
     if(!verifyDone) return;
     const key = keyInput.value.trim().toUpperCase();
@@ -428,18 +484,25 @@
 
       if(data.ok){
         let timeText = '';
-        if(data.isForever){ timeText = '∞ Vĩnh viễn'; }
+        if(data.isForever){ timeText = 'Vĩnh viễn'; }
         else {
           const remain = data.remainingMs;
           const days = Math.floor(remain / 86400000);
           const hours = Math.floor((remain % 86400000) / 3600000);
-          timeText = `${days}d ${hours}h`;
+          timeText = `${days} ngày ${hours} giờ`;
         }
-        keyMsg.textContent = `✓ Key hợp lệ! Còn lại: ${timeText}`; keyMsg.className = 'key-msg ok';
+        
+        keyMsg.textContent = `✓ Thành công! Đang mở khóa...`; keyMsg.className = 'key-msg ok';
+        
+        // CẬP NHẬT THÔNG TIN KEY LÊN HEADER
+        document.getElementById('userInfo').style.display = 'flex';
+        document.getElementById('uiDevice').textContent = DEVICE_ID;
+        document.getElementById('uiExpiry').textContent = timeText;
+
         setTimeout(()=>{
           lockScreen.classList.add('hidden');
-          log('🔓 Xác thực key thành công', 'ok'); log(`⏱️ Loại key: ${data.type.toUpperCase()} · Còn: ${timeText}`, 'info');
-          setTimeout(()=>{ log('🟢 INNOVA CHEAT v6.0 khởi động', 'ok'); log('🎮 Game detected. Ready!', 'ok'); }, 400);
+          log('🔓 Xác thực key thành công', 'ok'); log(`⏱️ Hạn dùng: ${timeText}`, 'info');
+          setTimeout(()=>{ log('🟢 INNOVA CHEAT v7.0 khởi động', 'ok'); log('🎮 Game detected. Ready!', 'ok'); }, 400);
         }, 900);
       } else {
         keyMsg.textContent = '✗ ' + data.error; keyMsg.className = 'key-msg err';
@@ -463,7 +526,7 @@
     });
   });
 
-  // Toggles
+  // Toggles & Sliders
   const masterToggle = document.getElementById('masterToggle');
   const cheatToggles = document.querySelectorAll('.cheat-toggle');
   const cheatItems = document.querySelectorAll('.cheat-item');
@@ -491,6 +554,19 @@
       if(e.target.closest('.switch')) return;
       const t = item.querySelector('.cheat-toggle'); if(t){ t.checked = !t.checked; t.dispatchEvent(new Event('change')); }
     });
+  });
+
+  // Xử lý thanh trượt (Sliders)
+  document.querySelectorAll('.adjust-row input[type=range]').forEach(slider => {
+    const target = slider.dataset.target;
+    const valEl = document.getElementById(target + '-val');
+    function updateSlider(){
+      const v = slider.value;
+      slider.style.setProperty('--val', v + '%');
+      if(valEl) valEl.textContent = v + (target.includes('angle') ? '°' : '');
+    }
+    slider.addEventListener('input', updateSlider);
+    updateSlider();
   });
 
   document.getElementById('applyBtn').addEventListener('click', ()=>{
