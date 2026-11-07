@@ -1,99 +1,247 @@
+// server.js
 const express = require('express');
-const Database = require('better-sqlite3');
-const jwt = require('jsonwebtoken');
 const cors = require('cors');
-require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'chuoi_bi_mat_cua_ban';
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'admin_123';
+const KEYS_FILE = path.join(__dirname, 'keys.json');
 
-// Khởi tạo database (file db.sqlite sẽ tự tạo)
-const db = new Database('db.sqlite');
-
-// Tạo bảng lưu Key
-db.exec(`
-  CREATE TABLE IF NOT EXISTS licenses (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    key TEXT UNIQUE,
-    duration_ms INTEGER,   -- 0 là vĩnh viễn
-    hwid TEXT,             -- Định danh thiết bị
-    created_at INTEGER,
-    activated_at INTEGER,
-    expires_at INTEGER,
-    is_active INTEGER DEFAULT 1
-  );
-`);
+// Admin password để tạo key (ĐỔI NGAY khi deploy!)
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'innova-admin-2024';
 
 app.use(cors());
 app.use(express.json());
 
-// ================= API DÀNH CHO ADMIN (TẠO KEY) =================
-app.post('/api/admin/create-key', (req, res) => {
-  // Kiểm tra quyền Admin
-  if (req.headers['x-admin-token'] !== ADMIN_TOKEN) {
-    return res.status(403).json({ ok: false, message: 'Sai mã Admin' });
+// ===== Load / save keys =====
+function loadKeys() {
+  if (!fs.existsSync(KEYS_FILE)) {
+    fs.writeFileSync(KEYS_FILE, JSON.stringify({ keys: [] }, null, 2));
+    return { keys: [] };
   }
-
-  const { duration, count } = req.body;
-  const timeUnits = { h: 3600000, d: 86400000, w: 604800000, m: 2592000000 };
-  
-  let ms = 0;
-  if (duration !== 'forever') {
-    const match = String(duration).match(/^(\d+)([hdwm])$/);
-    if (!match) return res.status(400).json({ ok: false, message: 'Sai định dạng (VD: 1h, 7d, 30d, forever)' });
-    ms = parseInt(match[1]) * timeUnits[match[2]];
+  try {
+    return JSON.parse(fs.readFileSync(KEYS_FILE, 'utf8'));
+  } catch {
+    return { keys: [] };
   }
+}
 
-  const createdKeys = [];
-  const insertStmt = db.prepare(`INSERT INTO licenses (key, duration_ms, created_at) VALUES (?, ?, ?)`);
+function saveKeys(data) {
+  fs.writeFileSync(KEYS_FILE, JSON.stringify(data, null, 2));
+}
 
-  for (let i = 0; i < (count || 1); i++) {
-    // Tạo key ngẫu nhiên dạng: APP-1234-ABCD-5678
-    const randomPart = () => Math.random().toString(36).substring(2, 6).toUpperCase();
-    const newKey = `APP-${randomPart()}-${randomPart()}-${randomPart()}`;
-    
-    insertStmt.run(newKey, ms, Date.now());
-    createdKeys.push(newKey);
+// ===== Sinh key ngẫu nhiên =====
+function generateKey() {
+  const part = () => crypto.randomBytes(2).toString('hex').toUpperCase();
+  return `INNOVA-${part()}-${part()}-${part()}`;
+}
+
+// ===== Tính thời gian hết hạn =====
+// type: 'hour' | 'day' | 'week' | 'month' | 'forever'
+function calcExpiry(type) {
+  const now = Date.now();
+  const HOUR = 3600 * 1000;
+  const DAY = 24 * HOUR;
+  switch (type) {
+    case 'hour':  return now + HOUR;
+    case 'day':   return now + DAY;
+    case 'week':  return now + 7 * DAY;
+    case 'month': return now + 30 * DAY;
+    case 'forever': return null; // null = vĩnh viễn
+    default: return null;
   }
+}
 
-  res.json({ ok: true, message: 'Tạo thành công', keys: createdKeys });
+// ===== Middleware check admin =====
+function requireAdmin(req, res, next) {
+  const pass = req.headers['x-admin-pass'] || req.query.pass;
+  if (pass !== ADMIN_PASSWORD) {
+    return res.status(401).json({ ok: false, error: 'Sai mật khẩu admin' });
+  }
+  next();
+}
+
+// ============================================================
+// API: TẠO KEY
+// POST /api/create
+// body: { type: 'hour'|'day'|'week'|'month'|'forever', count: 1..100, note?: string }
+// header: x-admin-pass: <ADMIN_PASSWORD>
+// ============================================================
+app.post('/api/create', requireAdmin, (req, res) => {
+  const { type = 'day', count = 1, note = '' } = req.body;
+  const validTypes = ['hour', 'day', 'week', 'month', 'forever'];
+  if (!validTypes.includes(type)) {
+    return res.status(400).json({ ok: false, error: 'type không hợp lệ' });
+  }
+  const n = Math.min(Math.max(parseInt(count) || 1, 1), 100);
+
+  const db = loadKeys();
+  const created = [];
+  for (let i = 0; i < n; i++) {
+    const key = generateKey();
+    const item = {
+      key,
+      type,
+      createdAt: Date.now(),
+      expiresAt: calcExpiry(type),
+      note: String(note).slice(0, 100),
+      used: false,
+      usedAt: null,
+      deviceId: null
+    };
+    db.keys.push(item);
+    created.push(item);
+  }
+  saveKeys(db);
+  res.json({ ok: true, created });
 });
 
-// ================= API XÁC THỰC KEY (DÀNH CHO NGƯỜI DÙNG) =================
-app.post('/api/verify-key', (req, res) => {
-  const { key, hwid } = req.body;
-  if (!key || !hwid) return res.status(400).json({ ok: false, message: 'Thiếu Key hoặc HWID' });
-
-  const row = db.prepare(`SELECT * FROM licenses WHERE key = ? AND is_active = 1`).get(key.trim());
-
-  if (!row) return res.status(404).json({ ok: false, message: 'Key không tồn tại hoặc đã bị khóa' });
-  if (row.expires_at && row.expires_at < Date.now()) {
-    return res.status(400).json({ ok: false, message: 'Key đã hết hạn' });
+// ============================================================
+// API: KIỂM TRA KEY + gắn thiết bị (dùng ở client index.html)
+// POST /api/verify
+// body: { key: string, deviceId: string }
+// ============================================================
+app.post('/api/verify', (req, res) => {
+  const { key, deviceId } = req.body || {};
+  if (!key || !deviceId) {
+    return res.status(400).json({ ok: false, error: 'Thiếu key hoặc deviceId' });
   }
 
-  // Nếu key chưa ai dùng (hwid trống) -> Kích hoạt và gắn HWID
-  if (!row.hwid) {
-    const now = Date.now();
-    const expires = row.duration_ms === 0 ? null : now + row.duration_ms;
-    db.prepare(`UPDATE licenses SET hwid = ?, activated_at = ?, expires_at = ? WHERE id = ?`)
-      .run(hwid, now, expires, row.id);
-      
-    const ticket = jwt.sign({ key: row.key, hwid }, JWT_SECRET, { expiresIn: '5m' });
-    return res.json({ ok: true, ticket, message: 'Kích hoạt thành công' });
+  const db = loadKeys();
+  const found = db.keys.find(k => k.key === key.toUpperCase().trim());
+  if (!found) {
+    return res.json({ ok: false, error: 'Key không tồn tại' });
   }
 
-  // Nếu key đã dùng -> Kiểm tra xem có đúng máy không
-  if (row.hwid !== hwid) {
-    return res.status(403).json({ ok: false, message: 'Key đã bị khóa trên thiết bị khác' });
+  // Kiểm tra hết hạn
+  if (found.expiresAt !== null && Date.now() > found.expiresAt) {
+    return res.json({ ok: false, error: 'Key đã hết hạn' });
   }
 
-  // Hợp lệ
-  const ticket = jwt.sign({ key: row.key, hwid }, JWT_SECRET, { expiresIn: '5m' });
-  res.json({ ok: true, ticket, message: 'Xác thực thành công' });
+  // Nếu key đã gắn thiết bị khác → chặn
+  if (found.deviceId && found.deviceId !== deviceId) {
+    return res.json({ ok: false, error: 'Key đã được dùng trên thiết bị khác' });
+  }
+
+  // Gắn thiết bị lần đầu
+  if (!found.deviceId) {
+    found.deviceId = deviceId;
+    found.used = true;
+    found.usedAt = Date.now();
+    saveKeys(db);
+  }
+
+  // Trả về thông tin
+  res.json({
+    ok: true,
+    type: found.type,
+    expiresAt: found.expiresAt,
+    isForever: found.expiresAt === null,
+    remainingMs: found.expiresAt ? Math.max(0, found.expiresAt - Date.now()) : null
+  });
+});
+
+// ============================================================
+// API: LIỆT KÊ KEY (admin)
+// GET /api/list?pass=<ADMIN_PASSWORD>
+// ============================================================
+app.get('/api/list', requireAdmin, (req, res) => {
+  const db = loadKeys();
+  res.json({ ok: true, keys: db.keys });
+});
+
+// ============================================================
+// API: XÓA KEY (admin)
+// DELETE /api/delete/:key?pass=<ADMIN_PASSWORD>
+// ============================================================
+app.delete('/api/delete/:key', requireAdmin, (req, res) => {
+  const db = loadKeys();
+  const before = db.keys.length;
+  db.keys = db.keys.filter(k => k.key !== req.params.key.toUpperCase());
+  saveKeys(db);
+  res.json({ ok: true, deleted: before - db.keys.length });
+});
+
+// ============================================================
+// Trang admin tạo key đơn giản (truy cập /admin)
+// ============================================================
+app.get('/admin', (req, res) => {
+  res.send(`<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8"><title>Admin - Innova Key</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  body{font-family:system-ui;background:#0a0f17;color:#cfefff;padding:20px;max-width:820px;margin:auto}
+  h1{color:#00f0ff;letter-spacing:2px}
+  input,select,button{padding:10px;border-radius:8px;border:1px solid #2a3a4d;background:#101a24;color:#cfefff;font-size:14px}
+  button{background:linear-gradient(135deg,#00f0ff,#0099cc);color:#001a22;font-weight:800;cursor:pointer}
+  table{width:100%;border-collapse:collapse;margin-top:16px;font-size:12px}
+  th,td{padding:6px;border-bottom:1px solid #1a2a3d;text-align:left}
+  .key{color:#00ff88;font-family:monospace}
+  .row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+</style></head><body>
+<h1>⚡ INNOVA KEY ADMIN</h1>
+<div class="row">
+  <input id="pass" type="password" placeholder="Admin password" value="">
+  <select id="type">
+    <option value="hour">1 Giờ</option>
+    <option value="day" selected>1 Ngày</option>
+    <option value="week">1 Tuần</option>
+    <option value="month">1 Tháng</option>
+    <option value="forever">Vĩnh viễn</option>
+  </select>
+  <input id="count" type="number" value="1" min="1" max="100" style="width:80px">
+  <input id="note" type="text" placeholder="Ghi chú (tuỳ chọn)" style="flex:1;min-width:150px">
+  <button onclick="createKey()">TẠO KEY</button>
+  <button onclick="loadList()" style="background:#334">LOAD</button>
+</div>
+<div id="out" style="margin-top:12px;color:#00ff88;font-family:monospace;white-space:pre-wrap"></div>
+<table id="tbl"><thead><tr><th>Key</th><th>Loại</th><th>Hết hạn</th><th>Device</th><th></th></tr></thead><tbody></tbody></table>
+<script>
+async function createKey(){
+  const pass=document.getElementById('pass').value;
+  const body={type:document.getElementById('type').value,
+              count:+document.getElementById('count').value,
+              note:document.getElementById('note').value};
+  const r=await fetch('/api/create',{method:'POST',
+      headers:{'Content-Type':'application/json','x-admin-pass':pass},
+      body:JSON.stringify(body)});
+  const d=await r.json();
+  document.getElementById('out').textContent = JSON.stringify(d,null,2);
+  if(d.ok) loadList();
+}
+async function loadList(){
+  const pass=document.getElementById('pass').value;
+  const r=await fetch('/api/list?pass='+encodeURIComponent(pass));
+  const d=await r.json();
+  const tb=document.querySelector('#tbl tbody');tb.innerHTML='';
+  if(!d.ok){document.getElementById('out').textContent=JSON.stringify(d,null,2);return;}
+  d.keys.forEach(k=>{
+    const tr=document.createElement('tr');
+    const exp = k.expiresAt ? new Date(k.expiresAt).toLocaleString('vi-VN') : '∞ Vĩnh viễn';
+    tr.innerHTML='<td class="key">'+k.key+'</td><td>'+k.type+'</td><td>'+exp+'</td><td>'+(k.deviceId?k.deviceId.slice(0,10)+'…':'—')+'</td><td><button style="padding:4px 8px;font-size:11px" onclick="delKey(\\''+k.key+'\\')">X</button></td>';
+    tb.appendChild(tr);
+  });
+}
+async function delKey(key){
+  const pass=document.getElementById('pass').value;
+  const r=await fetch('/api/delete/'+key+'?pass='+encodeURIComponent(pass),{method:'DELETE'});
+  loadList();
+}
+</script></body></html>`);
+});
+
+app.get('/', (req, res) => {
+  res.json({
+    ok: true,
+    service: 'Innova Key Server',
+    endpoints: ['POST /api/create', 'POST /api/verify', 'GET /api/list', 'DELETE /api/delete/:key', 'GET /admin']
+  });
 });
 
 app.listen(PORT, () => {
-  console.log(`Server đang chạy tại http://localhost:${PORT}`);
+  console.log(`⚡ Innova Key Server chạy tại http://localhost:${PORT}`);
+  console.log(`🔑 Admin password: ${ADMIN_PASSWORD}`);
+  console.log(`🖥️  Trang admin: http://localhost:${PORT}/admin`);
 });
