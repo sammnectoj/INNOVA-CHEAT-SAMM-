@@ -1,32 +1,21 @@
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
+const { createClient } = require('@supabase/supabase-js');
 const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const KEYS_FILE = path.join(__dirname, 'keys.json');
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'innova-admin-2024';
+
+// ⚠️ QUAN TRỌNG: ĐIỀN 2 THÔNG SỐ SUPABASE CỦA BẠN VÀO ĐÂY
+// Lấy ở Bước 1 (Project Settings -> API)
+const SUPABASE_URL = 'https://xxxx.supabase.co'; 
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; 
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 app.use(cors());
 app.use(express.json());
-
-function loadKeys() {
-  if (!fs.existsSync(KEYS_FILE)) {
-    fs.writeFileSync(KEYS_FILE, JSON.stringify({ keys: [] }, null, 2));
-    return { keys: [] };
-  }
-  try {
-    return JSON.parse(fs.readFileSync(KEYS_FILE, 'utf8'));
-  } catch {
-    return { keys: [] };
-  }
-}
-
-function saveKeys(data) {
-  fs.writeFileSync(KEYS_FILE, JSON.stringify(data, null, 2));
-}
 
 function generateKey() {
   const part = () => crypto.randomBytes(2).toString('hex').toUpperCase();
@@ -35,8 +24,7 @@ function generateKey() {
 
 function calcExpiry(type) {
   const now = Date.now();
-  const HOUR = 3600 * 1000;
-  const DAY = 24 * HOUR;
+  const HOUR = 3600 * 1000, DAY = 24 * HOUR;
   switch (type) {
     case 'hour':  return now + HOUR;
     case 'day':   return now + DAY;
@@ -47,60 +35,71 @@ function calcExpiry(type) {
   }
 }
 
-app.post('/api/create', (req, res) => {
-  const pass = req.headers['x-admin-pass'] || req.query.pass;
-  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
+// Tạo Key
+app.post('/api/create', async (req, res) => {
+  const pass = req.headers['x-admin-pass'];
+  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu Admin' });
 
   const { type = 'day', count = 1, note = '' } = req.body;
   const n = Math.min(Math.max(parseInt(count) || 1, 1), 100);
-  const db = loadKeys();
   const created = [];
 
   for (let i = 0; i < n; i++) {
-    const key = generateKey();
-    db.keys.push({ key, type, createdAt: Date.now(), expiresAt: calcExpiry(type), note: String(note).slice(0, 100), used: false, usedAt: null, deviceId: null });
-    created.push(key);
+    const item = {
+      key: generateKey(),
+      type,
+      created_at: Date.now(),
+      expires_at: calcExpiry(type),
+      note: String(note).slice(0, 100),
+      device_id: null
+    };
+    await supabase.from('keys').insert([item]);
+    created.push(item);
   }
-  saveKeys(db);
   res.json({ ok: true, created });
 });
 
-app.post('/api/verify', (req, res) => {
+// Kiểm tra Key
+app.post('/api/verify', async (req, res) => {
   const { key, deviceId } = req.body || {};
   if (!key || !deviceId) return res.status(400).json({ ok: false, error: 'Thiếu key hoặc deviceId' });
 
-  const db = loadKeys();
-  const found = db.keys.find(k => k.key === key.toUpperCase().trim());
-  if (!found) return res.json({ ok: false, error: 'Key không tồn tại' });
-  if (found.expiresAt !== null && Date.now() > found.expiresAt) return res.json({ ok: false, error: 'Key đã hết hạn' });
-  if (found.deviceId && found.deviceId !== deviceId) return res.json({ ok: false, error: 'Key đã dùng trên thiết bị khác' });
+  const { data: found, error } = await supabase.from('keys').select('*').eq('key', key.toUpperCase().trim()).single();
+  
+  if (error || !found) return res.json({ ok: false, error: 'Key không tồn tại' });
+  if (found.expires_at && Date.now() > found.expires_at) return res.json({ ok: false, error: 'Key đã hết hạn' });
+  if (found.device_id && found.device_id !== deviceId) return res.json({ ok: false, error: 'Key đã dùng trên thiết bị khác' });
 
-  if (!found.deviceId) {
-    found.deviceId = deviceId;
-    found.used = true;
-    found.usedAt = Date.now();
-    saveKeys(db);
+  // Nếu chưa có thiết bị, cập nhật thiết bị
+  if (!found.device_id) {
+    await supabase.from('keys').update({ device_id: deviceId }).eq('key', found.key);
   }
 
-  res.json({ ok: true, type: found.type, isForever: found.expiresAt === null, remainingMs: found.expiresAt ? Math.max(0, found.expiresAt - Date.now()) : null });
+  res.json({
+    ok: true, type: found.type, isForever: !found.expires_at,
+    remainingMs: found.expires_at ? Math.max(0, found.expires_at - Date.now()) : null
+  });
 });
 
-app.get('/api/list', (req, res) => {
-  const pass = req.headers['x-admin-pass'] || req.query.pass;
+// Lấy danh sách Key (Admin)
+app.get('/api/list', async (req, res) => {
+  const pass = req.query.pass;
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
-  const db = loadKeys();
-  res.json({ ok: true, keys: db.keys.sort((a, b) => b.createdAt - a.createdAt) });
+
+  const { data } = await supabase.from('keys').select('*').order('created_at', { ascending: false });
+  res.json({ ok: true, keys: data || [] });
 });
 
-app.delete('/api/delete/:key', (req, res) => {
-  const pass = req.headers['x-admin-pass'] || req.query.pass;
+// Xóa Key (Admin)
+app.delete('/api/delete/:key', async (req, res) => {
+  const pass = req.query.pass;
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
-  const db = loadKeys();
-  db.keys = db.keys.filter(k => k.key !== req.params.key.toUpperCase());
-  saveKeys(db);
+
+  await supabase.from('keys').delete().eq('key', req.params.key.toUpperCase());
   res.json({ ok: true });
 });
 
+// Giao diện Admin
 app.get('/admin', (req, res) => {
   res.send(`<!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"><title>Admin - Innova Key</title>
@@ -157,8 +156,8 @@ async function loadList(){
     if(!d.ok) return document.getElementById('msg').innerHTML='❌ '+d.error;
     d.keys.forEach(k=>{
       const tr=document.createElement('tr');
-      const exp = k.expiresAt ? new Date(k.expiresAt).toLocaleString('vi-VN') : '∞ Vĩnh viễn';
-      const dev = k.deviceId ? k.deviceId.slice(0,10)+'...' : 'Chưa dùng';
+      const exp = k.expires_at ? new Date(k.expires_at).toLocaleString('vi-VN') : '∞ Vĩnh viễn';
+      const dev = k.device_id ? k.device_id.slice(0,10)+'...' : '<span style="color:#00ff88">Chưa dùng</span>';
       tr.innerHTML='<td class="key">'+k.key+'</td><td>'+exp+'</td><td>'+dev+'</td><td>'+(k.note||'—')+'</td><td><button style="padding:4px 8px;font-size:12px;background:#ff3366;color:#fff" onclick="delKey(\\''+k.key+'\\')">X</button></td>';
       tb.appendChild(tr);
     });
@@ -173,5 +172,5 @@ async function delKey(key){
 </script></body></html>`);
 });
 
-app.get('/', (req, res) => res.json({ ok: true, service: 'Innova Key Server', status: 'Running' }));
+app.get('/', (req, res) => res.json({ ok: true, service: 'Innova Key Server', status: 'Running with Supabase' }));
 app.listen(PORT, () => console.log('Server chạy tại cổng ' + PORT));
