@@ -304,10 +304,8 @@
 
 <script>
 (function(){
-  // ⚠️ QUAN TRỌNG: Đổi URL này thành địa chỉ server.js của bạn khi deploy
-  // Khi chạy local: 'http://localhost:3000'
-  // Khi deploy Render/Railway: 'https://ten-app-cua-ban.onrender.com'
-  const SERVER_URL = localStorage.getItem('INNOVA_SERVER') || 'http://localhost:3000';
+  // ✅ ĐÃ GẮN CỨNG LINK SERVER RENDER CỦA BẠN VÀO ĐÂY
+  const SERVER_URL = 'https://innova-key.onrender.com';
 
   // Particles
   const pWrap = document.getElementById('particles');
@@ -334,19 +332,18 @@
     while(consoleEl.children.length > 60) consoleEl.removeChild(consoleEl.firstChild);
   }
 
-  // ===== DEVICE ID (lưu trong localStorage) =====
+  // Device ID
   function getDeviceId(){
     let id = localStorage.getItem('INNOVA_DEVICE_ID');
     if(!id){
-      id = 'DEV-' + Math.random().toString(36).slice(2,10).toUpperCase() +
-           '-' + Date.now().toString(36).toUpperCase();
+      id = 'DEV-' + Math.random().toString(36).slice(2,10).toUpperCase() + '-' + Date.now().toString(36).toUpperCase();
       localStorage.setItem('INNOVA_DEVICE_ID', id);
     }
     return id;
   }
   const DEVICE_ID = getDeviceId();
 
-  // ===== DEVICE VERIFICATION =====
+  // Verification
   const progressFill = document.getElementById('progressFill');
   const progressPercent = document.getElementById('progressPercent');
   const verifyStatus = document.getElementById('verifyStatus');
@@ -357,12 +354,9 @@
   const musicIndicator = document.getElementById('musicIndicator');
 
   const verifySteps = [
-    { end:15, msg:'Khởi tạo môi trường...' },
-    { end:30, msg:'Đọc thông tin phần cứng...' },
-    { end:45, msg:'Kiểm tra CPU & RAM...' },
-    { end:60, msg:'Xác thực GPU...' },
-    { end:75, msg:'Tạo device fingerprint...' },
-    { end:90, msg:'Mã hóa kết nối...' },
+    { end:15, msg:'Khởi tạo môi trường...' }, { end:30, msg:'Đọc thông tin phần cứng...' },
+    { end:45, msg:'Kiểm tra CPU & RAM...' }, { end:60, msg:'Xác thực GPU...' },
+    { end:75, msg:'Tạo device fingerprint...' }, { end:90, msg:'Mã hóa kết nối...' },
     { end:100, msg:'Xác thực hoàn tất!' }
   ];
   let currentStep = 0, currentPercent = 0, verifyDone = false;
@@ -370,166 +364,106 @@
   function runVerification(){
     if(currentStep >= verifySteps.length){
       verifyDone = true;
-      progressFill.style.width = '100%';
-      progressPercent.textContent = '100%';
-      verifyStatus.textContent = '✓ Thiết bị đã xác thực';
-      verifyStatus.style.color = '#00ff88';
-      unlockBtn.disabled = false;
-      keyInput.focus();
-      keyMsg.textContent = '🔓 Nhập key để mở khóa';
-      keyMsg.className = 'key-msg info';
+      progressFill.style.width = '100%'; progressPercent.textContent = '100%';
+      verifyStatus.textContent = '✓ Thiết bị đã xác thực'; verifyStatus.style.color = '#00ff88';
+      unlockBtn.disabled = false; keyInput.focus();
+      keyMsg.textContent = '🔓 Nhập key để mở khóa'; keyMsg.className = 'key-msg info';
       return;
     }
     const step = verifySteps[currentStep];
     verifyStatus.textContent = step.msg;
-    const targetPercent = step.end;
-    const stepDuration = 350 + Math.random()*400;
-    const startPercent = currentPercent;
-    const startTime = performance.now();
+    const targetPercent = step.end, stepDuration = 350 + Math.random()*400;
+    const startPercent = currentPercent, startTime = performance.now();
     function animate(now){
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / stepDuration, 1);
+      const progress = Math.min((now - startTime) / stepDuration, 1);
       currentPercent = startPercent + (targetPercent - startPercent) * progress;
       progressFill.style.width = currentPercent + '%';
       progressPercent.textContent = Math.floor(currentPercent) + '%';
       if(progress < 1){ requestAnimationFrame(animate); }
       else {
-        currentPercent = targetPercent;
-        progressFill.style.width = targetPercent + '%';
-        progressPercent.textContent = targetPercent + '%';
-        currentStep++;
-        setTimeout(runVerification, 150 + Math.random()*250);
+        currentPercent = targetPercent; progressFill.style.width = targetPercent + '%'; progressPercent.textContent = targetPercent + '%';
+        currentStep++; setTimeout(runVerification, 150 + Math.random()*250);
       }
     }
     requestAnimationFrame(animate);
   }
   setTimeout(runVerification, 500);
 
-  // ===== MUSIC =====
+  // Music
   let audioEl = null, musicStarted = false;
   function playMusic(){
-    if(musicStarted) return;
-    musicStarted = true;
-    audioEl = new Audio();
-    audioEl.src = 'https://files.catbox.moe/ij9uix.mp3';
-    audioEl.loop = true;
-    audioEl.volume = 0.5;
-    audioEl.preload = 'auto';
+    if(musicStarted) return; musicStarted = true;
+    audioEl = new Audio(); audioEl.src = 'https://files.catbox.moe/ij9uix.mp3';
+    audioEl.loop = true; audioEl.volume = 0.5; audioEl.preload = 'auto';
     const p = audioEl.play();
     if(p !== undefined){
-      p.then(()=>{
-        musicIndicator.classList.add('show');
-        log('🎵 Nhạc nền đang phát', 'ok');
-      }).catch(err=>{
-        console.warn('Autoplay chặn:', err);
-        log('⚠️ Trình duyệt chặn autoplay — nhấn "BẬT NHẠC"', 'warn');
-        showMusicFallback();
-      });
+      p.then(()=>{ musicIndicator.classList.add('show'); log('🎵 Nhạc nền đang phát', 'ok'); })
+       .catch(err=>{ console.warn(err); log('⚠️ Trình duyệt chặn autoplay — nhấn "BẬT NHẠC"', 'warn'); showMusicFallback(); });
     }
   }
   function showMusicFallback(){
     if(document.getElementById('musicFallbackBtn')) return;
     const btn = document.createElement('button');
-    btn.id = 'musicFallbackBtn';
-    btn.textContent = '🎵 BẬT NHẠC';
+    btn.id = 'musicFallbackBtn'; btn.textContent = '🎵 BẬT NHẠC';
     btn.style.cssText = 'position:fixed;bottom:70px;right:16px;z-index:60;padding:12px 18px;border:none;border-radius:30px;background:linear-gradient(135deg,#00f0ff,#0099cc);color:#001a22;font-weight:900;font-size:.75rem;letter-spacing:1.5px;cursor:pointer;box-shadow:0 0 25px rgba(0,240,255,.6);';
-    btn.onclick = ()=>{
-      audioEl.play().then(()=>{
-        musicIndicator.classList.add('show');
-        btn.remove();
-        log('🎵 Nhạc đã bật!', 'ok');
-      }).catch(e=>log('❌ Lỗi: '+e.message, 'err'));
-    };
+    btn.onclick = ()=>{ audioEl.play().then(()=>{ musicIndicator.classList.add('show'); btn.remove(); log('🎵 Nhạc đã bật!', 'ok'); }).catch(e=>log('❌ Lỗi: '+e.message, 'err')); };
     document.body.appendChild(btn);
   }
 
-  // ===== UNLOCK → GỌI SERVER VERIFY =====
+  // Unlock Logic
   unlockBtn.addEventListener('click', async ()=>{
-    if(!verifyDone){
-      keyMsg.textContent = '⏳ Chờ xác thực thiết bị xong';
-      keyMsg.className = 'key-msg err';
-      return;
-    }
+    if(!verifyDone) return;
     const key = keyInput.value.trim().toUpperCase();
-    if(!key){
-      keyMsg.textContent = '⚠️ Vui lòng nhập key';
-      keyMsg.className = 'key-msg err';
-      return;
-    }
+    if(!key){ keyMsg.textContent = '⚠️ Vui lòng nhập key'; keyMsg.className = 'key-msg err'; return; }
 
-    keyMsg.textContent = '🔍 Đang kiểm tra key...';
-    keyMsg.className = 'key-msg info';
-    unlockBtn.disabled = true;
-
-    // PHÁT NHẠC NGAY trong click handler (user gesture hợp lệ)
+    keyMsg.textContent = '🔍 Đang kiểm tra key...'; keyMsg.className = 'key-msg info'; unlockBtn.disabled = true;
     playMusic();
 
     try {
       const res = await fetch(SERVER_URL + '/api/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key, deviceId: DEVICE_ID })
       });
       const data = await res.json();
 
       if(data.ok){
-        // Key hợp lệ
         let timeText = '';
-        if(data.isForever){
-          timeText = '∞ Vĩnh viễn';
-        } else {
+        if(data.isForever){ timeText = '∞ Vĩnh viễn'; }
+        else {
           const remain = data.remainingMs;
           const days = Math.floor(remain / 86400000);
           const hours = Math.floor((remain % 86400000) / 3600000);
-          const mins = Math.floor((remain % 3600000) / 60000);
-          timeText = `${days}d ${hours}h ${mins}p`;
+          timeText = `${days}d ${hours}h`;
         }
-        keyMsg.textContent = `✓ Key hợp lệ! Còn lại: ${timeText}`;
-        keyMsg.className = 'key-msg ok';
-        unlockBtn.textContent = '✓ OK';
-
+        keyMsg.textContent = `✓ Key hợp lệ! Còn lại: ${timeText}`; keyMsg.className = 'key-msg ok';
         setTimeout(()=>{
           lockScreen.classList.add('hidden');
-          log('🔓 Xác thực key thành công', 'ok');
-          log(`⏱️ Loại key: ${data.type.toUpperCase()} · Còn: ${timeText}`, 'info');
-          setTimeout(()=>{
-            log('🟢 INNOVA CHEAT v6.0 khởi động', 'ok');
-            log('📡 Scan game process...', 'info');
-            setTimeout(()=>log('🎮 Game detected. Ready!', 'ok'), 800);
-          }, 400);
+          log('🔓 Xác thực key thành công', 'ok'); log(`⏱️ Loại key: ${data.type.toUpperCase()} · Còn: ${timeText}`, 'info');
+          setTimeout(()=>{ log('🟢 INNOVA CHEAT v6.0 khởi động', 'ok'); log('🎮 Game detected. Ready!', 'ok'); }, 400);
         }, 900);
       } else {
-        // Key sai / hết hạn / thiết bị khác
-        keyMsg.textContent = '✗ ' + data.error;
-        keyMsg.className = 'key-msg err';
-        keyInput.style.borderColor = '#ff4466';
-        setTimeout(()=>{ keyInput.style.borderColor = ''; }, 600);
+        keyMsg.textContent = '✗ ' + data.error; keyMsg.className = 'key-msg err';
+        keyInput.style.borderColor = '#ff4466'; setTimeout(()=>{ keyInput.style.borderColor = ''; }, 600);
         unlockBtn.disabled = false;
       }
     } catch(err){
-      keyMsg.textContent = '❌ Không kết nối được server. Kiểm tra SERVER_URL.';
-      keyMsg.className = 'key-msg err';
-      unlockBtn.disabled = false;
-      console.error(err);
+      keyMsg.textContent = '❌ Lỗi kết nối Server! (Đang khởi động, đợi 30s rồi thử lại)'; keyMsg.className = 'key-msg err';
+      unlockBtn.disabled = false; console.error(err);
     }
   });
+  keyInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' && !unlockBtn.disabled) unlockBtn.click(); });
 
-  keyInput.addEventListener('keydown', (e)=>{
-    if(e.key === 'Enter' && !unlockBtn.disabled) unlockBtn.click();
-  });
-
-  // ===== TABS =====
+  // Tabs
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', ()=>{
       document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
       document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+      tab.classList.add('active'); document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
       log(`📂 Tab: ${tab.dataset.tab.toUpperCase()}`, 'info');
     });
   });
 
-  // ===== CHEAT TOGGLES =====
+  // Toggles
   const masterToggle = document.getElementById('masterToggle');
   const cheatToggles = document.querySelectorAll('.cheat-toggle');
   const cheatItems = document.querySelectorAll('.cheat-item');
@@ -538,83 +472,37 @@
   const activeCount = document.getElementById('activeCount');
 
   function updateUI(){
-    const toggles = Array.from(cheatToggles);
-    const activeToggles = toggles.filter(t => t.checked);
-    const count = activeToggles.length;
-    const total = toggles.length;
-    cheatItems.forEach(item => {
-      const t = item.querySelector('.cheat-toggle');
-      if(t) item.classList.toggle('active', t.checked);
-    });
+    const count = Array.from(cheatToggles).filter(t => t.checked).length;
+    const total = cheatToggles.length;
+    cheatItems.forEach(item => { const t = item.querySelector('.cheat-toggle'); if(t) item.classList.toggle('active', t.checked); });
     activeCount.textContent = `${count}/${total} ACTIVE`;
-    if(count === 0){
-      statusLed.className = 'status-led';
-      statusText.textContent = 'HỆ THỐNG: OFF';
-      statusText.style.color = '#8ba0b8';
-      masterToggle.checked = false;
-    } else if(count === total){
-      statusLed.className = 'status-led on';
-      statusText.textContent = 'HỆ THỐNG: FULL POWER';
-      statusText.style.color = '#00ff88';
-      masterToggle.checked = true;
-    } else {
-      statusLed.className = 'status-led on';
-      statusText.textContent = 'HỆ THỐNG: ACTIVE';
-      statusText.style.color = '#00f0ff';
-      masterToggle.checked = true;
-    }
+    if(count === 0){ statusLed.className = 'status-led'; statusText.textContent = 'HỆ THỐNG: OFF'; statusText.style.color = '#8ba0b8'; masterToggle.checked = false; }
+    else if(count === total){ statusLed.className = 'status-led on'; statusText.textContent = 'HỆ THỐNG: FULL POWER'; statusText.style.color = '#00ff88'; masterToggle.checked = true; }
+    else { statusLed.className = 'status-led on'; statusText.textContent = 'HỆ THỐNG: ACTIVE'; statusText.style.color = '#00f0ff'; masterToggle.checked = true; }
   }
 
   masterToggle.addEventListener('change', ()=>{
-    const on = masterToggle.checked;
-    cheatToggles.forEach(t => { t.checked = on; });
-    updateUI();
-    log(on ? '⚡ Master ON' : '⏸ Master OFF', on ? 'ok' : 'warn');
+    const on = masterToggle.checked; cheatToggles.forEach(t => { t.checked = on; });
+    updateUI(); log(on ? '⚡ Master ON' : '⏸ Master OFF', on ? 'ok' : 'warn');
   });
-
-  cheatToggles.forEach(t => {
-    t.addEventListener('change', ()=>{
-      updateUI();
-      log(t.checked ? `✅ ${t.dataset.name} BẬT` : `❌ ${t.dataset.name} TẮT`, t.checked ? 'ok' : 'warn');
-    });
-  });
-
+  cheatToggles.forEach(t => { t.addEventListener('change', ()=>{ updateUI(); log(t.checked ? `✅ ${t.dataset.name} BẬT` : `❌ ${t.dataset.name} TẮT`, t.checked ? 'ok' : 'warn'); }); });
   cheatItems.forEach(item => {
     item.addEventListener('click', (e)=>{
       if(e.target.closest('.switch')) return;
-      const t = item.querySelector('.cheat-toggle');
-      if(t){ t.checked = !t.checked; t.dispatchEvent(new Event('change')); }
+      const t = item.querySelector('.cheat-toggle'); if(t){ t.checked = !t.checked; t.dispatchEvent(new Event('change')); }
     });
   });
 
   document.getElementById('applyBtn').addEventListener('click', ()=>{
     const active = Array.from(cheatToggles).filter(t=>t.checked).length;
     if(active === 0){ log('⚠️ Chưa chọn module nào!', 'warn'); return; }
-    log(`🚀 Áp dụng ${active} modules...`, 'ok');
-    setTimeout(()=>log('🔗 Injecting...', 'info'), 500);
-    setTimeout(()=>log('✅ Inject thành công!', 'ok'), 1100);
+    log(`🚀 Áp dụng ${active} modules...`, 'ok'); setTimeout(()=>log('✅ Inject thành công!', 'ok'), 1000);
   });
-
   document.getElementById('resetBtn').addEventListener('click', ()=>{
-    cheatToggles.forEach(t=>t.checked = false);
-    masterToggle.checked = false;
-    updateUI();
-    log('⟲ Reset toàn bộ', 'warn');
+    cheatToggles.forEach(t=>t.checked = false); masterToggle.checked = false; updateUI(); log('⟲ Reset toàn bộ', 'warn');
   });
 
   updateUI();
-
-  document.querySelectorAll('.gallery img').forEach(img=>{
-    img.addEventListener('error', function(){
-      this.parentElement.style.background = '#0a1220';
-      this.parentElement.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#2a3545;font-size:.6rem;font-weight:700;">N/A</div>';
-    });
-  });
-
-  // ===== Hướng dẫn nếu chưa set SERVER_URL =====
-  console.log('%c⚡ INNOVA CHEAT v6.0', 'color:#00f0ff;font-size:20px;font-weight:900');
-  console.log('%cServer URL hiện tại: ' + SERVER_URL, 'color:#00ff88');
-  console.log('%cNếu sai, chạy: localStorage.setItem("INNOVA_SERVER","https://server-cua-ban.com") rồi reload', 'color:#ffaa00');
 })();
 </script>
 </body>
