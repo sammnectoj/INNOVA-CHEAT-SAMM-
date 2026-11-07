@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#090b10">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>INNOVA CHEAT — Cài Đặt Trực Tiếp iOS</title>
+  <link rel="icon" type="image/png" href="https://files.catbox.moe/ton80g.png">
+  <link rel="apple-touch-icon" href="https://files.catbox.moe/ton80g.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090b10;
+      --card-bg: rgba(18, 22, 32, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f1f5f9;
+      --text-muted: #8492a6;
+      --text-dim: #475569;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-subtle: rgba(37, 99, 235, 0.12);
+      --success: #10b981;
+      --danger: #ef4444;
+      --radius-lg: 20px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background-color: var(--bg);
+      background-image: radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.07) 0%, transparent 60%);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1.25rem 3rem;
+      -webkit-font-smoothing: antialiased;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .wrap {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* Header Nav */
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.25rem 0.25rem 0.5rem;
+    }
+    .brand-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .status-badge.online {
+      background: rgba(16, 185, 129, 0.1);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    .status-badge.offline {
+      background: rgba(239, 68, 68, 0.1);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* Main App Card */
+    .app-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 2rem 1.6rem 1.75rem;
+      text-align: center;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+    }
+    .icon-container {
+      width: 86px;
+      height: 86px;
+      margin: 0 auto 1.25rem;
+      border-radius: 22%;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #090b10;
+      position: relative;
+    }
+    .app-icon-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 22%;
+    }
+    .app-name {
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-bottom: 0.35rem;
+    }
+    .app-meta {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 1.5rem;
+    }
+    .app-meta span {
+      display: inline-flex;
+      align-items: center;
+    }
+    .meta-separator {
+      color: var(--text-dim);
+      font-size: 0.7rem;
+    }
+
+    /* App Store Metrics Row */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 0.9rem 0.5rem;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem;
+    }
+    .metric-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    .metric-col:not(:last-child) {
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .metric-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-dim);
+      font-weight: 600;
+    }
+    .metric-val {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* Main CTA Button */
+    .btn-install-primary {
+      width: 100%;
+      height: 50px;
+      background: #ffffff;
+      color: #090b10;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 0.98rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.18s ease;
+      box-shadow: 0 4px 14px rgba(255, 255, 255, 0.1);
+    }
+    .btn-install-primary:hover {
+      background: #e2e8f0;
+      transform: translateY(-1px);
+    }
+    .btn-install-primary:active {
+      transform: scale(0.985);
+      background: #cbd5e1;
+    }
+    .btn-install-primary.disabled {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-dim);
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .safari-subtext {
+      margin-top: 0.75rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Content Cards */
+    .content-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 1.35rem 1.4rem;
+    }
+    .card-heading {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-body-text {
+      font-size: 0.86rem;
+      line-height: 1.55;
+      color: var(--text-muted);
+    }
+
+    /* Steps list */
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .step-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .step-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .step-desc {
+      font-size: 0.84rem;
+      line-height: 1.48;
+      color: var(--text-muted);
+    }
+    .step-desc strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Modal Backdrop */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(5, 7, 12, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+    }
+    .modal-box {
+      background: #121622;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      width: 100%;
+      max-width: 420px;
+      padding: 1.6rem 1.4rem;
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.4rem;
+    }
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #fff;
+    }
+    .btn-close {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06);
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: background 0.15s;
+    }
+    .btn-close:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+    .modal-desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Key Input */
+    .field-wrap {
+      margin-bottom: 1rem;
+    }
+    .field-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+    .key-input {
+      width: 100%;
+      height: 48px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.98rem;
+      font-weight: 600;
+      padding: 0 14px;
+      outline: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .key-input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+    .key-input::placeholder {
+      color: var(--text-dim);
+      font-weight: 400;
+    }
+
+    /* HWID Footer Note */
+    .hwid-note {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-bottom: 1.25rem;
+      padding: 0 2px;
+    }
+    .hwid-value {
+      color: var(--text-muted);
+      font-weight: 500;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .btn-verify-submit {
+      width: 100%;
+      height: 46px;
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.94rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.15s;
+    }
+    .btn-verify-submit:hover {
+      background: #1d4ed8;
+    }
+    .btn-verify-submit:active {
+      transform: scale(0.99);
+    }
+    .btn-verify-submit:disabled {
+      background: #1e293b;
+      color: var(--text-dim);
+      cursor: not-allowed;
+    }
+
+    /* Alerts */
+    .alert-panel {
+      margin-top: 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.83rem;
+      line-height: 1.45;
+      display: none;
+    }
+    .alert-panel.err {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #fca5a5;
+    }
+    .alert-panel.ok {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #86efac;
+    }
+    .btn-manual-trigger {
+      display: block;
+      margin-top: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-align: center;
+      width: 100%;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-manual-trigger:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+    .btn-manual-trigger:active {
+      transform: scale(0.99);
+    }
+
+    .spinner-sm {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .site-footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-top: 0.75rem;
+    }
+
+    /* App Previews Showcase */
+    .preview-card {
+      overflow: hidden;
+      padding: 1.25rem 1.35rem 1.4rem;
+    }
+    .preview-scroll-container {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding: 0.5rem 0.25rem 0.85rem;
+      margin: 0 -0.25rem;
+    }
+    .preview-scroll-container::-webkit-scrollbar {
+      height: 6px;
+    }
+    .preview-scroll-container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 4px;
+    }
+    .preview-scroll-container::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.16);
+      border-radius: 4px;
+    }
+    .preview-scroll-container::-webkit-scrollbar-thumb:hover {
+      background: rgba(37, 99, 235, 0.5);
+    }
+    .preview-item {
+      scroll-snap-align: center;
+      flex-shrink: 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55);
+      background: #000;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      height: 380px;
+      width: auto;
+      max-width: 220px;
+    }
+    .preview-item:hover {
+      transform: translateY(-3px) scale(1.01);
+      border-color: rgba(37, 99, 235, 0.5);
+      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.2);
+    }
+    .preview-item img {
+      height: 100%;
+      width: auto;
+      object-fit: cover;
+      display: block;
+      border-radius: 15px;
+    }
+    .preview-zoom-badge {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 3px 8px;
+      color: #e2e8f0;
+      font-size: 0.7rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      pointer-events: none;
+    }
+
+    /* Lightbox Modal */
+    .lightbox-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      touch-action: pinch-zoom;
+    }
+    .lightbox-img {
+      max-width: 92vw;
+      max-height: 88vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      animation: zoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes zoomIn {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 24px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 2010;
+      transition: background 0.15s;
+    }
+    .lightbox-close:hover {
+      background: rgba(239, 68, 68, 0.8);
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <!-- Nav Bar -->
+  <header class="top-nav">
+    <div class="brand-title">
+      <img src="https://files.catbox.moe/ton80g.png" alt="INNOVA" width="22" height="22" style="border-radius:6px; object-fit:cover; display:inline-block; border:1px solid rgba(255,255,255,0.15);">
+      <span>INNOVA CHEAT</span>
+    </div>
+    <div class="status-badge online"><span class="status-dot"></span>Sẵn sàng</div>
+  </header>
+
+  <!-- Main App Showcase -->
+  <main class="app-card">
+    <div class="icon-container">
+      <img src="https://files.catbox.moe/ton80g.png" alt="INNOVA CHEAT" class="app-icon-img" width="86" height="86" loading="eager">
+    </div>
+
+    <h1 class="app-name">INNOVA CHEAT</h1>
+    <div class="app-meta">
+      <span>Free Fire Utility</span>
+      <span class="meta-separator">•</span>
+      <span>2.1.2</span>
+      <span class="meta-separator">•</span>
+      <span>iOS 15.0+</span>
+    </div>
+
+    <!-- Metrics -->
+    <div class="metrics-row">
+      <div class="metric-col">
+        <span class="metric-label">Cài đặt</span>
+        <span class="metric-val">OTA Trực tiếp</span>
+      </div>
+      <div class="metric-col">
+        <span class="metric-label">Bản quyền</span>
+        <span class="metric-val">1 Máy / Key</span>
+      </div>
+      <div class="metric-col">
+        <span class="metric-label">Máy tính</span>
+        <span class="metric-val">Không cần PC</span>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    
+    <button type="button" class="btn-install-primary" id="openModalBtn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      <span>Cài đặt trực tiếp</span>
+    </button>
+    <div class="safari-subtext">Khuyến nghị mở bằng trình duyệt Safari trên iPhone / iPad</div>
+    
+  </main>
+
+  
+  <!-- App Previews / Screenshots Showcase -->
+  <section class="content-card preview-card">
+    <div class="card-heading" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.85rem;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#60a5fa;">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="8" y1="21" x2="16" y2="21"></line>
+          <line x1="12" y1="17" x2="12" y2="21"></line>
+        </svg>
+        <span>Xem trước ứng dụng</span>
+      </div>
+      <span style="font-size:0.75rem; color:var(--text-dim); font-weight:500;">
+        5 hình &bull; Chạm để phóng to
+      </span>
+    </div>
+
+    <div class="preview-scroll-container">
+      
+        <div class="preview-item" onclick="openLightbox('https://files.catbox.moe/g50cgx.jpeg')">
+          <img src="https://files.catbox.moe/g50cgx.jpeg" alt="Preview 1" loading="lazy">
+          <div class="preview-zoom-badge">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+            <span>Phóng to</span>
+          </div>
+        </div>
+      
+        <div class="preview-item" onclick="openLightbox('https://files.catbox.moe/idgu3n.jpeg')">
+          <img src="https://files.catbox.moe/idgu3n.jpeg" alt="Preview 2" loading="lazy">
+          <div class="preview-zoom-badge">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+            <span>Phóng to</span>
+          </div>
+        </div>
+      
+        <div class="preview-item" onclick="openLightbox('https://files.catbox.moe/4noh59.jpeg')">
+          <img src="https://files.catbox.moe/4noh59.jpeg" alt="Preview 3" loading="lazy">
+          <div class="preview-zoom-badge">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+            <span>Phóng to</span>
+          </div>
+        </div>
+      
+        <div class="preview-item" onclick="openLightbox('https://files.catbox.moe/8doodg.jpeg')">
+          <img src="https://files.catbox.moe/8doodg.jpeg" alt="Preview 4" loading="lazy">
+          <div class="preview-zoom-badge">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+            <span>Phóng to</span>
+          </div>
+        </div>
+      
+        <div class="preview-item" onclick="openLightbox('https://files.catbox.moe/6m40hb.jpeg')">
+          <img src="https://files.catbox.moe/6m40hb.jpeg" alt="Preview 5" loading="lazy">
+          <div class="preview-zoom-badge">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+            <span>Phóng to</span>
+          </div>
+        </div>
+      
+    </div>
+  </section>
+  
+
+  <!-- Release Notes -->
+  <section class="content-card">
+    <div class="card-heading">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#94a3b8;">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+      <span>Thông tin phiên bản</span>
+    </div>
+    <p class="card-body-text">PHIÊN BẢN 2.1.2 CẬP NHẬT NHÉ ANH EM</p>
+  </section>
+
+  <!-- 3 Steps -->
+  <section class="content-card">
+    <div class="card-heading">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#94a3b8;">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+        <polyline points="10 9 9 9 8 9"></polyline>
+      </svg>
+      <span>Các bước cài đặt</span>
+    </div>
+    <div class="steps-list">
+      <div class="step-row">
+        <div class="step-badge">1</div>
+        <div class="step-desc">
+          <strong>Nhập Key bản quyền:</strong> Bấm nút cài đặt và điền mã Key (áp dụng từ 1 Giờ trở lên) để xác thực bản quyền & liên kết thiết bị.
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-badge">2</div>
+        <div class="step-desc">
+          <strong>Xác nhận tải về:</strong> Khi Safari hiện thông báo <em>"muốn cài đặt..."</em>, chọn <strong>Cài đặt</strong> và về Màn hình chính xem app tải.
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-badge">3</div>
+        <div class="step-desc">
+          <strong>Tin cậy chứng chỉ:</strong> Vào <strong>Cài đặt</strong> &gt; <strong>Cài đặt chung</strong> &gt; <strong>Quản lý VPN &amp; Thiết bị</strong> &gt; Chọn chứng chỉ doanh nghiệp và bấm <strong>Tin cậy</strong>.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    INNOVA CHEAT &bull; Phân phối trực tiếp qua giao thức OTA
+  </footer>
+</div>
+
+<!-- Modal Nhập Key -->
+<div class="modal-overlay" id="keyModal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title" style="display:flex; align-items:center; gap:8px;">
+        <img src="https://files.catbox.moe/ton80g.png" alt="" width="22" height="22" style="border-radius:5px; object-fit:cover; border:1px solid rgba(255,255,255,0.15);">
+        <span>Kích hoạt cài đặt</span>
+      </div>
+      <button type="button" class="btn-close" id="closeModalBtn" aria-label="Đóng">&times;</button>
+    </div>
+    <p class="modal-desc">
+      Nhập mã Key của bạn (áp dụng cho Key từ <strong>1 Giờ</strong> trở lên, có mã chuẩn trên máy chủ). Mỗi Key sẽ được liên kết cố định với trình duyệt/thiết bị này (1 Key = 1 Thiết bị).
+    </p>
+
+    <form id="verifyForm" onsubmit="return false;">
+      <div class="field-wrap">
+        <label class="field-label" for="innovaKey">Mã bản quyền (Key)</label>
+        <input type="text" id="innovaKey" class="key-input" placeholder="Nhập mã Key (VD: 1H, 1D, INNOVA...)" maxlength="64" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+      </div>
+
+      <div class="hwid-note">
+        <span>Định danh thiết bị:</span>
+        <span id="hwidText" class="mono hwid-value">Đang nhận diện...</span>
+      </div>
+
+      <button type="submit" class="btn-verify-submit" id="submitBtn">
+        <span id="btnText">Xác thực &amp; Bắt đầu cài đặt</span>
+      </button>
+    </form>
+
+    <div id="errorAlert" class="alert-panel err"></div>
+    <div id="successAlert" class="alert-panel ok"></div>
+  </div>
+</div>
+
+<script>
+(function() {
+  let cachedBrowserHwid = null;
+
+  async function computeBrowserHwid() {
+    if (cachedBrowserHwid) return cachedBrowserHwid;
+    try {
+      let seed = localStorage.getItem('_innova_hwid_seed');
+      if (!seed) {
+        seed = 'innova_' + Math.random().toString(36).substring(2, 12) + '_' + Date.now();
+        localStorage.setItem('_innova_hwid_seed', seed);
+      }
+
+      let canvasFp = '';
+      try {
+        const cv = document.createElement('canvas');
+        cv.width = 200;
+        cv.height = 50;
+        const ctx = cv.getContext('2d');
+        if (ctx) {
+          ctx.textBaseline = 'alphabetic';
+          ctx.fillStyle = '#2563eb';
+          ctx.font = '14px Arial';
+          ctx.fillText('INNOVA_BROWSER_HWID', 2, 15);
+          ctx.fillRect(120, 1, 60, 20);
+          canvasFp = cv.toDataURL();
+        }
+      } catch (_) {}
+
+      let glFp = '';
+      try {
+        const glCv = document.createElement('canvas');
+        const gl = glCv.getContext('webgl') || glCv.getContext('experimental-webgl');
+        if (gl) {
+          const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+          if (dbg) {
+            glFp = (gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || '') + ' ' + (gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) || '');
+          }
+        }
+      } catch (_) {}
+
+      const parts = [
+        seed,
+        navigator.userAgent || '',
+        navigator.platform || '',
+        navigator.language || '',
+        (screen.width || 0) + 'x' + (screen.height || 0) + 'x' + (screen.colorDepth || 0),
+        (window.devicePixelRatio || 1),
+        (Intl && Intl.DateTimeFormat ? Intl.DateTimeFormat().resolvedOptions().timeZone : ''),
+        canvasFp,
+        glFp
+      ].join('|||');
+
+      if (window.crypto && window.crypto.subtle) {
+        const enc = new TextEncoder().encode(parts);
+        const hashBuf = await crypto.subtle.digest('SHA-256', enc);
+        const hashArr = Array.from(new Uint8Array(hashBuf));
+        const hashHex = hashArr.map(b => b.toString(16).padStart(2, '0')).join('');
+        cachedBrowserHwid = 'BHWID-' + hashHex.toUpperCase();
+      } else {
+        let h = 0;
+        for (let i = 0; i < parts.length; i++) {
+          h = ((h << 5) - h) + parts.charCodeAt(i);
+          h |= 0;
+        }
+        cachedBrowserHwid = 'BHWID-' + Math.abs(h).toString(16).toUpperCase() + '-' + seed.slice(7, 15).toUpperCase();
+      }
+    } catch (e) {
+      cachedBrowserHwid = 'BHWID-FALLBACK-' + Date.now();
+    }
+    return cachedBrowserHwid;
+  }
+
+  const hwidTextEl = document.getElementById('hwidText');
+  computeBrowserHwid().then(hwid => {
+    if (hwidTextEl) {
+      hwidTextEl.textContent = hwid.slice(0, 16) + '...';
+      hwidTextEl.title = hwid;
+    }
+  });
+
+  const modal = document.getElementById('keyModal');
+  const openBtn = document.getElementById('openModalBtn');
+  const closeBtn = document.getElementById('closeModalBtn');
+  const keyInput = document.getElementById('innovaKey');
+  const verifyForm = document.getElementById('verifyForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const btnText = document.getElementById('btnText');
+  const errorAlert = document.getElementById('errorAlert');
+  const successAlert = document.getElementById('successAlert');
+
+  function openModal() {
+    if (!modal) return;
+    modal.style.display = 'flex';
+    errorAlert.style.display = 'none';
+    successAlert.style.display = 'none';
+    if (keyInput) {
+      keyInput.focus();
+    }
+  }
+
+  function closeModal() {
+    if (!modal) return;
+    modal.style.display = 'none';
+  }
+
+  if (openBtn) openBtn.addEventListener('click', openModal);
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (modal) {
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) closeModal();
+    });
+  }
+
+  if (verifyForm) {
+    verifyForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const rawKey = (keyInput.value || '').trim().toUpperCase();
+      if (!rawKey) {
+        errorAlert.textContent = 'Vui lòng nhập mã Key bản quyền!';
+        errorAlert.style.display = 'block';
+        successAlert.style.display = 'none';
+        return;
+      }
+
+      // Kiểm tra nhanh tiền tố gói: Chỉ chặn các Key dưới 1 giờ (như 30M, 45M) nếu có tiền tố phút
+      var upperKey = rawKey.toUpperCase();
+      if (/^(?:INNOVA-)?(?:30M|45M)-/i.test(upperKey)) {
+        errorAlert.textContent = 'Cổng cài đặt trực tiếp chỉ áp dụng cho Key từ 1 Giờ trở lên (1H, 2H, 1D, 7D...)! Key dưới 1 giờ không được phép cài trực tiếp.';
+        errorAlert.style.display = 'block';
+        successAlert.style.display = 'none';
+        return;
+      }
+
+      submitBtn.disabled = true;
+      btnText.innerHTML = '<span class="spinner-sm"></span> Đang xác thực...';
+      errorAlert.style.display = 'none';
+      successAlert.style.display = 'none';
+
+      try {
+        const browserHwid = await computeBrowserHwid();
+        const res = await fetch('/api/innova/verify-install-key', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: rawKey, browserHwid: browserHwid })
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+          const errMsg = (data && data.message) ? data.message : 'Xác thực thất bại. Vui lòng kiểm tra lại!';
+          errorAlert.textContent = errMsg;
+          errorAlert.style.display = 'block';
+          submitBtn.disabled = false;
+          btnText.textContent = 'Xác thực & Bắt đầu cài đặt';
+          return;
+        }
+
+        var expStr = data.expiresTimeStr || 'Không thời hạn';
+        var activeTicket = data.ticket;
+        successAlert.innerHTML = '<div style="font-weight:600; margin-bottom:0.25rem;">Xác thực thành công</div>' +
+          '<div style="font-size:0.8rem; margin-bottom:0.45rem; color:#94a3b8;">Hạn dùng đến: <strong>' + expStr + '</strong> (Đã khóa 1 thiết bị)</div>' +
+          '<div style="font-size:0.8rem; color:#e2e8f0; margin-bottom:0.6rem;">Safari đang chuẩn bị mở hộp thoại cài đặt...</div>' +
+          '<button type="button" class="btn-manual-trigger" id="manualTriggerBtn">Bấm vào đây nếu máy chưa tự mở cài đặt</button>';
+        
+        successAlert.style.display = 'block';
+        btnText.textContent = 'Đã cấp quyền tải!';
+
+        var manualBtn = document.getElementById('manualTriggerBtn');
+        if (manualBtn) {
+          manualBtn.onclick = function() {
+            if (activeTicket) {
+              window.location.href = '/innova/ota/' + encodeURIComponent(activeTicket);
+            }
+          };
+        }
+
+        setTimeout(() => {
+          if (activeTicket) {
+            window.location.href = '/innova/ota/' + encodeURIComponent(activeTicket);
+          }
+        }, 400);
+
+      } catch (err) {
+        errorAlert.textContent = 'Lỗi kết nối máy chủ: ' + (err && err.message || err);
+        errorAlert.style.display = 'block';
+        submitBtn.disabled = false;
+        btnText.textContent = 'Xác thực & Bắt đầu cài đặt';
+      }
+    });
+  }
+})();
+
+    // App Preview Lightbox Modal
+    function openLightbox(url) {
+      var modal = document.getElementById('lightboxModal');
+      var img = document.getElementById('lightboxImg');
+      if (modal && img) {
+        img.src = url;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+    function closeLightbox(e) {
+      if (e && e.target && e.target.id === 'lightboxImg') return;
+      var modal = document.getElementById('lightboxModal');
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    }
+</script>
+
+  <!-- Lightbox Fullscreen Preview Modal -->
+  <div class="lightbox-overlay" id="lightboxModal" onclick="closeLightbox(event)">
+    <button type="button" class="lightbox-close" onclick="closeLightbox(event)" aria-label="Đóng">&times;</button>
+    <img src="" alt="Preview Full" class="lightbox-img" id="lightboxImg">
+  </div>
+</body>
+</html>
