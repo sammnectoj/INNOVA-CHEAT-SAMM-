@@ -1,7 +1,7 @@
 {
   "name": "innova-key-server",
   "version": "1.0.0",
-  "description": "Key server cho Innova Cheat",
+  "description": "Server tao key Innova Cheat",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -11,6 +11,6 @@
     "cors": "^2.8.5"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=18.0.0"
   }
 }
