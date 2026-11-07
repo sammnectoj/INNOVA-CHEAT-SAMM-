@@ -7,9 +7,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'innova-admin-2024';
 
-// ⚠️ ĐIỀN THÔNG TIN SUPABASE CỦA BẠN VÀO ĐÂY
+// ✅ ĐÃ ĐIỀN SẴN THÔNG TIN CỦA BẠN VÀO ĐÂY
 const SUPABASE_URL = 'https://llvlcqfievwtvylsqslm.supabase.co'; 
-const SUPABASE_KEY = 'DÁN_KEY_SB_PUBLISHABLE_CỦA_BẠN_VÀO_ĐÂY'; 
+const SUPABASE_KEY = 'sb_publishable_37lYwmdntFwHgspQ7b3vgA_Jna_S5r1'; 
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -102,7 +102,7 @@ app.delete('/api/delete/:key', async (req, res) => {
   res.json({ ok: true });
 });
 
-// Giao diện Admin (Giữ nguyên giao diện đẹp)
+// Giao diện Admin
 app.get('/admin', (req, res) => {
   res.send(`<!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"><title>Admin - Innova Key</title>
