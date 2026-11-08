@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INNOVA CHEAT · ULTIMATE v12</title>
+<title>INNOVA CHEAT · ULTIMATE v13</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
   :root { 
@@ -12,7 +12,7 @@
     --neon3:#00ff88; 
     --neon4:#ffaa00; 
     --bg-dark:#05070d; 
-    --glass: rgba(16, 24, 38, 0.6);
+    --glass: rgba(16, 24, 38, 0.7);
     --glass-border: rgba(0, 240, 255, 0.25);
   }
   body { 
@@ -49,7 +49,7 @@
     border: 2px solid var(--bg-dark); box-shadow: 0 0 8px #ff3366;
   }
 
-  /* MODAL CHUNG (GLASSMORPHISM) */
+  /* MODAL CHUNG */
   .modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;padding:15px;backdrop-filter:blur(10px);opacity:0;transition:opacity 0.3s}
   .modal.show{display:flex;opacity:1}
   .modal-box{
@@ -59,7 +59,6 @@
     animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
   @keyframes zoomIn { from{transform: scale(0.9); opacity:0;} to{transform: scale(1); opacity:1;} }
-  
   .modal-close{position:absolute;top:15px;right:15px;color:#fff;background:rgba(255,255,255,0.1);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-weight:bold; transition: 0.2s;}
   .modal-close:hover { background: #ff3366; }
   .modal-title{font-size:1.2rem;color:var(--neon);text-align:center;margin-bottom:20px;text-transform:uppercase;letter-spacing:2px; text-shadow: 0 0 10px rgba(0,240,255,0.5);}
@@ -88,13 +87,13 @@
   .shop-item-price{color:var(--neon4);font-weight:800;margin:4px 0;font-size:0.95rem}
   .btn-buy{padding:8px 16px;background:linear-gradient(135deg, var(--neon), #0099cc);color:#000;border:none;border-radius:8px;font-weight:900;cursor:pointer;font-size:0.75rem; box-shadow: 0 0 10px rgba(0,240,255,0.3);}
 
-  /* LOCK SCREEN (GIAO DIỆN CHÍNH) */
+  /* MÀN HÌNH CHÍNH (LOCK SCREEN) */
   .lock-screen{position:fixed;inset:0;z-index:100;background:transparent;display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity .6s,visibility .6s; overflow-y: auto;}
   .lock-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
   
   .lock-box{
-    width:100%;max-width:420px;background:var(--glass);border:1px solid var(--glass-border);
-    border-radius:28px;padding:36px 28px;
+    width:100%;max-width:440px;background:var(--glass);border:1px solid var(--glass-border);
+    border-radius:28px;padding:30px 24px;
     box-shadow:0 25px 50px rgba(0,0,0,0.8), inset 0 0 30px rgba(0,240,255,0.05);
     position:relative;overflow:hidden; margin: 20px 0; backdrop-filter: blur(20px);
   }
@@ -110,16 +109,28 @@
   }
   @keyframes rotateBorder { 100% { transform: rotate(360deg); } }
 
-  .lock-logo{text-align:center;margin-bottom:30px}
-  .lock-logo h1{
-    font-size:2.4rem;font-weight:900;letter-spacing:6px;
-    background:linear-gradient(90deg,#fff,var(--neon),var(--neon2),#fff);background-size:300% auto;
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    animation: gm 4s linear infinite;text-transform:uppercase;
+  /* AVATAR & TÊN (MỚI) */
+  .app-profile {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    margin-bottom: 24px; text-align: center;
+  }
+  .app-profile img {
+    width: 85px; height: 85px; border-radius: 50%; object-fit: cover;
+    border: 3px solid var(--neon); box-shadow: 0 0 20px rgba(0,240,255,0.4);
+    margin-bottom: 12px; background: #000;
+  }
+  .app-profile h1 {
+    font-size: 1.8rem; font-weight: 900; letter-spacing: 3px;
+    background: linear-gradient(90deg, #fff, var(--neon), var(--neon2), #fff); background-size: 300% auto;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: gm 4s linear infinite; text-transform: uppercase;
     filter: drop-shadow(0 0 10px rgba(0,240,255,0.5));
   }
-  @keyframes gm{0%{background-position:0% center}100%{background-position:300% center}}
-  .lock-logo p{font-size:.75rem;color:#8ba0b8;letter-spacing:4px;text-transform:uppercase;margin-top:6px;font-weight:600}
+  @keyframes gm { 0%{background-position:0% center} 100%{background-position:300% center} }
+  .app-profile p {
+    font-size: 0.65rem; color: var(--neon); letter-spacing: 4px; text-transform: uppercase;
+    margin-top: 4px; font-weight: 700;
+  }
 
   .key-section{margin-bottom:20px}
   .key-label{display:block;font-size:.75rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#8ba0b8;margin-bottom:10px; text-align: center;}
@@ -135,6 +146,29 @@
   .key-msg.ok{color:var(--neon3); text-shadow: 0 0 8px rgba(0,255,136,0.5);} 
   .key-msg.err{color:#ff4466; text-shadow: 0 0 8px rgba(255,68,102,0.5);} 
   .key-msg.info{color:var(--neon)}
+
+  /* CÁC BƯỚC CÀI ĐẶT (MỚI) */
+  .install-steps {
+    background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px; padding: 16px; margin-top: 20px; margin-bottom: 10px;
+  }
+  .install-title {
+    font-size: 0.75rem; color: var(--neon4); font-weight: 800; text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+  }
+  .step-item {
+    display: flex; gap: 12px; margin-bottom: 12px; position: relative;
+  }
+  .step-item:last-child { margin-bottom: 0; }
+  .step-num {
+    width: 24px; height: 24px; border-radius: 50%; background: rgba(0,240,255,0.1);
+    border: 1px solid var(--neon); color: var(--neon); font-size: 0.75rem; font-weight: bold;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .step-text {
+    font-size: 0.75rem; color: #b0c4d8; line-height: 1.5;
+  }
+  .step-text strong { color: #fff; }
 
   .shop-btn-container { margin-top: 15px; display: flex; gap: 10px; }
   .btn-shop-trigger {
@@ -188,7 +222,7 @@
   .section-title{display:flex;align-items:center;gap:8px;font-size:.75rem;font-weight:800;text-transform:uppercase;color:#8ba0b8;margin-bottom:16px; letter-spacing: 1px;}
   .section-title::before{content:'';width:4px;height:16px;background:var(--neon);border-radius:4px; box-shadow: 0 0 10px var(--neon);}
 
-  /* CHEAT ITEM (CỰC CHẤT) */
+  /* CHEAT ITEM */
   .cheat-item { 
     display: flex; align-items: center; gap: 14px; padding: 14px 16px; 
     background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); 
@@ -211,14 +245,12 @@
   .cheat-info .desc { font-size: 0.7rem; color: #8ba0b8; margin-top: 2px; }
   .cheat-item.active .name { color: var(--neon); text-shadow: 0 0 10px rgba(0,240,255,0.5); }
 
-  /* Ô NHẬP UID */
   .uid-input-box { display: none; margin-top: -6px; margin-bottom: 12px; padding: 14px; background: rgba(0,240,255,0.05); border: 1px dashed rgba(0,240,255,0.3); border-radius: 16px; animation: slideDown 0.3s ease; }
   .uid-input-box.show { display: flex; gap: 10px; align-items: center; }
   @keyframes slideDown { from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
   .uid-input-box input { padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: var(--neon); font-family: monospace; outline: none; font-weight: bold;}
   .uid-input-box input:focus { border-color: var(--neon); box-shadow: 0 0 10px rgba(0,240,255,0.2); }
 
-  /* NÚT GẠT XỊN HƠN */
   .switch { position: relative; display: inline-block; width: 60px; height: 32px; flex-shrink: 0; }
   .switch input { opacity: 0; width: 0; height: 0; }
   .slider { 
@@ -249,6 +281,13 @@
   .btn-danger{background:rgba(255,51,102,0.1);border:1px solid #ff3366;color:#ff3366;}
   .btn-danger:hover { background: #ff3366; color: #fff; box-shadow: 0 5px 20px rgba(255,51,102,0.4); }
 
+  /* GALLERY CHUYỂN RA NGOÀI */
+  .gallery-section {
+    width: 100%; max-width: 440px; margin-top: 20px;
+    background: var(--glass); border: 1px solid var(--glass-border);
+    border-radius: 24px; padding: 20px; backdrop-filter: blur(15px);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+  }
   .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
   .gallery a{display:block;aspect-ratio:1/1;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);cursor:pointer; transition: 0.3s;}
   .gallery a:hover { border-color: var(--neon); transform: scale(1.05); box-shadow: 0 0 15px rgba(0,240,255,0.3); }
@@ -389,21 +428,50 @@
   </div>
 </div>
 
-<!-- MÀN HÌNH CHÍNH (BỎ XÁC THỰC THIẾT BỊ) -->
-<div class="lock-screen" id="lockScreen">
+<!-- MÀN HÌNH CHÍNH (ĐÃ CẬP NHẬT AVATAR, TÊN VÀ CÁC BƯỚC CÀI ĐẶT) -->
+<div class="lock-screen" id="lockScreen" style="flex-direction: column;">
   <div class="lock-box">
-    <div class="lock-logo">
-      <h1>INNOVA</h1>
-      <p>▸ ULTIMATE v12 ◂</p>
-    </div>
     
-    <div class="key-section" style="margin-top: 30px;">
+    <!-- AVATAR & TÊN -->
+    <div class="app-profile">
+      <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/85/1a2230/00f0ff?text=IC'">
+      <h1>INNOVACHEAT</h1>
+      <p>▸ ULTIMATE v13 ◂</p>
+    </div>
+
+    <div class="key-section">
       <label class="key-label">🔑 NHẬP KEY BẢN QUYỀN</label>
       <div class="key-input-wrap">
         <input type="text" class="key-input" id="keyInput" placeholder="INNOVA-XXXX-XXXX-XXXX" maxlength="30" autocomplete="off">
         <button class="btn-unlock" id="unlockBtn">MỞ KHÓA</button>
       </div>
       <div class="key-msg" id="keyMsg"></div>
+    </div>
+
+    <!-- CÁC BƯỚC CÀI ĐẶT -->
+    <div class="install-steps">
+      <div class="install-title">⚙️ CÁC BƯỚC CÀI ĐẶT</div>
+      
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>Nhập Key bản quyền:</strong> Bấm nút Mở Khóa và điền mã Key (áp dụng từ 1 Giờ trở lên) để xác thực bản quyền & liên kết thiết bị.
+        </div>
+      </div>
+      
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>Xác nhận tải về:</strong> Khi Safari hiện thông báo "muốn cài đặt...", chọn Cài đặt và về Màn hình chính xem app tải.
+        </div>
+      </div>
+      
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>Tin cậy chứng chỉ:</strong> Vào Cài đặt > Cài đặt chung > Quản lý VPN & Thiết bị > Chọn chứng chỉ doanh nghiệp và bấm Tin cậy.
+        </div>
+      </div>
     </div>
 
     <div class="shop-btn-container">
@@ -423,13 +491,25 @@
       </div>
     </div>
   </div>
+
+  <!-- ẢNH GIỚI THIỆU ĐƯỢC CHUYỂN RA NGOÀI -->
+  <div class="gallery-section">
+    <div class="section-title" style="margin-bottom:12px; color:#8ba0b8;">HÌNH ẢNH GIỚI THIỆU</div>
+    <div class="gallery">
+      <a onclick="openLightbox('https://files.catbox.moe/6m40hb.jpeg')"><img src="https://files.catbox.moe/6m40hb.jpeg"></a>
+      <a onclick="openLightbox('https://files.catbox.moe/8doodg.jpeg')"><img src="https://files.catbox.moe/8doodg.jpeg"></a>
+      <a onclick="openLightbox('https://files.catbox.moe/4noh59.jpeg')"><img src="https://files.catbox.moe/4noh59.jpeg"></a>
+      <a onclick="openLightbox('https://files.catbox.moe/idgu3n.jpeg')"><img src="https://files.catbox.moe/idgu3n.jpeg"></a>
+      <a onclick="openLightbox('https://files.catbox.moe/g50cgx.jpeg')"><img src="https://files.catbox.moe/g50cgx.jpeg"></a>
+    </div>
+  </div>
 </div>
 
-<!-- APP CHÍNH (SAU KHI LOGIN) -->
+<!-- APP CHÍNH (SAU KHI LOGIN THÀNH CÔNG) -->
 <div class="app" id="app">
   <div class="header">
     <div class="avatar-wrap">
-      <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/68/1a2230/00f0ff?text=IC'">
+      <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/64/1a2230/00f0ff?text=IC'">
     </div>
     <div class="title-wrap">
       <h1>INNOVA</h1>
@@ -518,17 +598,6 @@
     <button class="btn btn-primary" id="btnActivate">🚀 KÍCH HOẠT</button>
     <button class="btn btn-danger" onclick="location.reload()">⟲ RESET</button>
   </div>
-
-  <div class="section">
-    <div class="section-title">HÌNH ẢNH GIỚI THIỆU</div>
-    <div class="gallery">
-      <a onclick="openLightbox('https://files.catbox.moe/6m40hb.jpeg')"><img src="https://files.catbox.moe/6m40hb.jpeg"></a>
-      <a onclick="openLightbox('https://files.catbox.moe/8doodg.jpeg')"><img src="https://files.catbox.moe/8doodg.jpeg"></a>
-      <a onclick="openLightbox('https://files.catbox.moe/4noh59.jpeg')"><img src="https://files.catbox.moe/4noh59.jpeg"></a>
-      <a onclick="openLightbox('https://files.catbox.moe/idgu3n.jpeg')"><img src="https://files.catbox.moe/idgu3n.jpeg"></a>
-      <a onclick="openLightbox('https://files.catbox.moe/g50cgx.jpeg')"><img src="https://files.catbox.moe/g50cgx.jpeg"></a>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -540,7 +609,6 @@ let isRegisterMode = false;
 let checkStatusInterval = null;
 let currentDiscountCode = ""; 
 
-// KHỞI TẠO PARTICLES
 const pWrap = document.getElementById('particles');
 for(let i=0;i<50;i++){
   const s = document.createElement('span');
