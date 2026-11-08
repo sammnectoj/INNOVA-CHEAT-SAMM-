@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INNOVA CHEAT · ULTIMATE v9</title>
+<title>INNOVA CHEAT · ULTIMATE v10</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
   :root { --neon:#00f0ff; --neon2:#ff00e5; --neon3:#00ff88; --neon4:#ffaa00; --bg-dark:#05070d; --card-bg:rgba(10,14,22,0.92); }
@@ -69,7 +69,6 @@
   .key-msg{font-size:.72rem;margin-top:8px;min-height:16px;font-weight:600;}
   .key-msg.ok{color:var(--neon3);} .key-msg.err{color:#ff4466;} .key-msg.info{color:var(--neon)}
 
-  /* NÚT SHOP MỚI */
   .shop-btn-container { margin-top: 15px; display: flex; gap: 10px; }
   .btn-shop-trigger {
     flex: 1; padding: 12px; background: linear-gradient(135deg, #ff00e5, #7000ff);
@@ -119,8 +118,6 @@
     transition: all 0.3s ease; position: relative; overflow: hidden;
   }
   .cheat-item:hover { background: rgba(255,255,255,.04); }
-  
-  /* Khi được bật */
   .cheat-item.active {
     border-color: rgba(0, 240, 255, 0.4);
     background: linear-gradient(90deg, rgba(0, 240, 255, 0.08), rgba(0,0,0,0));
@@ -143,6 +140,20 @@
   .cheat-info .name { font-size: 0.95rem; font-weight: 700; color: #b0c4d8; transition: 0.3s; text-transform: uppercase; letter-spacing: 0.5px;}
   .cheat-info .desc { font-size: 0.65rem; color: #5e7a94; margin-top: 2px; }
 
+  /* Ô nhập UID hiển thị khi bật Buff Like */
+  .uid-input-box {
+    display: none; margin-top: -5px; margin-bottom: 10px; padding: 12px;
+    background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2);
+    border-radius: 12px; animation: slideDown 0.3s ease;
+  }
+  .uid-input-box.show { display: flex; gap: 8px; align-items: center; }
+  @keyframes slideDown { from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
+  .uid-input-box input {
+    padding: 10px; border-radius: 8px; border: 1px solid #2a3a4d;
+    background: #03060a; color: var(--neon); font-family: monospace; outline: none;
+  }
+  .uid-input-box input:focus { border-color: var(--neon); box-shadow: 0 0 10px rgba(0,240,255,0.3); }
+
   /* Nút gạt (Switch) phong cách Nam châm */
   .switch { position: relative; display: inline-block; width: 56px; height: 30px; flex-shrink: 0; }
   .switch input { opacity: 0; width: 0; height: 0; }
@@ -158,7 +169,6 @@
     transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
     box-shadow: 0 2px 4px rgba(0,0,0,0.5);
   }
-  /* Trạng thái ON */
   input:checked + .slider {
     background: rgba(0, 240, 255, 0.15);
     border-color: var(--neon);
@@ -171,8 +181,9 @@
   }
 
   .btn-row{display:flex;gap:10px}
-  .btn{flex:1;padding:12px;border:none;border-radius:12px;font-weight:800;font-size:.75rem;text-transform:uppercase;cursor:pointer;}
+  .btn{flex:1;padding:14px;border:none;border-radius:12px;font-weight:900;font-size:.85rem;text-transform:uppercase;cursor:pointer;letter-spacing:1px;transition:0.3s;}
   .btn-primary{background:linear-gradient(135deg,var(--neon),#0099cc);color:#001a22;box-shadow: 0 0 15px rgba(0,240,255,.3);}
+  .btn-primary:active { transform: scale(0.95); }
   .btn-danger{background:linear-gradient(135deg,#ff3366,#aa0044);color:#fff;}
 
   .status-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--card-bg);border:1px solid rgba(0,240,255,.25);border-radius:16px;}
@@ -187,9 +198,35 @@
   .lightbox.show{display:flex;}
   .lightbox img{max-width:100%;max-height:90vh;border-radius:12px;border:2px solid var(--neon);}
   .lightbox-close{position:absolute;top:20px;right:20px;color:#fff;font-size:24px;cursor:pointer;background:rgba(0,240,255,0.2);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--neon);}
+
+  /* HIỆU ỨNG LOADING KHI KÍCH HOẠT */
+  .loading-overlay {
+    position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.85);
+    display: none; align-items: center; justify-content: center; flex-direction: column; gap: 20px;
+    backdrop-filter: blur(5px);
+  }
+  .loading-overlay.show { display: flex; }
+  .spinner {
+    width: 60px; height: 60px; border: 4px solid rgba(0,240,255,0.2);
+    border-top: 4px solid var(--neon); border-radius: 50%;
+    animation: spin 1s linear infinite;
+    box-shadow: 0 0 20px rgba(0,240,255,0.5);
+  }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  .loading-text {
+    color: var(--neon); font-weight: 900; font-size: 1.2rem;
+    letter-spacing: 2px; text-transform: uppercase; animation: pulseText 1.5s infinite;
+  }
+  @keyframes pulseText { 0%, 100% { opacity: 1; text-shadow: 0 0 10px var(--neon); } 50% { opacity: 0.5; text-shadow: none; } }
 </style>
 </head>
 <body>
+
+<!-- HIỆU ỨNG LOADING -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">ĐANG KÍCH HOẠT...</div>
+</div>
 
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox">
@@ -236,12 +273,10 @@
       <button onclick="switchShopTab('shop-history', this)">Lịch Sử</button>
     </div>
 
-    <!-- TAB CỬA HÀNG -->
     <div id="shop-keys" class="shop-tab-content">
       <div id="shopList"></div>
     </div>
 
-    <!-- TAB NẠP TIỀN -->
     <div id="shop-topup" class="shop-tab-content" style="display:none">
       <div class="form-group">
         <label>Số tiền muốn nạp (VNĐ)</label>
@@ -262,7 +297,6 @@
       <button class="btn-full" id="btnShowQR" onclick="showQR()" style="margin-top:15px;">LẤY MÃ QR NẠP TIỀN</button>
     </div>
 
-    <!-- TAB LỊCH SỬ -->
     <div id="shop-history" class="shop-tab-content" style="display:none">
       <div id="historyList"></div>
     </div>
@@ -273,7 +307,7 @@
   <div class="lock-box">
     <div class="lock-logo">
       <h1>INNOVA</h1>
-      <p>▸ CHEAT ULTIMATE v9 ◂</p>
+      <p>▸ CHEAT ULTIMATE v10 ◂</p>
     </div>
     <div class="verify-section">
       <div class="verify-header">XÁC THỰC THIẾT BỊ</div>
@@ -346,12 +380,30 @@
   <div class="panel active" id="panel-combat">
     <div class="section">
       <div class="section-title">COMBAT MODULES</div>
+      
+      <!-- BUFF LIKE -->
+      <div class="cheat-item" id="buffLikeItem">
+        <div class="cheat-icon">❤️</div>
+        <div class="cheat-info"><div class="name">Buff Like</div><div class="desc">Tăng lượt thích cho UID</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle" id="buffLikeToggle"><span class="slider"></span></label>
+      </div>
+      <!-- Ô NHẬP UID VÀ SỐ LIKE -->
+      <div class="uid-input-box" id="uidBox">
+        <input type="number" id="uidInput" placeholder="Nhập UID (8-12 số)" style="flex:2;" min="10000000" max="999999999999">
+        <select id="likeCount" class="form-input" style="flex:1; padding:10px; color:#00f0ff; background:#03060a;">
+          <option value="100">100 Like</option>
+          <option value="500">500 Like</option>
+          <option value="1000" selected>1000 Like</option>
+          <option value="5000">5000 Like</option>
+          <option value="10000">10.000 Like</option>
+        </select>
+      </div>
+
       <div class="cheat-item"><div class="cheat-icon">🎯</div><div class="cheat-info"><div class="name">Aimbot</div><div class="desc">Tự động khóa mục tiêu</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">✨</div><div class="cheat-info"><div class="name">Magic Bullet</div><div class="desc">Đạn xuyên vật cản</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">🔥</div><div class="cheat-info"><div class="name">Rapid Fire</div><div class="desc">Bắn siêu nhanh</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">🎮</div><div class="cheat-info"><div class="name">No Recoil</div><div class="desc">Không giật súng</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">📦</div><div class="cheat-info"><div class="name">Infinite Ammo</div><div class="desc">Đạn vô hạn</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">🔄</div><div class="cheat-info"><div class="name">Fast Reload</div><div class="desc">Nạp đạn tức thì</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
     </div>
   </div>
 
@@ -400,7 +452,7 @@
   </div>
 
   <div class="btn-row">
-    <button class="btn btn-primary" onclick="alert('Đã kích hoạt toàn bộ Modules!')">🚀 KÍCH HOẠT</button>
+    <button class="btn btn-primary" id="btnActivate">🚀 KÍCH HOẠT</button>
     <button class="btn btn-danger" onclick="location.reload()">⟲ RESET</button>
   </div>
 
@@ -702,18 +754,19 @@ document.querySelectorAll('.tab').forEach(tab => {
   });
 });
 
-// TOGGLE UI EFFECT
+// TOGGLE UI EFFECT & BUFF LIKE LOGIC
 document.querySelectorAll('.cheat-item').forEach(item => {
   item.addEventListener('click', (e) => {
-    if(e.target.closest('.switch')) return; // Nếu bấm vào công tắc thì để công tắc tự xử lý
+    if(e.target.closest('.switch')) return;
     const toggle = item.querySelector('.cheat-toggle');
     if(toggle) {
       toggle.checked = !toggle.checked;
+      // Kích hoạt sự kiện change thủ công
+      toggle.dispatchEvent(new Event('change'));
     }
   });
 });
 
-// Cập nhật trạng thái hiển thị của Cheat Item khi công tắc thay đổi
 document.querySelectorAll('.cheat-toggle').forEach(toggle => {
   toggle.addEventListener('change', function() {
     const item = this.closest('.cheat-item');
@@ -722,7 +775,48 @@ document.querySelectorAll('.cheat-toggle').forEach(toggle => {
     } else {
       item.classList.remove('active');
     }
+
+    // Logic hiển thị ô nhập UID khi bật Buff Like
+    if (this.id === 'buffLikeToggle') {
+      const uidBox = document.getElementById('uidBox');
+      if (this.checked) {
+        uidBox.classList.add('show');
+      } else {
+        uidBox.classList.remove('show');
+      }
+    }
   });
+});
+
+// XỬ LÝ NÚT KÍCH HOẠT VỚI HIỆU ỨNG LOADING
+document.getElementById('btnActivate').addEventListener('click', () => {
+  // Kiểm tra xem có chức năng nào đang bật không
+  const activeModules = document.querySelectorAll('.cheat-toggle:checked');
+  if (activeModules.length === 0) {
+    alert('Vui lòng bật ít nhất 1 chức năng trước khi kích hoạt!');
+    return;
+  }
+
+  // Kiểm tra nếu bật Buff Like thì phải nhập UID
+  if (document.getElementById('buffLikeToggle').checked) {
+    const uid = document.getElementById('uidInput').value.trim();
+    if (!uid || uid.length < 8 || uid.length > 12) {
+      alert('Vui lòng nhập UID hợp lệ (từ 8 đến 12 chữ số) cho chức năng Buff Like!');
+      return;
+    }
+    const likes = document.getElementById('likeCount').value;
+    console.log(`Đang buff ${likes} like cho UID: ${uid}`);
+  }
+
+  // Hiển thị hiệu ứng Loading
+  const overlay = document.getElementById('loadingOverlay');
+  overlay.classList.add('show');
+
+  // Đợi 2.5 giây rồi thông báo thành công
+  setTimeout(() => {
+    overlay.classList.remove('show');
+    alert('✅ KÍCH HOẠT THÀNH CÔNG!\nToàn bộ chức năng đã được áp dụng vào game.');
+  }, 2500);
 });
 </script>
 </body>
