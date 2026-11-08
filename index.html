@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>INNOVA CHEAT · ULTIMATE v11</title>
 <style>
-  /* CSS GIỮ NGUYÊN NHƯ CŨ, CHỈ THÊM CSS CHO HÒM THƯ VÀ MÃ GIẢM GIÁ */
   * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
   :root { --neon:#00f0ff; --neon2:#ff00e5; --neon3:#00ff88; --neon4:#ffaa00; --bg-dark:#05070d; --card-bg:rgba(10,14,22,0.92); }
   body { min-height:100vh; background: radial-gradient(circle at 20% 20%, #0a1220 0%, #05070d 70%); display:flex; justify-content:center; align-items:flex-start; padding:14px 10px 40px; overflow-x:hidden; position:relative; }
@@ -167,7 +166,6 @@
   .loading-text { color: var(--neon); font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; animation: pulseText 1.5s infinite; }
   @keyframes pulseText { 0%, 100% { opacity: 1; text-shadow: 0 0 10px var(--neon); } 50% { opacity: 0.5; text-shadow: none; } }
 
-  /* CSS CHO PHẦN THÔNG BÁO VÀ MÃ GIẢM GIÁ */
   .mail-item { padding: 12px; border-bottom: 1px solid #1a2a3d; font-size: 0.85rem; color: #cfefff; line-height: 1.4; }
   .mail-item:last-child { border-bottom: none; }
   .mail-time { font-size: 0.65rem; color: #5e7a94; margin-top: 5px; display: block; }
@@ -248,7 +246,6 @@
     </div>
 
     <div id="shop-keys" class="shop-tab-content">
-      <!-- Ô NHẬP MÃ GIẢM GIÁ -->
       <div class="coupon-box">
         <input type="text" id="couponInput" placeholder="Nhập mã giảm giá...">
         <button onclick="applyCoupon()">ÁP DỤNG</button>
@@ -439,17 +436,16 @@ const QR_IMAGE_URL = 'https://files.catbox.moe/4ot0fd.jpeg';
 let currentUser = null;
 let isRegisterMode = false;
 let checkStatusInterval = null;
-let currentDiscountCode = ""; // Biến lưu mã giảm giá đã áp dụng
+let currentDiscountCode = ""; 
 
 function openLightbox(src) {
   document.getElementById('lightboxImg').src = src;
   document.getElementById('lightbox').classList.add('show');
 }
 
-// HÒM THƯ
 async function openMailbox() {
   document.getElementById('mailModal').classList.add('show');
-  document.getElementById('mailBadge').style.display = 'none'; // Xóa chấm đỏ
+  document.getElementById('mailBadge').style.display = 'none';
   const el = document.getElementById('mailList');
   el.innerHTML = '<div style="padding:20px; text-align:center; color:#5e7a94;">Đang tải...</div>';
   
@@ -461,10 +457,7 @@ async function openMailbox() {
       d.notifications.forEach(n => {
         const div = document.createElement('div');
         div.className = 'mail-item';
-        div.innerHTML = `
-          <div style="color:#00f0ff;">📢 ${n.message}</div>
-          <span class="mail-time">${new Date(n.created_at).toLocaleString('vi-VN')}</span>
-        `;
+        div.innerHTML = `<div style="color:#00f0ff;">📢 ${n.message}</div><span class="mail-time">${new Date(n.created_at).toLocaleString('vi-VN')}</span>`;
         el.appendChild(div);
       });
     } else {
@@ -475,7 +468,6 @@ async function openMailbox() {
   }
 }
 
-// MÃ GIẢM GIÁ
 async function applyCoupon() {
   const code = document.getElementById('couponInput').value.trim().toUpperCase();
   const msg = document.getElementById('couponMsg');
@@ -502,7 +494,6 @@ async function applyCoupon() {
   }
 }
 
-// KHỞI TẠO PARTICLES VÀ CÁC HÀM KHÁC...
 const pWrap = document.getElementById('particles');
 for(let i=0;i<40;i++){
   const s = document.createElement('span');
@@ -546,7 +537,7 @@ function openShop() {
   if (currentUser) {
     document.getElementById('shopModal').classList.add('show');
     updateShopUI();
-    loadShopKeys(); // Load lại shop mỗi lần mở
+    loadShopKeys();
   } else {
     document.getElementById('authModal').classList.add('show');
   }
@@ -658,7 +649,6 @@ async function buyKey(key, price) {
     currentUser.balance -= d.finalPrice;
     updateShopUI();
     loadShopKeys();
-    // Xóa ô giảm giá sau khi mua thành công
     document.getElementById('couponInput').value = '';
     document.getElementById('couponMsg').textContent = '';
     currentDiscountCode = "";
@@ -848,7 +838,6 @@ document.getElementById('btnActivate').addEventListener('click', () => {
   }, 2500);
 });
 
-// KIỂM TRA THÔNG BÁO MỚI (Chấm đỏ)
 async function checkNewMail() {
   try {
     const r = await fetch(SERVER_URL + '/api/shop/notifications');
