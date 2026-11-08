@@ -151,12 +151,11 @@
   <img id="lightboxImg" src="" alt="Preview">
 </div>
 
-<!-- MODAL AUTH (ĐĂNG NHẬP / ĐĂNG KÝ) -->
+<!-- MODAL AUTH -->
 <div class="modal" id="authModal">
   <div class="modal-box">
     <button class="modal-close" onclick="document.getElementById('authModal').classList.remove('show')">✕</button>
     <div class="modal-title" id="authTitle">ĐĂNG NHẬP SHOP</div>
-    
     <div class="form-group">
       <label>Tên tài khoản</label>
       <input type="text" class="form-input" id="authUser" placeholder="Nhập tài khoản...">
@@ -165,16 +164,14 @@
       <label>Mật khẩu</label>
       <input type="password" class="form-input" id="authPass" placeholder="Nhập mật khẩu...">
     </div>
-    
     <button class="btn-full" id="authBtn" onclick="handleAuth()">ĐĂNG NHẬP</button>
-    
     <div class="switch-form">
       <span id="authSwitchText">Chưa có tài khoản?</span> <a onclick="toggleAuthMode()" id="authSwitchBtn">Đăng ký ngay</a>
     </div>
   </div>
 </div>
 
-<!-- MODAL SHOP (TRANG CHỦ SHOP) -->
+<!-- MODAL SHOP -->
 <div class="modal" id="shopModal">
   <div class="modal-box" style="max-width: 500px;">
     <button class="modal-close" onclick="document.getElementById('shopModal').classList.remove('show')">✕</button>
@@ -190,7 +187,7 @@
     <div class="shop-nav">
       <button class="active" onclick="switchShopTab('shop-keys', this)">Cửa Hàng</button>
       <button onclick="switchShopTab('shop-topup', this)">Nạp Tiền</button>
-      <button onclick="switchShopTab('shop-history', this)">Lịch Sử Mua</button>
+      <button onclick="switchShopTab('shop-history', this)">Lịch Sử</button>
     </div>
 
     <!-- TAB CỬA HÀNG -->
@@ -198,14 +195,26 @@
       <div id="shopList"></div>
     </div>
 
-    <!-- TAB NẠP TIỀN -->
+    <!-- TAB NẠP TIỀN (MỚI) -->
     <div id="shop-topup" class="shop-tab-content" style="display:none">
       <div class="form-group">
         <label>Số tiền muốn nạp (VNĐ)</label>
         <input type="number" class="form-input" id="topupAmount" placeholder="VD: 50000">
       </div>
-      <button class="btn-full" onclick="doTopup()" style="background:linear-gradient(135deg, #00ff88, #009944)">XÁC NHẬN NẠP (DEMO)</button>
-      <p style="font-size:0.65rem;color:#8ba0b8;text-align:center;margin-top:10px">* Hệ thống tự động cộng tiền (Demo)</p>
+      
+      <div id="qrContainer" style="display:none; text-align:center; margin-top:15px;">
+        <p style="font-size:0.8rem;color:#8ba0b8;margin-bottom:10px">Quét mã QR bên dưới để thanh toán</p>
+        <!-- THAY LINK ẢNH QR CỦA BẠN VÀO ĐÂY -->
+        <img id="qrImage" src="" style="width:200px;height:200px;border-radius:12px;border:2px solid var(--neon);object-fit:cover; margin-bottom:10px;">
+        
+        <div style="background:rgba(255,170,0,0.1);border:1px solid var(--neon4);padding:10px;border-radius:8px;margin-top:10px;">
+           <p style="color:var(--neon4);font-size:0.75rem;font-weight:bold;margin-bottom:5px;">⚠️ QUAN TRỌNG</p>
+           <p style="font-size:0.7rem;color:#8ba0b8;line-height:1.5">Vui lòng chuyển <strong style="color:#fff">ĐÚNG SỐ TIỀN</strong> đã nhập. Hệ thống sẽ tự động hiển thị trạng thái <strong>Chờ Duyệt</strong> sau khi bạn chuyển khoản.</p>
+        </div>
+        <button class="btn-full" onclick="confirmTopup()" style="margin-top:15px; background:linear-gradient(135deg, #00ff88, #009944);">TÔI ĐÃ CHUYỂN KHOẢN</button>
+      </div>
+
+      <button class="btn-full" id="btnShowQR" onclick="showQR()" style="margin-top:15px;">LẤY MÃ QR NẠP TIỀN</button>
     </div>
 
     <!-- TAB LỊCH SỬ -->
@@ -214,7 +223,6 @@
     </div>
   </div>
 </div>
-
 
 <div class="lock-screen" id="lockScreen">
   <div class="lock-box">
@@ -240,7 +248,6 @@
       <div class="key-msg" id="keyMsg"></div>
     </div>
 
-    <!-- NÚT SHOP -->
     <div class="shop-btn-container">
       <button class="btn-shop-trigger" onclick="openShop()">
         🛒 VÀO SHOP MUA KEY
@@ -267,7 +274,6 @@
 <div class="bg-particles" id="particles"></div>
 <div class="grid-overlay"></div>
 
-<!-- APP CHÍNH (SAU KHI LOGIN) -->
 <div class="app" id="app" style="display:none">
   <div class="header">
     <div class="avatar-wrap">
@@ -323,6 +329,8 @@
 
 <script>
 const SERVER_URL = 'https://innova-key.onrender.com';
+const QR_IMAGE_URL = 'https://files.catbox.moe/4ot0fd.jpeg'; // Thay link ảnh QR THẬT của bạn vào đây
+
 let currentUser = null;
 let isRegisterMode = false;
 
@@ -342,7 +350,7 @@ for(let i=0;i<40;i++){
   pWrap.appendChild(s);
 }
 
-// XÁC THỰC THIẾT BỊ
+// XÁC THỰC
 let currentStep = 0, currentPercent = 0, verifyDone = false;
 const verifySteps = [{ end:25, msg:'Khởi tạo...' }, { end:60, msg:'Xác thực GPU...' }, { end:100, msg:'Hoàn tất!' }];
 function runVerification(){
@@ -372,7 +380,7 @@ function runVerification(){
 }
 setTimeout(runVerification, 500);
 
-// XỬ LÝ SHOP
+// SHOP LOGIC
 function openShop() {
   if (currentUser) {
     document.getElementById('shopModal').classList.add('show');
@@ -462,7 +470,7 @@ async function loadShopKeys() {
           <div class="shop-item-name">${k.name || 'Gói Key'}</div>
           <div class="shop-item-price">${k.price.toLocaleString('vi-VN')}đ</div>
         </div>
-        <button class="btn-buy" onclick="buyKey('${k.key}')">MUA</button>
+        <button class="btn-buy" onclick="buyKey('${k.key}', ${k.price})">MUA</button>
       `;
       el.appendChild(div);
     });
@@ -471,22 +479,16 @@ async function loadShopKeys() {
   }
 }
 
-async function buyKey(key) {
-  if(!confirm('Bạn có chắc muốn mua Key này?')) return;
+async function buyKey(key, price) {
+  if(!confirm('Bạn có chắc muốn mua Key này với giá ' + price.toLocaleString('vi-VN') + 'đ?')) return;
   const r = await fetch(SERVER_URL + '/api/shop/buy', {
     method: 'POST', headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ username: currentUser.username, key })
   });
   const d = await r.json();
   if(d.ok) {
-    alert('Mua thành công! Xem lại trong Lịch sử mua.');
-    // Cập nhật lại số dư
-    const r2 = await fetch(SERVER_URL + '/api/shop/login', {
-      method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ username: currentUser.username, password: '****' }) // Fake login to refresh data
-    });
-    // Đơn giản là trừ tiền ở client
-    currentUser.balance -= parseInt(prompt("Nhập giá để trừ (demo)") || 0); 
+    alert('Mua thành công! Xem lại trong Lịch sử.');
+    currentUser.balance -= price;
     updateShopUI();
     loadShopKeys();
   } else {
@@ -494,21 +496,50 @@ async function buyKey(key) {
   }
 }
 
-async function doTopup() {
+// NẠP TIỀN MỚI (QR)
+function showQR() {
   const amt = parseInt(document.getElementById('topupAmount').value);
-  if(!amt || amt <= 0) return alert('Nhập số tiền hợp lệ!');
-  const r = await fetch(SERVER_URL + '/api/shop/topup', {
-    method: 'POST', headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ username: currentUser.username, amount: amt })
-  });
-  const d = await r.json();
-  if(d.ok) {
-    currentUser.balance = d.newBalance;
-    updateShopUI();
-    document.getElementById('topupAmount').value = '';
-    alert('Nạp thành công! Số dư mới: ' + d.newBalance.toLocaleString('vi-VN') + 'đ');
-  } else {
-    alert(d.error);
+  if(!amt || amt < 1000) return alert('Vui lòng nhập số tiền từ 1,000đ trở lên!');
+  
+  document.getElementById('qrImage').src = QR_IMAGE_URL;
+  document.getElementById('qrContainer').style.display = 'block';
+  document.getElementById('btnShowQR').style.display = 'none';
+}
+
+async function confirmTopup() {
+  const amt = parseInt(document.getElementById('topupAmount').value);
+  if(!amt) return;
+
+  const btn = event.target;
+  btn.textContent = 'ĐANG GỬI YÊU CẦU...'; btn.disabled = true;
+
+  try {
+    // Gửi yêu cầu nạp lên server (chờ admin duyệt)
+    const r = await fetch(SERVER_URL + '/api/shop/topup', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ username: currentUser.username, amount: amt })
+    });
+    const d = await r.json();
+    
+    if(d.ok) {
+      // Hiển thị trạng thái chờ duyệt
+      document.getElementById('qrContainer').innerHTML = `
+        <div style="background:rgba(0,240,255,0.1);border:1px solid var(--neon);padding:20px;border-radius:12px;margin-top:15px;text-align:center;">
+          <h3 style="color:var(--neon);font-size:1.1rem;margin-bottom:10px;">⏳ ĐANG XÁC THỰC</h3>
+          <p style="font-size:0.8rem;color:#8ba0b8;line-height:1.6;">
+            Yêu cầu nạp <strong>${amt.toLocaleString('vi-VN')}đ</strong> của bạn đã được gửi.<br>
+            Vui lòng chờ <strong>Admin kiểm tra và cộng tiền</strong>. Quá trình này có thể mất vài phút.
+          </p>
+          <button class="btn-full" onclick="location.reload()" style="margin-top:15px;background:#334">ĐÓNG</button>
+        </div>
+      `;
+    } else {
+      alert(d.error);
+      btn.textContent = 'TÔI ĐÃ CHUYỂN KHOẢN'; btn.disabled = false;
+    }
+  } catch(e) {
+    alert('Lỗi kết nối Server!');
+    btn.textContent = 'TÔI ĐÃ CHUYỂN KHOẢN'; btn.disabled = false;
   }
 }
 
@@ -536,7 +567,7 @@ async function loadHistory() {
   }
 }
 
-// MỞ KHÓA KEY & VÀO APP
+// MỞ KHÓA KEY
 document.getElementById('unlockBtn').addEventListener('click', async ()=>{
   if(!verifyDone) return;
   const key = document.getElementById('keyInput').value.trim().toUpperCase();
@@ -545,7 +576,6 @@ document.getElementById('unlockBtn').addEventListener('click', async ()=>{
 
   msg.textContent = '🔍 Đang kiểm tra key...'; msg.className = 'key-msg info'; document.getElementById('unlockBtn').disabled = true;
   
-  // PHÁT NHẠC
   if(!window.audioEl) {
     window.audioEl = new Audio('https://files.catbox.moe/ij9uix.mp3');
     window.audioEl.loop = true;
