@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INNOVA CHEAT · ULTIMATE v13</title>
+<title>INNOVA CHEAT · ULTIMATE v14</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
   :root { 
@@ -109,7 +109,7 @@
   }
   @keyframes rotateBorder { 100% { transform: rotate(360deg); } }
 
-  /* AVATAR & TÊN (MỚI) */
+  /* AVATAR & TÊN */
   .app-profile {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     margin-bottom: 24px; text-align: center;
@@ -147,7 +147,7 @@
   .key-msg.err{color:#ff4466; text-shadow: 0 0 8px rgba(255,68,102,0.5);} 
   .key-msg.info{color:var(--neon)}
 
-  /* CÁC BƯỚC CÀI ĐẶT (MỚI) */
+  /* CÁC BƯỚC CÀI ĐẶT */
   .install-steps {
     background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);
     border-radius: 16px; padding: 16px; margin-top: 20px; margin-bottom: 10px;
@@ -156,18 +156,14 @@
     font-size: 0.75rem; color: var(--neon4); font-weight: 800; text-transform: uppercase;
     letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
   }
-  .step-item {
-    display: flex; gap: 12px; margin-bottom: 12px; position: relative;
-  }
+  .step-item { display: flex; gap: 12px; margin-bottom: 12px; position: relative; }
   .step-item:last-child { margin-bottom: 0; }
   .step-num {
     width: 24px; height: 24px; border-radius: 50%; background: rgba(0,240,255,0.1);
     border: 1px solid var(--neon); color: var(--neon); font-size: 0.75rem; font-weight: bold;
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
-  .step-text {
-    font-size: 0.75rem; color: #b0c4d8; line-height: 1.5;
-  }
+  .step-text { font-size: 0.75rem; color: #b0c4d8; line-height: 1.5; }
   .step-text strong { color: #fff; }
 
   .shop-btn-container { margin-top: 15px; display: flex; gap: 10px; }
@@ -222,7 +218,7 @@
   .section-title{display:flex;align-items:center;gap:8px;font-size:.75rem;font-weight:800;text-transform:uppercase;color:#8ba0b8;margin-bottom:16px; letter-spacing: 1px;}
   .section-title::before{content:'';width:4px;height:16px;background:var(--neon);border-radius:4px; box-shadow: 0 0 10px var(--neon);}
 
-  /* CHEAT ITEM */
+  /* CHEAT ITEM (UPDATE THEO ẢNH) */
   .cheat-item { 
     display: flex; align-items: center; gap: 14px; padding: 14px 16px; 
     background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); 
@@ -428,17 +424,17 @@
   </div>
 </div>
 
-<!-- MÀN HÌNH CHÍNH (ĐÃ CẬP NHẬT AVATAR, TÊN VÀ CÁC BƯỚC CÀI ĐẶT) -->
+<!-- MÀN HÌNH CHÍNH -->
 <div class="lock-screen" id="lockScreen" style="flex-direction: column;">
   <div class="lock-box">
     
-    <!-- AVATAR & TÊN -->
     <div class="app-profile">
       <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/85/1a2230/00f0ff?text=IC'">
       <h1>INNOVACHEAT</h1>
-      <p>▸ ULTIMATE v13 ◂</p>
+      <p>▸ ULTIMATE v14 ◂</p>
     </div>
 
+    <!-- Ô NHẬP KEY ĐÃ ĐƯỢC ĐƯA VÀO ĐÚNG VỊ TRÍ -->
     <div class="key-section">
       <label class="key-label">🔑 NHẬP KEY BẢN QUYỀN</label>
       <div class="key-input-wrap">
@@ -492,7 +488,7 @@
     </div>
   </div>
 
-  <!-- ẢNH GIỚI THIỆU ĐƯỢC CHUYỂN RA NGOÀI -->
+  <!-- ẢNH GIỚI THIỆU -->
   <div class="gallery-section">
     <div class="section-title" style="margin-bottom:12px; color:#8ba0b8;">HÌNH ẢNH GIỚI THIỆU</div>
     <div class="gallery">
@@ -505,7 +501,7 @@
   </div>
 </div>
 
-<!-- APP CHÍNH (SAU KHI LOGIN THÀNH CÔNG) -->
+<!-- APP CHÍNH (ĐÃ CẬP NHẬT CHỨC NĂNG THEO ẢNH) -->
 <div class="app" id="app">
   <div class="header">
     <div class="avatar-wrap">
@@ -522,75 +518,116 @@
 
   <div class="tabs" id="tabs">
     <button class="tab active" data-tab="combat"><span class="ico">⚔️</span>COMBAT</button>
-    <button class="tab" data-tab="movement"><span class="ico">🏃</span>MOVEMENT</button>
     <button class="tab" data-tab="visual"><span class="ico">🎨</span>VISUAL</button>
-    <button class="tab" data-tab="camera"><span class="ico">📷</span>CAM 360</button>
     <button class="tab" data-tab="misc"><span class="ico">⚙️</span>MISC</button>
   </div>
 
+  <!-- TAB COMBAT (CẬP NHẬT THEO ẢNH 1) -->
   <div class="panel active" id="panel-combat">
     <div class="section">
       <div class="section-title">COMBAT MODULES</div>
-      <div class="cheat-item" id="buffLikeItem">
-        <div class="cheat-icon">❤️</div>
-        <div class="cheat-info"><div class="name">Buff Like</div><div class="desc">Tăng lượt thích cho UID</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle" id="buffLikeToggle"><span class="slider"></span></label>
+      
+      <div class="cheat-item">
+        <div class="cheat-icon">💥</div>
+        <div class="cheat-info"><div class="name">Tăng Sát Thương (Buff Dame)</div><div class="desc">Cường hóa sát thương khi bắn trúng</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
       </div>
-      <div class="uid-input-box" id="uidBox">
-        <input type="number" id="uidInput" placeholder="Nhập UID (8-12 số)" style="flex:2;" min="10000000" max="999999999999">
-        <select id="likeCount" class="form-input" style="flex:1; padding:12px; color:#00f0ff; background:rgba(0,0,0,0.5); border-radius:10px;">
-          <option value="100">100 Like</option>
-          <option value="500">500 Like</option>
-          <option value="1000" selected>1000 Like</option>
-          <option value="5000">5000 Like</option>
-          <option value="10000">10.000 Like</option>
-        </select>
+      <div class="cheat-item">
+        <div class="cheat-icon">⚡</div>
+        <div class="cheat-info"><div class="name">Bắn Siêu Tốc (Fast Fire)</div><div class="desc">Tăng tốc độ bắn của mọi loại súng</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
       </div>
-      <div class="cheat-item"><div class="cheat-icon">🎯</div><div class="cheat-info"><div class="name">Aimbot</div><div class="desc">Tự động khóa mục tiêu</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">✨</div><div class="cheat-info"><div class="name">Magic Bullet</div><div class="desc">Đạn xuyên vật cản</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">🔥</div><div class="cheat-info"><div class="name">Rapid Fire</div><div class="desc">Bắn siêu nhanh</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">🎮</div><div class="cheat-info"><div class="name">No Recoil</div><div class="desc">Không giật súng</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">📦</div><div class="cheat-info"><div class="name">Infinite Ammo</div><div class="desc">Đạn vô hạn</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item">
+        <div class="cheat-icon">🔄</div>
+        <div class="cheat-info"><div class="name">Đổi Súng Nhanh</div><div class="desc">Chuyển đổi vũ khí siêu mượt</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-icon">📦</div>
+        <div class="cheat-info"><div class="name">Nạp Đạn Nhanh</div><div class="desc">Giảm thời gian nạp đạn</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-icon">🎮</div>
+        <div class="cheat-info"><div class="name">Giảm Giật Súng (No Recoil)</div><div class="desc">Loại bỏ độ giật khi bắn</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+      </div>
     </div>
   </div>
 
-  <div class="panel" id="panel-movement">
-    <div class="section">
-      <div class="section-title">MOVEMENT MODULES</div>
-      <div class="cheat-item"><div class="cheat-icon">⚡</div><div class="cheat-info"><div class="name">Speed Boost</div><div class="desc">Tăng tốc di chuyển</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">🕊️</div><div class="cheat-info"><div class="name">Fly Mode</div><div class="desc">Bay lượn tự do</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">🌀</div><div class="cheat-info"><div class="name">Teleport</div><div class="desc">Dịch chuyển tức thời</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">🦘</div><div class="cheat-info"><div class="name">High Jump</div><div class="desc">Nhảy cao</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">🐇</div><div class="cheat-info"><div class="name">Bunny Hop</div><div class="desc">Tự động nhảy liên tục</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-    </div>
-  </div>
-
+  <!-- TAB VISUAL (CẬP NHẬT THEO ẢNH 2) -->
   <div class="panel" id="panel-visual">
     <div class="section">
       <div class="section-title">VISUAL MODULES</div>
-      <div class="cheat-item"><div class="cheat-icon">👁️</div><div class="cheat-info"><div class="name">ESP Wallhack</div><div class="desc">Xuyên tường nhìn địch</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">🎨</div><div class="cheat-info"><div class="name">Chams</div><div class="desc">Đổi màu địch</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">📡</div><div class="cheat-info"><div class="name">Radar Hack</div><div class="desc">Hiện địch trên radar</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">🌫️</div><div class="cheat-info"><div class="name">No Fog</div><div class="desc">Bỏ sương mù</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">🖱️</div><div class="cheat-info"><div class="name">Custom Crosshair</div><div class="desc">Tâm ngắm tùy chỉnh</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      
+      <div class="cheat-item">
+        <div class="cheat-icon">👁️</div>
+        <div class="cheat-info"><div class="name">Khung 2D (Box ESP)</div><div class="desc">Hiển thị khung xương địch</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-icon">📡</div>
+        <div class="cheat-info"><div class="name">Tia Chỉ Hướng (Line ESP)</div><div class="desc">Vẽ đường thẳng tới kẻ địch</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-icon">💚</div>
+        <div class="cheat-info"><div class="name">Thanh Máu (Health Bar)</div><div class="desc">Hiển thị lượng máu của địch</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-icon">🏷️</div>
+        <div class="cheat-info"><div class="name">Tên Kẻ Địch (Name Tag)</div><div class="desc">Hiển thị tên của người chơi</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-icon">📏</div>
+        <div class="cheat-info"><div class="name">Khoảng Cách (Distance Tag)</div><div class="desc">Hiển thị khoảng cách tới địch</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+      </div>
     </div>
   </div>
 
-  <div class="panel" id="panel-camera">
-    <div class="section">
-      <div class="section-title">CAMERA MODULES</div>
-      <div class="cheat-item"><div class="cheat-icon">🔄</div><div class="cheat-info"><div class="name">Xoay 360°</div><div class="desc">Góc nhìn thứ 3 xoay quanh nhân vật</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">🔭</div><div class="cheat-info"><div class="name">Zoom FOV</div><div class="desc">Thay đổi tầm nhìn xa gần</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-    </div>
-  </div>
-
+  <!-- TAB MISC (CẬP NHẬT THEO ẢNH 3, 4, 5) -->
   <div class="panel" id="panel-misc">
     <div class="section">
       <div class="section-title">MISC MODULES</div>
-      <div class="cheat-item"><div class="cheat-icon">🛡️</div><div class="cheat-info"><div class="name">God Mode</div><div class="desc">Bất tử</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">🔒</div><div class="cheat-info"><div class="name">Anti-Ban</div><div class="desc">Bypass chống cheat</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">👕</div><div class="cheat-info"><div class="name">Skin Changer</div><div class="desc">Đổi skin</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">⭐</div><div class="cheat-info"><div class="name">Level Hack</div><div class="desc">Tăng level</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      
+      <div class="cheat-item">
+        <div class="cheat-icon">🦘</div>
+        <div class="cheat-info"><div class="name">Nhảy Cao (High Jump)</div><div class="desc">Tăng độ cao khi nhảy</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-icon">🌀</div>
+        <div class="cheat-info"><div class="name">Đảo Nhựa (360°)</div><div class="desc">Xoay camera 360 độ quanh nhân vật</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-icon">🎯</div>
+        <div class="cheat-info"><div class="name">Khóa Góc 100% (No Gra)</div><div class="desc">Hỗ trợ ngắm bắn chính xác</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-icon">🌫️</div>
+        <div class="cheat-info"><div class="name">Khử Sương Mù (No Fog)</div><div class="desc">Loại bỏ sương mù trên bản đồ</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-icon">🎒</div>
+        <div class="cheat-info"><div class="name">Loot Đồ Nhanh</div><div class="desc">Tự động nhặt vật phẩm siêu tốc</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-icon">🏃</div>
+        <div class="cheat-info"><div class="name">Nâng Di Chuyển</div><div class="desc">Tăng tốc độ chạy của nhân vật</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-icon">🖱️</div>
+        <div class="cheat-info"><div class="name">Aim Silent (Tàng Hình)</div><div class="desc">Ngắm bắn không lộ vị trí</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+      </div>
     </div>
   </div>
 
@@ -953,23 +990,12 @@ document.querySelectorAll('.cheat-toggle').forEach(toggle => {
     const item = this.closest('.cheat-item');
     if(this.checked) item.classList.add('active');
     else item.classList.remove('active');
-
-    if (this.id === 'buffLikeToggle') {
-      const uidBox = document.getElementById('uidBox');
-      if (this.checked) uidBox.classList.add('show');
-      else uidBox.classList.remove('show');
-    }
   });
 });
 
 document.getElementById('btnActivate').addEventListener('click', () => {
   const activeModules = document.querySelectorAll('.cheat-toggle:checked');
   if (activeModules.length === 0) return alert('Vui lòng bật ít nhất 1 chức năng trước khi kích hoạt!');
-
-  if (document.getElementById('buffLikeToggle').checked) {
-    const uid = document.getElementById('uidInput').value.trim();
-    if (!uid || uid.length < 8 || uid.length > 12) return alert('Vui lòng nhập UID hợp lệ (từ 8 đến 12 chữ số) cho chức năng Buff Like!');
-  }
 
   const overlay = document.getElementById('loadingOverlay');
   overlay.classList.add('show');
