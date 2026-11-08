@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'innova-admin-2024';
 
-// ✅ THÔNG TIN SUPABASE
+// ✅ THÔNG TIN SUPABASE CỦA BẠN
 const SUPABASE_URL = 'https://llvlcqfievwtvylsqslm.supabase.co'; 
 const SUPABASE_KEY = 'sb_publishable_37lYwmdntFwHgspQ7b3vgA_Jna_S5r1'; 
 
@@ -72,7 +72,7 @@ app.post('/api/shop/buy', async (req, res) => {
   res.json({ ok: true, message: 'Mua thành công!' });
 });
 
-// API NẠP TIỀN: Chỉ lưu trạng thái 'pending' (Chờ duyệt)
+// API NẠP TIỀN: Ghi nhận 'pending'
 app.post('/api/shop/topup', async (req, res) => {
   const { username, amount } = req.body;
   const { error } = await supabase.from('topups').insert([{ 
@@ -82,7 +82,7 @@ app.post('/api/shop/topup', async (req, res) => {
     status: 'pending' 
   }]);
   if(error) return res.json({ ok: false, error: error.message });
-  res.json({ ok: true, message: 'Đã gửi yêu cầu, chờ Admin duyệt' });
+  res.json({ ok: true, message: 'Đã gửi yêu cầu' });
 });
 
 app.get('/api/shop/history', async (req, res) => {
@@ -114,7 +114,6 @@ app.get('/api/admin/users', async (req, res) => {
   res.json({ ok: true, users: data || [] });
 });
 
-// Admin lấy danh sách chờ duyệt
 app.get('/api/admin/topups', async (req, res) => {
   const pass = req.query.pass;
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
@@ -122,17 +121,13 @@ app.get('/api/admin/topups', async (req, res) => {
   res.json({ ok: true, topups: data || [] });
 });
 
-// Admin duyệt nạp tiền
 app.post('/api/admin/approve-topup', async (req, res) => {
   const pass = req.headers['x-admin-pass'];
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
 
   const { id, username, amount } = req.body;
-  
-  // 1. Cập nhật trạng thái topup thành 'success'
   await supabase.from('topups').update({ status: 'success' }).eq('id', id);
   
-  // 2. Cộng tiền cho user
   const { data: user } = await supabase.from('users').select('*').eq('username', username).single();
   if(user) {
     await supabase.from('users').update({ balance: user.balance + amount }).eq('username', username);
@@ -140,7 +135,7 @@ app.post('/api/admin/approve-topup', async (req, res) => {
   res.json({ ok: true });
 });
 
-// Các API cũ giữ nguyên
+// CÁC API CŨ
 app.post('/api/create', async (req, res) => {
   const pass = req.headers['x-admin-pass'];
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu Admin' });
@@ -183,7 +178,7 @@ app.delete('/api/delete/:key', async (req, res) => {
   res.json({ ok: true });
 });
 
-// ================= GIAO DIỆN ADMIN =================
+// GIAO DIỆN ADMIN (Giữ nguyên như cũ)
 app.get('/admin', (req, res) => {
   res.send(`<!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"><title>Admin - Innova Shop</title>
@@ -337,7 +332,7 @@ async function approveTopup(id, username, amount){
   const d = await r.json();
   if(d.ok) {
     alert('Đã duyệt thành công!');
-    loadTopups(); // Tải lại danh sách
+    loadTopups();
   } else {
     alert('Lỗi: ' + d.error);
   }
