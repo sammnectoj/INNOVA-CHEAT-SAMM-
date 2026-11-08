@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INNOVA CHEAT · ULTIMATE v15</title>
+<title>INNOVA CHEAT · ULTIMATE v16</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
   :root { 
@@ -23,7 +23,7 @@
     color: #e0eef5;
   }
   
-  /* Hiệu ứng nền */
+  /* NỀN */
   .bg-particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
   .bg-particles span{position:absolute;width:3px;height:3px;border-radius:50%;opacity:.4;animation:floatUp linear infinite}
   @keyframes floatUp{0%{transform:translateY(100vh) scale(.5);opacity:0}10%{opacity:.6}90%{opacity:.3}100%{transform:translateY(-10vh) scale(1.2);opacity:0}}
@@ -72,34 +72,56 @@
   .switch-form{text-align:center;font-size:0.8rem;color:#8ba0b8;margin-top:15px}
   .switch-form a{color:var(--neon2);text-decoration:none;font-weight:bold;cursor:pointer; text-shadow: 0 0 8px rgba(255,0,229,0.5);}
   
-  /* SHOP UI */
-  .shop-header{display:flex;justify-content:space-between;align-items:center;background:rgba(0,240,255,0.08);padding:14px 16px;border-radius:16px;margin-bottom:15px;border:1px solid rgba(0,240,255,0.2)}
-  .shop-balance{font-size:1.1rem;color:var(--neon3);font-weight:900; text-shadow: 0 0 10px rgba(0,255,136,0.3);}
-  .shop-nav{display:flex;gap:8px;margin-bottom:15px;overflow-x:auto;padding-bottom:5px; scrollbar-width: none;}
-  .shop-nav button{flex:1;padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#8ba0b8;font-weight:bold;cursor:pointer;white-space:nowrap;font-size:0.75rem; transition: 0.3s;}
-  .shop-nav button.active{background:var(--neon);color:#000; border-color: var(--neon); box-shadow: 0 0 15px rgba(0,240,255,0.4);}
+  /* ====== GIAO DIỆN SHOP CỰC CHẤT ====== */
+  .shop-header{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg, rgba(0,240,255,0.1), rgba(255,0,229,0.05));padding:16px;border-radius:16px;margin-bottom:20px;border:1px solid rgba(0,240,255,0.3); box-shadow: 0 4px 15px rgba(0,0,0,0.3);}
+  .shop-balance{font-size:1.3rem;color:var(--neon3);font-weight:900; text-shadow: 0 0 10px rgba(0,255,136,0.4);}
+  .shop-nav{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:5px; scrollbar-width: none;}
+  .shop-nav button{flex:1;padding:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#8ba0b8;font-weight:800;cursor:pointer;white-space:nowrap;font-size:0.75rem; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;}
+  .shop-nav button.active{background:linear-gradient(135deg, var(--neon), #0099cc);color:#000; border-color: transparent; box-shadow: 0 0 20px rgba(0,240,255,0.4); text-shadow: none;}
   
-  .shop-item{display:flex;gap:12px;background:rgba(0,0,0,0.4);padding:12px;border-radius:16px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.05);align-items:center; transition: 0.3s;}
-  .shop-item:hover { border-color: rgba(0,240,255,0.3); background: rgba(0,240,255,0.05); }
-  .shop-item img{width:70px;height:70px;border-radius:12px;object-fit:cover;border:1px solid rgba(255,255,255,0.1)}
-  .shop-item-info{flex:1}
-  .shop-item-name{font-weight:bold;color:#fff;font-size:0.95rem}
-  .shop-item-price{color:var(--neon4);font-weight:800;margin:4px 0;font-size:0.95rem}
-  .btn-buy{padding:8px 16px;background:linear-gradient(135deg, var(--neon), #0099cc);color:#000;border:none;border-radius:8px;font-weight:900;cursor:pointer;font-size:0.75rem; box-shadow: 0 0 10px rgba(0,240,255,0.3);}
+  /* Ô nhập mã giảm giá */
+  .coupon-box { display: flex; gap: 10px; margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 14px; border: 1px dashed rgba(255,170,0,0.4); }
+  .coupon-box input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.6); color: #ffaa00; font-weight: 900; outline: none; text-transform: uppercase; transition: 0.3s; font-family: 'Courier New', monospace; font-size: 0.9rem;}
+  .coupon-box input:focus { border-color: #ffaa00; box-shadow: 0 0 15px rgba(255,170,0,0.2); }
+  .coupon-box button { padding: 12px 20px; background: linear-gradient(135deg, #ffaa00, #ff7700); border: none; color: #000; border-radius: 10px; font-weight: 900; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;}
+  .coupon-box button:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,170,0,0.5); }
+
+  /* Thẻ Key trong Shop */
+  .shop-item{
+    position: relative; display: flex; gap: 16px; 
+    background: linear-gradient(145deg, rgba(20,30,48,0.8), rgba(10,15,25,0.9)); 
+    padding: 16px; border-radius: 20px; margin-bottom: 15px; 
+    border: 1px solid rgba(0,240,255,0.2); align-items: center; 
+    transition: 0.3s; overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+  }
+  .shop-item:hover { border-color: var(--neon); box-shadow: 0 8px 30px rgba(0,240,255,0.2); transform: translateY(-3px); }
+  .shop-item::before {
+    content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    transform: skewX(-20deg); transition: 0.5s;
+  }
+  .shop-item:hover::before { left: 100%; }
+  
+  .shop-item img{width: 75px; height: 75px; border-radius: 16px; object-fit: cover; border: 2px solid rgba(255,255,255,0.1); box-shadow: 0 0 15px rgba(0,0,0,0.5);}
+  .shop-item-info{flex:1; z-index: 2;}
+  .shop-item-name{font-weight: 900; color:#fff; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(255,255,255,0.3);}
+  .shop-item-price{color:var(--neon4); font-weight: 900; margin: 6px 0; font-size: 1.1rem; text-shadow: 0 0 10px rgba(255,170,0,0.4);}
+  .btn-buy{padding: 10px 18px; background: linear-gradient(135deg, var(--neon), #0099cc); color:#000; border:none; border-radius:12px; font-weight: 900; cursor:pointer; font-size:0.85rem; box-shadow: 0 4px 15px rgba(0,240,255,0.3); transition: 0.3s; text-transform: uppercase;}
+  .btn-buy:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--neon); }
 
   /* MÀN HÌNH CHÍNH (LOCK SCREEN) */
   .lock-screen{position:fixed;inset:0;z-index:100;background:transparent;display:flex;align-items:center;justify-content:center;padding:15px;transition:opacity .6s,visibility .6s; overflow-y: auto;}
   .lock-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
   
   .lock-box{
-    width:100%;max-width:400px; /* Thu nhỏ chiều rộng */
+    width:100%;max-width:400px;
     background:var(--glass);border:1px solid var(--glass-border);
-    border-radius:24px;padding:24px 20px; /* Thu nhỏ padding */
+    border-radius:24px;padding:24px 20px;
     box-shadow:0 25px 50px rgba(0,0,0,0.8), inset 0 0 30px rgba(0,240,255,0.05);
     position:relative;overflow:hidden; margin: 15px 0; backdrop-filter: blur(20px);
   }
   
-  /* Hiệu ứng ánh sáng chạy qua viền */
   .lock-box::before {
     content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
     background: conic-gradient(transparent, var(--neon), transparent 30%);
@@ -110,28 +132,12 @@
   }
   @keyframes rotateBorder { 100% { transform: rotate(360deg); } }
 
-  /* AVATAR & TÊN (ĐÃ THU NHỎ) */
-  .app-profile {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    margin-bottom: 20px; text-align: center;
-  }
-  .app-profile img {
-    width: 65px; height: 65px; border-radius: 50%; object-fit: cover;
-    border: 2px solid var(--neon); box-shadow: 0 0 15px rgba(0,240,255,0.4);
-    margin-bottom: 8px; background: #000;
-  }
-  .app-profile h1 {
-    font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;
-    background: linear-gradient(90deg, #fff, var(--neon), var(--neon2), #fff); background-size: 300% auto;
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    animation: gm 4s linear infinite; text-transform: uppercase;
-    filter: drop-shadow(0 0 8px rgba(0,240,255,0.5));
-  }
+  /* AVATAR & TÊN (THU NHỎ) */
+  .app-profile { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px; text-align: center; }
+  .app-profile img { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 2px solid var(--neon); box-shadow: 0 0 15px rgba(0,240,255,0.4); margin-bottom: 8px; background: #000; }
+  .app-profile h1 { font-size: 1.5rem; font-weight: 900; letter-spacing: 2px; background: linear-gradient(90deg, #fff, var(--neon), var(--neon2), #fff); background-size: 300% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: gm 4s linear infinite; text-transform: uppercase; filter: drop-shadow(0 0 8px rgba(0,240,255,0.5)); }
   @keyframes gm { 0%{background-position:0% center} 100%{background-position:300% center} }
-  .app-profile p {
-    font-size: 0.6rem; color: var(--neon); letter-spacing: 3px; text-transform: uppercase;
-    margin-top: 2px; font-weight: 700;
-  }
+  .app-profile p { font-size: 0.6rem; color: var(--neon); letter-spacing: 3px; text-transform: uppercase; margin-top: 2px; font-weight: 700; }
 
   .key-section{margin-bottom:20px}
   .key-label{display:block;font-size:.7rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#8ba0b8;margin-bottom:8px; text-align: center;}
@@ -149,48 +155,22 @@
   .key-msg.info{color:var(--neon)}
 
   /* CÁC BƯỚC CÀI ĐẶT */
-  .install-steps {
-    background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 14px; padding: 14px; margin-top: 15px; margin-bottom: 10px;
-  }
-  .install-title {
-    font-size: 0.7rem; color: var(--neon4); font-weight: 800; text-transform: uppercase;
-    letter-spacing: 1px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
-  }
+  .install-steps { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 14px; padding: 14px; margin-top: 15px; margin-bottom: 10px; }
+  .install-title { font-size: 0.7rem; color: var(--neon4); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
   .step-item { display: flex; gap: 10px; margin-bottom: 10px; position: relative; }
   .step-item:last-child { margin-bottom: 0; }
-  .step-num {
-    width: 20px; height: 20px; border-radius: 50%; background: rgba(0,240,255,0.1);
-    border: 1px solid var(--neon); color: var(--neon); font-size: 0.65rem; font-weight: bold;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
+  .step-num { width: 20px; height: 20px; border-radius: 50%; background: rgba(0,240,255,0.1); border: 1px solid var(--neon); color: var(--neon); font-size: 0.65rem; font-weight: bold; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .step-text { font-size: 0.7rem; color: #b0c4d8; line-height: 1.4; }
   .step-text strong { color: #fff; }
 
   .shop-btn-container { margin-top: 15px; display: flex; gap: 10px; }
-  .btn-shop-trigger {
-    flex: 1; padding: 14px; background: linear-gradient(135deg, #ff00e5, #7000ff);
-    color: #fff; font-weight: 900; font-size: 0.85rem; text-align: center;
-    border-radius: 14px; border: none; cursor: pointer; box-shadow: 0 5px 20px rgba(255,0,229,0.4);
-    text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 8px;
-    transition: 0.3s; position: relative; overflow: hidden;
-  }
-  .btn-shop-trigger::before {
-    content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    transform: skewX(-20deg); transition: 0.5s;
-  }
+  .btn-shop-trigger { flex: 1; padding: 14px; background: linear-gradient(135deg, #ff00e5, #7000ff); color: #fff; font-weight: 900; font-size: 0.85rem; text-align: center; border-radius: 14px; border: none; cursor: pointer; box-shadow: 0 5px 20px rgba(255,0,229,0.4); text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s; position: relative; overflow: hidden; }
+  .btn-shop-trigger::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); transition: 0.5s; }
   .btn-shop-trigger:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(255,0,229,0.6); }
   .btn-shop-trigger:hover::before { left: 200%; }
 
   .extra-section { margin-top: 20px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); text-align: center; }
-  .zalo-btn { 
-    display: inline-flex; align-items: center; gap: 6px; 
-    background: linear-gradient(135deg, #0068FF, #00C6FF); color: #fff; 
-    padding: 10px 20px; border-radius: 30px; font-weight: 800; text-decoration: none; 
-    font-size: 0.8rem; box-shadow: 0 5px 15px rgba(0, 104, 255, 0.4); margin-bottom: 12px; 
-    text-transform: uppercase; transition: 0.3s; 
-  }
+  .zalo-btn { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #0068FF, #00C6FF); color: #fff; padding: 10px 20px; border-radius: 30px; font-weight: 800; text-decoration: none; font-size: 0.8rem; box-shadow: 0 5px 15px rgba(0, 104, 255, 0.4); margin-bottom: 12px; text-transform: uppercase; transition: 0.3s; }
   .zalo-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 25px rgba(0, 104, 255, 0.6); }
   .app-intro { font-size: 0.65rem; color: #8ba0b8; line-height: 1.5; margin-top: 8px; }
   .app-intro strong { color: #00f0ff; }
@@ -220,18 +200,9 @@
   .section-title::before{content:'';width:4px;height:16px;background:var(--neon);border-radius:4px; box-shadow: 0 0 10px var(--neon);}
 
   /* CHEAT ITEM */
-  .cheat-item { 
-    display: flex; align-items: center; gap: 14px; padding: 14px 16px; 
-    background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); 
-    border-radius: 16px; margin-bottom: 12px; cursor: pointer; 
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden;
-  }
+  .cheat-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
   .cheat-item:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
-  .cheat-item.active { 
-    border-color: rgba(0,240,255,0.5); 
-    background: linear-gradient(90deg, rgba(0,240,255,0.1), rgba(0,0,0,0.2)); 
-    box-shadow: 0 0 25px rgba(0,240,255,0.15); transform: translateY(-2px);
-  }
+  .cheat-item.active { border-color: rgba(0,240,255,0.5); background: linear-gradient(90deg, rgba(0,240,255,0.1), rgba(0,0,0,0.2)); box-shadow: 0 0 25px rgba(0,240,255,0.15); transform: translateY(-2px); }
   .cheat-item.active::before { content: ''; position: absolute; left: 0; top: 0; width: 4px; height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); }
   
   .cheat-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; font-size: 1.4rem; transition: 0.3s; }
@@ -244,26 +215,10 @@
 
   .switch { position: relative; display: inline-block; width: 56px; height: 30px; flex-shrink: 0; }
   .switch input { opacity: 0; width: 0; height: 0; }
-  .slider { 
-    position: absolute; cursor: pointer; inset: 0; 
-    background: #0f1722; border-radius: 30px; 
-    border: 2px solid #2a3a4d; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); 
-    box-shadow: inset 0 3px 6px rgba(0,0,0,0.8);
-  }
-  .slider:before { 
-    content: ""; position: absolute; height: 20px; width: 20px; 
-    left: 3px; bottom: 3px; background: #5a6a80; border-radius: 50%; 
-    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-  }
-  input:checked + .slider { 
-    background: rgba(0,240,255,0.15); border-color: var(--neon); 
-    box-shadow: inset 0 0 15px rgba(0,240,255,0.3), 0 0 15px rgba(0,240,255,0.2); 
-  }
-  input:checked + .slider:before { 
-    transform: translateX(26px); background: var(--neon); 
-    box-shadow: 0 0 15px var(--neon), 0 0 5px #fff; 
-  }
+  .slider { position: absolute; cursor: pointer; inset: 0; background: #0f1722; border-radius: 30px; border: 2px solid #2a3a4d; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); box-shadow: inset 0 3px 6px rgba(0,0,0,0.8); }
+  .slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #5a6a80; border-radius: 50%; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+  input:checked + .slider { background: rgba(0,240,255,0.15); border-color: var(--neon); box-shadow: inset 0 0 15px rgba(0,240,255,0.3), 0 0 15px rgba(0,240,255,0.2); }
+  input:checked + .slider:before { transform: translateX(26px); background: var(--neon); box-shadow: 0 0 15px var(--neon), 0 0 5px #fff; }
 
   .btn-row{display:flex;gap:12px; margin-top: 5px;}
   .btn{flex:1;padding:16px;border:none;border-radius:16px;font-weight:900;font-size:.9rem;text-transform:uppercase;cursor:pointer;letter-spacing:1px;transition:0.3s;}
@@ -272,13 +227,8 @@
   .btn-danger{background:rgba(255,51,102,0.1);border:1px solid #ff3366;color:#ff3366;}
   .btn-danger:hover { background: #ff3366; color: #fff; box-shadow: 0 5px 20px rgba(255,51,102,0.4); }
 
-  /* GALLERY CHUYỂN RA NGOÀI */
-  .gallery-section {
-    width: 100%; max-width: 400px; margin-top: 20px; /* Thu nhỏ chiều rộng */
-    background: var(--glass); border: 1px solid var(--glass-border);
-    border-radius: 24px; padding: 20px; backdrop-filter: blur(15px);
-    box-shadow: 0 25px 50px rgba(0,0,0,0.8);
-  }
+  /* GALLERY */
+  .gallery-section { width: 100%; max-width: 400px; margin-top: 20px; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 24px; padding: 20px; backdrop-filter: blur(15px); box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
   .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
   .gallery a{display:block;aspect-ratio:1/1;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);cursor:pointer; transition: 0.3s;}
   .gallery a:hover { border-color: var(--neon); transform: scale(1.05); box-shadow: 0 0 15px rgba(0,240,255,0.3); }
@@ -300,12 +250,6 @@
   .mail-item { padding: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; color: #cfefff; line-height: 1.5; }
   .mail-item:last-child { border-bottom: none; }
   .mail-time { font-size: 0.65rem; color: #5e7a94; margin-top: 6px; display: block; }
-  
-  .coupon-box { display: flex; gap: 10px; margin-bottom: 15px; }
-  .coupon-box input { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: #ffaa00; font-weight: bold; outline: none; text-transform: uppercase; transition: 0.3s;}
-  .coupon-box input:focus { border-color: #ffaa00; box-shadow: 0 0 10px rgba(255,170,0,0.2); }
-  .coupon-box button { padding: 12px 18px; background: rgba(255,170,0,0.1); border: 1px solid #ffaa00; color: #ffaa00; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s;}
-  .coupon-box button:hover { background: #ffaa00; color: #000; box-shadow: 0 0 15px rgba(255,170,0,0.4); }
 </style>
 </head>
 <body>
@@ -364,7 +308,7 @@
   </div>
 </div>
 
-<!-- MODAL SHOP -->
+<!-- MODAL SHOP (ĐÃ CẬP NHẬT GIAO DIỆN CỰC CHẤT) -->
 <div class="modal" id="shopModal">
   <div class="modal-box" style="max-width: 480px;">
     <button class="modal-close" onclick="closeShopModal()">✕</button>
@@ -383,12 +327,13 @@
       <button onclick="switchShopTab('shop-history', this)">Lịch Sử</button>
     </div>
 
+    <!-- TAB CỬA HÀNG CÓ MÃ GIẢM GIÁ VÀ THẺ KEY ĐẸP -->
     <div id="shop-keys" class="shop-tab-content">
       <div class="coupon-box">
         <input type="text" id="couponInput" placeholder="Nhập mã giảm giá...">
         <button onclick="applyCoupon()">ÁP DỤNG</button>
       </div>
-      <div id="couponMsg" style="font-size:0.75rem; margin-bottom:10px; font-weight:bold;"></div>
+      <div id="couponMsg" style="font-size:0.75rem; margin-bottom:10px; font-weight:bold; text-align:center;"></div>
       
       <div id="shopList"></div>
     </div>
@@ -426,10 +371,10 @@
     <div class="app-profile">
       <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/85/1a2230/00f0ff?text=IC'">
       <h1>INNOVACHEAT</h1>
-      <p>▸ ULTIMATE v15 ◂</p>
+      <p>▸ ULTIMATE v16 ◂</p>
     </div>
 
-    <!-- Ô NHẬP KEY ĐÃ ĐƯỢC ĐƯA VÀO ĐÚNG VỊ TRÍ -->
+    <!-- Ô NHẬP KEY -->
     <div class="key-section">
       <label class="key-label">🔑 NHẬP KEY BẢN QUYỀN</label>
       <div class="key-input-wrap">
@@ -483,7 +428,7 @@
     </div>
   </div>
 
-  <!-- ẢNH GIỚI THIỆU (THU NHỎ) -->
+  <!-- ẢNH GIỚI THIỆU -->
   <div class="gallery-section">
     <div class="section-title" style="margin-bottom:12px; color:#8ba0b8;">HÌNH ẢNH GIỚI THIỆU</div>
     <div class="gallery">
@@ -517,11 +462,9 @@
     <button class="tab" data-tab="misc"><span class="ico">⚙️</span>MISC</button>
   </div>
 
-  <!-- TAB COMBAT -->
   <div class="panel active" id="panel-combat">
     <div class="section">
       <div class="section-title">COMBAT MODULES</div>
-      
       <div class="cheat-item">
         <div class="cheat-icon">💥</div>
         <div class="cheat-info"><div class="name">Tăng Sát Thương (Buff Dame)</div><div class="desc">Cường hóa sát thương khi bắn trúng</div></div>
@@ -550,11 +493,9 @@
     </div>
   </div>
 
-  <!-- TAB VISUAL -->
   <div class="panel" id="panel-visual">
     <div class="section">
       <div class="section-title">VISUAL MODULES</div>
-      
       <div class="cheat-item">
         <div class="cheat-icon">👁️</div>
         <div class="cheat-info"><div class="name">Khung 2D (Box ESP)</div><div class="desc">Hiển thị khung xương địch</div></div>
@@ -583,11 +524,9 @@
     </div>
   </div>
 
-  <!-- TAB MISC -->
   <div class="panel" id="panel-misc">
     <div class="section">
       <div class="section-title">MISC MODULES</div>
-      
       <div class="cheat-item">
         <div class="cheat-icon">🦘</div>
         <div class="cheat-info"><div class="name">Nhảy Cao (High Jump)</div><div class="desc">Tăng độ cao khi nhảy</div></div>
