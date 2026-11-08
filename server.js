@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'innova-admin-2024';
 
-// ✅ THÔNG TIN SUPABASE CỦA BẠN
+// ✅ THÔNG TIN SUPABASE
 const SUPABASE_URL = 'https://llvlcqfievwtvylsqslm.supabase.co'; 
 const SUPABASE_KEY = 'sb_publishable_37lYwmdntFwHgspQ7b3vgA_Jna_S5r1'; 
 
@@ -35,8 +35,6 @@ function calcExpiry(type) {
 }
 
 // ================= SHOP API =================
-
-// Đăng ký
 app.post('/api/shop/register', async (req, res) => {
   const { username, password } = req.body;
   if(!username || !password) return res.json({ ok: false, error: 'Thiếu thông tin' });
@@ -49,22 +47,18 @@ app.post('/api/shop/register', async (req, res) => {
   res.json({ ok: true, message: 'Đăng ký thành công' });
 });
 
-// Đăng nhập
 app.post('/api/shop/login', async (req, res) => {
   const { username, password } = req.body;
   const { data: user } = await supabase.from('users').select('*').eq('username', username).eq('password', password).single();
-  
   if(!user) return res.json({ ok: false, error: 'Sai tài khoản hoặc mật khẩu' });
   res.json({ ok: true, user: { username: user.username, balance: user.balance } });
 });
 
-// Lấy danh sách Key đang bán (Có giá tiền)
 app.get('/api/shop/keys', async (req, res) => {
   const { data } = await supabase.from('keys').select('*').not('price', 'is', null).gt('price', 0).is('device_id', null);
   res.json({ ok: true, keys: data || [] });
 });
 
-// Mua Key
 app.post('/api/shop/buy', async (req, res) => {
   const { username, key } = req.body;
   const { data: user } = await supabase.from('users').select('*').eq('username', username).single();
@@ -73,28 +67,24 @@ app.post('/api/shop/buy', async (req, res) => {
   if(!user || !keyData) return res.json({ ok: false, error: 'Lỗi dữ liệu' });
   if(user.balance < keyData.price) return res.json({ ok: false, error: 'Số dư không đủ' });
 
-  // Trừ tiền user
   await supabase.from('users').update({ balance: user.balance - keyData.price }).eq('username', username);
-  // Gán key cho user (device_id = 'BOUGHT_BY_' + username để đánh dấu)
   await supabase.from('keys').update({ device_id: 'BOUGHT_BY_' + username }).eq('key', key);
-
-  res.json({ ok: true, message: 'Mua thành công! Key đã lưu vào lịch sử.' });
+  res.json({ ok: true, message: 'Mua thành công!' });
 });
 
-// Nạp tiền (Demo tự cộng)
+// API NẠP TIỀN: Chỉ lưu trạng thái 'pending' (Chờ duyệt)
 app.post('/api/shop/topup', async (req, res) => {
   const { username, amount } = req.body;
-  const { data: user } = await supabase.from('users').select('*').eq('username', username).single();
-  if(!user) return res.json({ ok: false, error: 'Không tìm thấy user' });
-
-  const newBalance = user.balance + parseInt(amount);
-  await supabase.from('users').update({ balance: newBalance }).eq('username', username);
-  await supabase.from('topups').insert([{ username, amount: parseInt(amount), created_at: Date.now() }]);
-  
-  res.json({ ok: true, newBalance });
+  const { error } = await supabase.from('topups').insert([{ 
+    username, 
+    amount: parseInt(amount), 
+    created_at: Date.now(),
+    status: 'pending' 
+  }]);
+  if(error) return res.json({ ok: false, error: error.message });
+  res.json({ ok: true, message: 'Đã gửi yêu cầu, chờ Admin duyệt' });
 });
 
-// Lịch sử mua hàng (Key đã mua)
 app.get('/api/shop/history', async (req, res) => {
   const { username } = req.query;
   const { data } = await supabase.from('keys').select('*').eq('device_id', 'BOUGHT_BY_' + username);
@@ -102,8 +92,6 @@ app.get('/api/shop/history', async (req, res) => {
 });
 
 // ================= ADMIN API =================
-
-// Admin thêm Key vào Shop (Kèm tên, ảnh, giá)
 app.post('/api/admin/add-shop-key', async (req, res) => {
   const pass = req.headers['x-admin-pass'];
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
@@ -119,7 +107,6 @@ app.post('/api/admin/add-shop-key', async (req, res) => {
   res.json({ ok: true, item });
 });
 
-// Lấy toàn bộ user cho Admin
 app.get('/api/admin/users', async (req, res) => {
   const pass = req.query.pass;
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
@@ -127,7 +114,7 @@ app.get('/api/admin/users', async (req, res) => {
   res.json({ ok: true, users: data || [] });
 });
 
-// Lấy lịch sử nạp cho Admin
+// Admin lấy danh sách chờ duyệt
 app.get('/api/admin/topups', async (req, res) => {
   const pass = req.query.pass;
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
@@ -135,15 +122,31 @@ app.get('/api/admin/topups', async (req, res) => {
   res.json({ ok: true, topups: data || [] });
 });
 
-// Các API cũ giữ nguyên (create, verify, list, delete)
+// Admin duyệt nạp tiền
+app.post('/api/admin/approve-topup', async (req, res) => {
+  const pass = req.headers['x-admin-pass'];
+  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
+
+  const { id, username, amount } = req.body;
+  
+  // 1. Cập nhật trạng thái topup thành 'success'
+  await supabase.from('topups').update({ status: 'success' }).eq('id', id);
+  
+  // 2. Cộng tiền cho user
+  const { data: user } = await supabase.from('users').select('*').eq('username', username).single();
+  if(user) {
+    await supabase.from('users').update({ balance: user.balance + amount }).eq('username', username);
+  }
+  res.json({ ok: true });
+});
+
+// Các API cũ giữ nguyên
 app.post('/api/create', async (req, res) => {
   const pass = req.headers['x-admin-pass'];
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu Admin' });
-
   const { type = 'day', count = 1, note = '' } = req.body;
   const n = Math.min(Math.max(parseInt(count) || 1, 1), 100);
   const created = [];
-
   for (let i = 0; i < n; i++) {
     const item = { key: generateKey(), type, created_at: Date.now(), expires_at: calcExpiry(type), note: String(note).slice(0, 100), device_id: null };
     await supabase.from('keys').insert([item]);
@@ -155,18 +158,14 @@ app.post('/api/create', async (req, res) => {
 app.post('/api/verify', async (req, res) => {
   const { key, deviceId } = req.body || {};
   if (!key || !deviceId) return res.status(400).json({ ok: false, error: 'Thiếu key hoặc deviceId' });
-
   const { data: found } = await supabase.from('keys').select('*').eq('key', key.toUpperCase().trim()).single();
-  
   if (!found) return res.json({ ok: false, error: 'Key không tồn tại' });
   if (found.device_id === 'BOUGHT_BY_' + deviceId) {
       return res.json({ ok: true, type: found.type, isForever: !found.expires_at, remainingMs: found.expires_at ? Math.max(0, found.expires_at - Date.now()) : null });
   }
   if (found.expires_at && Date.now() > found.expires_at) return res.json({ ok: false, error: 'Key đã hết hạn' });
   if (found.device_id && found.device_id !== deviceId) return res.json({ ok: false, error: 'Key đã dùng trên thiết bị khác' });
-
   if (!found.device_id) await supabase.from('keys').update({ device_id: deviceId }).eq('key', found.key);
-
   res.json({ ok: true, type: found.type, isForever: !found.expires_at, remainingMs: found.expires_at ? Math.max(0, found.expires_at - Date.now()) : null });
 });
 
@@ -208,6 +207,8 @@ app.get('/admin', (req, res) => {
   .tab.active { background:#00f0ff; color:#000; }
   .panel { display:none; }
   .panel.active { display:block; }
+  .status-pending { color: #ffaa00; font-weight: bold; }
+  .status-success { color: #00ff88; font-weight: bold; }
 </style></head><body>
 <h1>⚡ INNOVA ADMIN ⚡</h1>
 <div class="row"><input id="pass" type="password" placeholder="Mật khẩu Admin..." style="flex:1"></div>
@@ -216,6 +217,7 @@ app.get('/admin', (req, res) => {
   <div class="tab active" onclick="switchTab('tab-key')">Quản Lý Key</div>
   <div class="tab" onclick="switchTab('tab-shop')">Thêm Key Shop</div>
   <div class="tab" onclick="switchTab('tab-user')">Khách Hàng</div>
+  <div class="tab" onclick="switchTab('tab-topup')">Duyệt Nạp Tiền</div>
 </div>
 
 <div id="tab-key" class="panel active">
@@ -252,10 +254,13 @@ app.get('/admin', (req, res) => {
     <button class="btn-gray" onclick="loadUsers()">Tải Danh Sách</button>
     <table id="tbl-users" style="margin-top:10px"><thead><tr><th>Tài khoản</th><th>Số dư</th></tr></thead><tbody></tbody></table>
   </div>
+</div>
+
+<div id="tab-topup" class="panel">
   <div class="box">
     <h3 style="margin-bottom:10px; color:#ffaa00">Lịch Sử Nạp Tiền</h3>
     <button class="btn-gray" onclick="loadTopups()">Tải Lịch Sử</button>
-    <table id="tbl-topups" style="margin-top:10px"><thead><tr><th>Tài khoản</th><th>Số tiền</th><th>Thời gian</th></tr></thead><tbody></tbody></table>
+    <table id="tbl-topups" style="margin-top:10px"><thead><tr><th>Tài khoản</th><th>Số tiền</th><th>Thời gian</th><th>Trạng thái</th><th>Hành động</th></tr></thead><tbody></tbody></table>
   </div>
 </div>
 
@@ -315,7 +320,27 @@ async function loadTopups(){
   const r = await fetch('/api/admin/topups?pass='+getPass());
   const d = await r.json();
   const tb=document.querySelector('#tbl-topups tbody'); tb.innerHTML='';
-  if(d.ok) d.topups.forEach(t=>{ tb.innerHTML += '<tr><td>'+t.username+'</td><td style="color:#ffaa00">+'+t.amount.toLocaleString('vi-VN')+'đ</td><td>'+new Date(t.created_at).toLocaleString('vi-VN')+'</td></tr>'; });
+  if(d.ok) d.topups.forEach(t=>{ 
+    let statusHtml = t.status === 'success' ? '<span class="status-success">Đã duyệt</span>' : '<span class="status-pending">Chờ duyệt</span>';
+    let actionHtml = t.status === 'success' ? '' : '<button style="background:#00ff88;padding:4px 8px;color:#000" onclick="approveTopup('+t.id+', \\''+t.username+'\\', '+t.amount+')">DUYỆT</button>';
+    
+    tb.innerHTML += '<tr><td>'+t.username+'</td><td style="color:#ffaa00">+'+t.amount.toLocaleString('vi-VN')+'đ</td><td>'+new Date(t.created_at).toLocaleString('vi-VN')+'</td><td>'+statusHtml+'</td><td>'+actionHtml+'</td></tr>'; 
+  });
+}
+
+async function approveTopup(id, username, amount){
+  if(!confirm('Xác nhận đã nhận được ' + amount.toLocaleString('vi-VN') + 'đ từ ' + username + '?')) return;
+  const r = await fetch('/api/admin/approve-topup', {
+    method: 'POST', headers: {'Content-Type': 'application/json', 'x-admin-pass': getPass()},
+    body: JSON.stringify({ id, username, amount })
+  });
+  const d = await r.json();
+  if(d.ok) {
+    alert('Đã duyệt thành công!');
+    loadTopups(); // Tải lại danh sách
+  } else {
+    alert('Lỗi: ' + d.error);
+  }
 }
 </script></body></html>`);
 });
