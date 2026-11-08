@@ -22,9 +22,9 @@
   .grid-overlay{position:fixed;inset:0;background-image:linear-gradient(rgba(0,240,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 
   /* LOCK SCREEN */
-  .lock-screen{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 30%,#0a1220 0%,#03050a 100%);display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity .6s,visibility .6s}
+  .lock-screen{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 30%,#0a1220 0%,#03050a 100%);display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity .6s,visibility .6s; overflow-y: auto;}
   .lock-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
-  .lock-box{width:100%;max-width:440px;background:rgba(10,14,22,.95);border:1px solid rgba(0,240,255,.3);border-radius:24px;padding:32px 24px;box-shadow:0 0 40px rgba(0,240,255,.2),inset 0 0 40px rgba(0,240,255,.03);backdrop-filter:blur(12px);position:relative;overflow:hidden}
+  .lock-box{width:100%;max-width:440px;background:rgba(10,14,22,.95);border:1px solid rgba(0,240,255,.3);border-radius:24px;padding:32px 24px;box-shadow:0 0 40px rgba(0,240,255,.2),inset 0 0 40px rgba(0,240,255,.03);backdrop-filter:blur(12px);position:relative;overflow:hidden; margin: 20px 0;}
   .lock-box::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,240,255,.15),transparent);animation:shine 3.5s infinite}
   @keyframes shine{0%{left:-100%}50%{left:100%}100%{left:100%}}
   .lock-logo{text-align:center;margin-bottom:22px}
@@ -41,7 +41,7 @@
   .progress-percent{color:var(--neon);font-weight:700;font-size:.9rem;text-shadow:0 0 10px rgba(0,240,255,.5)}
   .verify-status{font-size:.65rem;color:#5e7a94;margin-top:6px;font-style:italic}
 
-  .key-section{margin-bottom:18px}
+  .key-section{margin-bottom:12px}
   .key-label{display:block;font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#5e7a94;margin-bottom:8px}
   .key-input-wrap{display:flex;gap:8px}
   .key-input{flex:1;padding:13px 14px;background:#03060a;border:1px solid #1a2230;border-radius:12px;color:var(--neon);font-weight:700;font-family:'Courier New',monospace;font-size:.9rem;letter-spacing:2px;outline:none;transition:.25s;box-shadow:inset 0 2px 8px rgba(0,0,0,.6)}
@@ -54,7 +54,52 @@
   .key-msg.ok{color:var(--neon3);text-shadow:0 0 8px rgba(0,255,136,.5)}
   .key-msg.err{color:#ff4466;text-shadow:0 0 8px rgba(255,68,102,.5)}
   .key-msg.info{color:var(--neon)}
-  .lock-footer{text-align:center;font-size:.6rem;color:#3a4a5c;letter-spacing:1.5px;text-transform:uppercase;border-top:1px solid #1a2230;padding-top:14px}
+
+  /* ZALO & APP INFO */
+  .extra-section {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px dashed rgba(0, 240, 255, 0.2);
+    text-align: center;
+  }
+  .zalo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #0068FF, #00C6FF);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 800;
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(0, 104, 255, 0.4);
+    transition: 0.3s;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .zalo-btn:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 104, 255, 0.6);
+  }
+  .zalo-btn img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
+  }
+  .app-intro {
+    font-size: 0.65rem;
+    color: #5e7a94;
+    line-height: 1.5;
+    margin-top: 10px;
+    letter-spacing: 0.5px;
+  }
+  .app-intro strong {
+    color: #00f0ff;
+  }
+
+  .lock-footer{text-align:center;font-size:.6rem;color:#3a4a5c;letter-spacing:1.5px;text-transform:uppercase;padding-top:14px}
 
   .music-indicator{position:fixed;bottom:16px;right:16px;z-index:50;display:none;align-items:center;gap:8px;padding:10px 14px;background:rgba(10,14,22,.95);border:1px solid rgba(0,240,255,.3);border-radius:30px;box-shadow:0 0 20px rgba(0,240,255,.2);font-size:.68rem;color:var(--neon);font-weight:700;letter-spacing:1px;backdrop-filter:blur(8px);animation:slideIn .5s ease}
   .music-indicator.show{display:flex}
@@ -206,6 +251,19 @@
       </div>
       <div class="key-msg" id="keyMsg"></div>
     </div>
+
+    <!-- PHẦN THÊM MỚI: ZALO & GIỚI THIỆU -->
+    <div class="extra-section">
+      <a href="https://zalo.me/0355757211" target="_blank" class="zalo-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.92 2 10.75c0 2.76 1.44 5.21 3.68 6.76-.1.71-.36 1.89-.9 2.85-.13.24.04.53.31.46 1.65-.38 3.16-1.17 4.17-1.82 1.05.24 2.16.37 3.31.37 5.52 0 10-3.92 10-8.75S17.52 2 12 2zm1.6 12.12c-.18.13-.44.14-.62-.01l-2.62-2.06-3.48 2.73c-.3.23-.71.18-.94-.12-.23-.3-.18-.71.12-.94l3.98-3.12c.18-.14.44-.15.63-.01l2.6 2.05 3.32-2.58c.3-.23.71-.18.94.12.23.3.18.71-.12.94l-3.81 3z"/></svg>
+        TÊN ZALO SAMM VIP
+      </a>
+      <div class="app-intro">
+        <strong>INNOVA CHEAT</strong> là ứng dụng hỗ trợ game (Menu Mod) với hàng chục tính năng hiện đại: Aimbot, ESP, Speed, Fly, Camera 360°,...<br>
+        👉 <strong>ẤN VÀO NÚT ZALO</strong> bên trên để được cấp Key và nhận hỗ trợ trực tiếp 24/7 (Hotline: <strong>0355757211</strong>).
+      </div>
+    </div>
+
     <div class="lock-footer">⚡ INNOVA TEAM · SECURE ACCESS ⚡</div>
   </div>
 </div>
