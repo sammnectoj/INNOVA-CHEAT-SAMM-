@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INNOVA CHEAT · ULTIMATE v8</title>
+<title>INNOVA CHEAT · ULTIMATE v9</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
   :root { --neon:#00f0ff; --neon2:#ff00e5; --neon3:#00ff88; --neon4:#ffaa00; --bg-dark:#05070d; --card-bg:rgba(10,14,22,0.92); }
@@ -111,22 +111,68 @@
   .section-title{display:flex;align-items:center;gap:8px;font-size:.7rem;font-weight:800;text-transform:uppercase;color:#5e7a94;margin-bottom:12px}
   .section-title::before{content:'';width:3px;height:14px;background:var(--neon);border-radius:2px}
 
-  .cheat-item{display:flex;align-items:center;gap:12px;padding:11px 13px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-radius:13px;margin-bottom:9px;cursor:pointer;}
-  .cheat-item.active{border-color:rgba(0,240,255,.5);background:rgba(0,240,255,.06);}
-  .cheat-icon{width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:rgba(0,240,255,.08);border-radius:10px;font-size:1.2rem;}
-  .cheat-info{flex:1}
-  .cheat-info .name{font-size:.9rem;font-weight:700;color:#dceaf5;text-transform:uppercase}
-  .cheat-info .desc{font-size:.65rem;color:#5e7a94;}
-  .switch{position:relative;display:inline-block;width:60px;height:32px;flex-shrink:0}
-  .switch input{opacity:0;width:0;height:0}
-  .slider{position:absolute;cursor:pointer;inset:0;background:#1a2230;border-radius:40px;border:1px solid #2e3a4d;transition:.3s;}
-  .slider:before{content:"";position:absolute;height:24px;width:24px;left:3px;bottom:3px;background:#5a6a80;border-radius:50%;transition:.3s;}
-  input:checked + .slider{background:#003d4d;border-color:var(--neon);}
-  input:checked + .slider:before{transform:translateX(28px);background:#d0faff;}
+  /* ====== GIAO DIỆN TOGGLE CHẤT HƠN ====== */
+  .cheat-item {
+    display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+    background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.05);
+    border-radius: 14px; margin-bottom: 10px; cursor: pointer;
+    transition: all 0.3s ease; position: relative; overflow: hidden;
+  }
+  .cheat-item:hover { background: rgba(255,255,255,.04); }
+  
+  /* Khi được bật */
+  .cheat-item.active {
+    border-color: rgba(0, 240, 255, 0.4);
+    background: linear-gradient(90deg, rgba(0, 240, 255, 0.08), rgba(0,0,0,0));
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+  }
+  .cheat-item.active .cheat-icon {
+    background: rgba(0, 240, 255, 0.15);
+    border-color: var(--neon);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+    color: var(--neon);
+  }
+  .cheat-item.active .name { color: #fff; text-shadow: 0 0 8px var(--neon); }
+
+  .cheat-icon {
+    width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 12px; font-size: 1.3rem; transition: 0.3s;
+  }
+  .cheat-info { flex: 1; }
+  .cheat-info .name { font-size: 0.95rem; font-weight: 700; color: #b0c4d8; transition: 0.3s; text-transform: uppercase; letter-spacing: 0.5px;}
+  .cheat-info .desc { font-size: 0.65rem; color: #5e7a94; margin-top: 2px; }
+
+  /* Nút gạt (Switch) phong cách Nam châm */
+  .switch { position: relative; display: inline-block; width: 56px; height: 30px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; cursor: pointer; inset: 0;
+    background: #101a24; border-radius: 30px;
+    border: 2px solid #2a3a4d; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+  }
+  .slider:before {
+    content: ""; position: absolute; height: 20px; width: 20px;
+    left: 3px; bottom: 3px; background: #5a6a80; border-radius: 50%;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  }
+  /* Trạng thái ON */
+  input:checked + .slider {
+    background: rgba(0, 240, 255, 0.15);
+    border-color: var(--neon);
+    box-shadow: inset 0 0 10px rgba(0,240,255,0.3), 0 0 10px rgba(0,240,255,0.2);
+  }
+  input:checked + .slider:before {
+    transform: translateX(26px);
+    background: var(--neon);
+    box-shadow: 0 0 12px var(--neon), 0 0 4px #fff;
+  }
 
   .btn-row{display:flex;gap:10px}
   .btn{flex:1;padding:12px;border:none;border-radius:12px;font-weight:800;font-size:.75rem;text-transform:uppercase;cursor:pointer;}
-  .btn-primary{background:linear-gradient(135deg,var(--neon),#0099cc);color:#001a22;}
+  .btn-primary{background:linear-gradient(135deg,var(--neon),#0099cc);color:#001a22;box-shadow: 0 0 15px rgba(0,240,255,.3);}
   .btn-danger{background:linear-gradient(135deg,#ff3366,#aa0044);color:#fff;}
 
   .status-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--card-bg);border:1px solid rgba(0,240,255,.25);border-radius:16px;}
@@ -195,7 +241,7 @@
       <div id="shopList"></div>
     </div>
 
-    <!-- TAB NẠP TIỀN (MỚI) -->
+    <!-- TAB NẠP TIỀN -->
     <div id="shop-topup" class="shop-tab-content" style="display:none">
       <div class="form-group">
         <label>Số tiền muốn nạp (VNĐ)</label>
@@ -204,7 +250,6 @@
       
       <div id="qrContainer" style="display:none; text-align:center; margin-top:15px;">
         <p style="font-size:0.8rem;color:#8ba0b8;margin-bottom:10px">Quét mã QR bên dưới để thanh toán</p>
-        <!-- THAY LINK ẢNH QR CỦA BẠN VÀO ĐÂY -->
         <img id="qrImage" src="" style="width:200px;height:200px;border-radius:12px;border:2px solid var(--neon);object-fit:cover; margin-bottom:10px;">
         
         <div style="background:rgba(255,170,0,0.1);border:1px solid var(--neon4);padding:10px;border-radius:8px;margin-top:10px;">
@@ -228,7 +273,7 @@
   <div class="lock-box">
     <div class="lock-logo">
       <h1>INNOVA</h1>
-      <p>▸ CHEAT ULTIMATE v8 ◂</p>
+      <p>▸ CHEAT ULTIMATE v9 ◂</p>
     </div>
     <div class="verify-section">
       <div class="verify-header">XÁC THỰC THIẾT BỊ</div>
@@ -274,6 +319,7 @@
 <div class="bg-particles" id="particles"></div>
 <div class="grid-overlay"></div>
 
+<!-- APP CHÍNH (SAU KHI LOGIN) -->
 <div class="app" id="app" style="display:none">
   <div class="header">
     <div class="avatar-wrap">
@@ -290,28 +336,71 @@
 
   <div class="tabs" id="tabs">
     <button class="tab active" data-tab="combat"><span class="ico">⚔️</span>COMBAT</button>
+    <button class="tab" data-tab="movement"><span class="ico">🏃</span>MOVEMENT</button>
+    <button class="tab" data-tab="visual"><span class="ico">🎨</span>VISUAL</button>
     <button class="tab" data-tab="camera"><span class="ico">📷</span>CAM 360</button>
+    <button class="tab" data-tab="misc"><span class="ico">⚙️</span>MISC</button>
   </div>
 
+  <!-- TAB COMBAT -->
   <div class="panel active" id="panel-combat">
     <div class="section">
       <div class="section-title">COMBAT MODULES</div>
       <div class="cheat-item"><div class="cheat-icon">🎯</div><div class="cheat-info"><div class="name">Aimbot</div><div class="desc">Tự động khóa mục tiêu</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">👁️</div><div class="cheat-info"><div class="name">ESP Wallhack</div><div class="desc">Xuyên tường nhìn địch</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">⚡</div><div class="cheat-info"><div class="name">Speed Boost</div><div class="desc">Tăng tốc di chuyển</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
-      <div class="cheat-item"><div class="cheat-icon">🛡️</div><div class="cheat-info"><div class="name">God Mode</div><div class="desc">Bất tử</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">✨</div><div class="cheat-info"><div class="name">Magic Bullet</div><div class="desc">Đạn xuyên vật cản</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🔥</div><div class="cheat-info"><div class="name">Rapid Fire</div><div class="desc">Bắn siêu nhanh</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🎮</div><div class="cheat-info"><div class="name">No Recoil</div><div class="desc">Không giật súng</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">📦</div><div class="cheat-info"><div class="name">Infinite Ammo</div><div class="desc">Đạn vô hạn</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🔄</div><div class="cheat-info"><div class="name">Fast Reload</div><div class="desc">Nạp đạn tức thì</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
     </div>
   </div>
 
+  <!-- TAB MOVEMENT -->
+  <div class="panel" id="panel-movement">
+    <div class="section">
+      <div class="section-title">MOVEMENT MODULES</div>
+      <div class="cheat-item"><div class="cheat-icon">⚡</div><div class="cheat-info"><div class="name">Speed Boost</div><div class="desc">Tăng tốc di chuyển</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🕊️</div><div class="cheat-info"><div class="name">Fly Mode</div><div class="desc">Bay lượn tự do</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🌀</div><div class="cheat-info"><div class="name">Teleport</div><div class="desc">Dịch chuyển tức thời</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🦘</div><div class="cheat-info"><div class="name">High Jump</div><div class="desc">Nhảy cao</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🐇</div><div class="cheat-info"><div class="name">Bunny Hop</div><div class="desc">Tự động nhảy liên tục</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+    </div>
+  </div>
+
+  <!-- TAB VISUAL -->
+  <div class="panel" id="panel-visual">
+    <div class="section">
+      <div class="section-title">VISUAL MODULES</div>
+      <div class="cheat-item"><div class="cheat-icon">👁️</div><div class="cheat-info"><div class="name">ESP Wallhack</div><div class="desc">Xuyên tường nhìn địch</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🎨</div><div class="cheat-info"><div class="name">Chams</div><div class="desc">Đổi màu địch</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">📡</div><div class="cheat-info"><div class="name">Radar Hack</div><div class="desc">Hiện địch trên radar</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🌫️</div><div class="cheat-info"><div class="name">No Fog</div><div class="desc">Bỏ sương mù</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🖱️</div><div class="cheat-info"><div class="name">Custom Crosshair</div><div class="desc">Tâm ngắm tùy chỉnh</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+    </div>
+  </div>
+
+  <!-- TAB CAMERA 360 -->
   <div class="panel" id="panel-camera">
     <div class="section">
       <div class="section-title">CAMERA MODULES</div>
-      <div class="cheat-item"><div class="cheat-icon">🔄</div><div class="cheat-info"><div class="name">Xoay 360°</div><div class="desc">Góc nhìn tự do</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🔄</div><div class="cheat-info"><div class="name">Xoay 360°</div><div class="desc">Góc nhìn thứ 3 xoay quanh nhân vật</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🔭</div><div class="cheat-info"><div class="name">Zoom FOV</div><div class="desc">Thay đổi tầm nhìn xa gần</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+    </div>
+  </div>
+
+  <!-- TAB MISC -->
+  <div class="panel" id="panel-misc">
+    <div class="section">
+      <div class="section-title">MISC MODULES</div>
+      <div class="cheat-item"><div class="cheat-icon">🛡️</div><div class="cheat-info"><div class="name">God Mode</div><div class="desc">Bất tử</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🔒</div><div class="cheat-info"><div class="name">Anti-Ban</div><div class="desc">Bypass chống cheat</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">👕</div><div class="cheat-info"><div class="name">Skin Changer</div><div class="desc">Đổi skin</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">⭐</div><div class="cheat-info"><div class="name">Level Hack</div><div class="desc">Tăng level</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
     </div>
   </div>
 
   <div class="btn-row">
-    <button class="btn btn-primary" onclick="alert('Đã kích hoạt!')">🚀 KÍCH HOẠT</button>
+    <button class="btn btn-primary" onclick="alert('Đã kích hoạt toàn bộ Modules!')">🚀 KÍCH HOẠT</button>
     <button class="btn btn-danger" onclick="location.reload()">⟲ RESET</button>
   </div>
 
@@ -329,7 +418,7 @@
 
 <script>
 const SERVER_URL = 'https://innova-key.onrender.com';
-const QR_IMAGE_URL = 'https://files.catbox.moe/4ot0fd.jpeg'; // Thay link ảnh QR THẬT của bạn vào đây
+const QR_IMAGE_URL = 'https://files.catbox.moe/4ot0fd.jpeg';
 
 let currentUser = null;
 let isRegisterMode = false;
@@ -339,7 +428,7 @@ function openLightbox(src) {
   document.getElementById('lightbox').classList.add('show');
 }
 
-// KHỞI TẠO PARTICLES
+// PARTICLES
 const pWrap = document.getElementById('particles');
 for(let i=0;i<40;i++){
   const s = document.createElement('span');
@@ -428,7 +517,7 @@ async function handleAuth() {
     } else {
       alert(d.error);
     }
-  } catch(e) { alert('Lỗi kết nối Server!'); }
+  } catch(e) { alert('Lỗi kết nối Server! Vui lòng đợi 30s và thử lại.'); }
   btn.textContent = isRegisterMode ? 'ĐĂNG KÝ' : 'ĐĂNG NHẬP'; btn.disabled = false;
 }
 
@@ -496,7 +585,6 @@ async function buyKey(key, price) {
   }
 }
 
-// NẠP TIỀN MỚI (QR)
 function showQR() {
   const amt = parseInt(document.getElementById('topupAmount').value);
   if(!amt || amt < 1000) return alert('Vui lòng nhập số tiền từ 1,000đ trở lên!');
@@ -514,7 +602,6 @@ async function confirmTopup() {
   btn.textContent = 'ĐANG GỬI YÊU CẦU...'; btn.disabled = true;
 
   try {
-    // Gửi yêu cầu nạp lên server (chờ admin duyệt)
     const r = await fetch(SERVER_URL + '/api/shop/topup', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ username: currentUser.username, amount: amt })
@@ -522,7 +609,6 @@ async function confirmTopup() {
     const d = await r.json();
     
     if(d.ok) {
-      // Hiển thị trạng thái chờ duyệt
       document.getElementById('qrContainer').innerHTML = `
         <div style="background:rgba(0,240,255,0.1);border:1px solid var(--neon);padding:20px;border-radius:12px;margin-top:15px;text-align:center;">
           <h3 style="color:var(--neon);font-size:1.1rem;margin-bottom:10px;">⏳ ĐANG XÁC THỰC</h3>
@@ -613,6 +699,29 @@ document.querySelectorAll('.tab').forEach(tab => {
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
     tab.classList.add('active'); document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// TOGGLE UI EFFECT
+document.querySelectorAll('.cheat-item').forEach(item => {
+  item.addEventListener('click', (e) => {
+    if(e.target.closest('.switch')) return; // Nếu bấm vào công tắc thì để công tắc tự xử lý
+    const toggle = item.querySelector('.cheat-toggle');
+    if(toggle) {
+      toggle.checked = !toggle.checked;
+    }
+  });
+});
+
+// Cập nhật trạng thái hiển thị của Cheat Item khi công tắc thay đổi
+document.querySelectorAll('.cheat-toggle').forEach(toggle => {
+  toggle.addEventListener('change', function() {
+    const item = this.closest('.cheat-item');
+    if(this.checked) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
   });
 });
 </script>
