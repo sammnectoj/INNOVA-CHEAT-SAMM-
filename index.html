@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INNOVA CHEAT · ULTIMATE v10</title>
+<title>INNOVA CHEAT · ULTIMATE v11</title>
 <style>
+  /* CSS GIỮ NGUYÊN NHƯ CŨ, CHỈ THÊM CSS CHO HÒM THƯ VÀ MÃ GIẢM GIÁ */
   * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
   :root { --neon:#00f0ff; --neon2:#ff00e5; --neon3:#00ff88; --neon4:#ffaa00; --bg-dark:#05070d; --card-bg:rgba(10,14,22,0.92); }
   body { min-height:100vh; background: radial-gradient(circle at 20% 20%, #0a1220 0%, #05070d 70%); display:flex; justify-content:center; align-items:flex-start; padding:14px 10px 40px; overflow-x:hidden; position:relative; }
@@ -14,7 +15,23 @@
   @keyframes floatUp{0%{transform:translateY(100vh) scale(.5);opacity:0}10%{opacity:.6}90%{opacity:.3}100%{transform:translateY(-10vh) scale(1.2);opacity:0}}
   .grid-overlay{position:fixed;inset:0;background-image:linear-gradient(rgba(0,240,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 
-  /* MODAL CHUNG */
+  /* HÒM THƯ (MAILBOX) */
+  .mailbox-icon {
+    position: absolute; top: 15px; right: 15px; z-index: 50;
+    background: rgba(0, 240, 255, 0.1); border: 1px solid var(--neon);
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: 0.3s; font-size: 1.2rem;
+    box-shadow: 0 0 10px rgba(0,240,255,0.3);
+  }
+  .mailbox-icon:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--neon); }
+  .mailbox-badge {
+    position: absolute; top: -5px; right: -5px; background: #ff3366;
+    color: #fff; font-size: 0.6rem; font-weight: bold; width: 18px; height: 18px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--bg-dark);
+  }
+
   .modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;padding:15px;backdrop-filter:blur(8px);opacity:0;transition:opacity 0.3s}
   .modal.show{display:flex;opacity:1}
   .modal-box{width:100%;max-width:460px;background:#0a1220;border:1px solid rgba(0,240,255,.4);border-radius:20px;padding:24px;box-shadow:0 0 40px rgba(0,240,255,.2);position:relative;max-height:90vh;overflow-y:auto}
@@ -29,7 +46,6 @@
   .switch-form{text-align:center;font-size:0.8rem;color:#8ba0b8;margin-top:15px}
   .switch-form a{color:var(--neon2);text-decoration:none;font-weight:bold;cursor:pointer}
   
-  /* SHOP UI */
   .shop-header{display:flex;justify-content:space-between;align-items:center;background:rgba(0,240,255,0.1);padding:12px 15px;border-radius:12px;margin-bottom:15px;border:1px solid rgba(0,240,255,0.2)}
   .shop-balance{font-size:1rem;color:var(--neon3);font-weight:800}
   .shop-nav{display:flex;gap:8px;margin-bottom:15px;overflow-x:auto;padding-bottom:5px}
@@ -43,7 +59,6 @@
   .shop-item-price{color:var(--neon4);font-weight:800;margin:4px 0;font-size:0.9rem}
   .btn-buy{padding:8px 12px;background:var(--neon);color:#000;border:none;border-radius:8px;font-weight:bold;cursor:pointer;font-size:0.75rem}
 
-  /* LOCK SCREEN */
   .lock-screen{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 30%,#0a1220 0%,#03050a 100%);display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity .6s,visibility .6s; overflow-y: auto;}
   .lock-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
   .lock-box{width:100%;max-width:440px;background:rgba(10,14,22,.95);border:1px solid rgba(0,240,255,.3);border-radius:24px;padding:32px 24px;box-shadow:0 0 40px rgba(0,240,255,.2);position:relative;overflow:hidden; margin: 20px 0;}
@@ -85,17 +100,14 @@
   .zalo-btn img { width: 20px; height: 20px; }
   .app-intro { font-size: 0.65rem; color: #5e7a94; line-height: 1.5; margin-top: 10px; }
   .app-intro strong { color: #00f0ff; }
-
   .lock-footer{text-align:center;font-size:.6rem;color:#3a4a5c;letter-spacing:1.5px;text-transform:uppercase;padding-top:14px}
 
-  /* MAIN APP UI */
   .app{position:relative;z-index:2;width:100%;max-width:540px;display:flex;flex-direction:column;gap:14px}
   .header{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--card-bg);border:1px solid rgba(0,240,255,.3);border-radius:20px;}
   .avatar-wrap{position:relative;flex-shrink:0}
   .avatar-wrap img{width:68px;height:68px;border-radius:50%;object-fit:cover;border:2px solid var(--neon);}
   .title-wrap{flex:1;min-width:0}
   .title-wrap h1{font-size:1.7rem;font-weight:900;letter-spacing:3px;background:linear-gradient(90deg,var(--neon),var(--neon2),var(--neon));-webkit-background-clip:text;color:transparent;line-height:1.1;text-transform:uppercase}
-  
   .user-info{display:none;flex-direction:column;gap:2px;font-size:0.65rem;color:#8899aa;margin-top:6px;background:rgba(0,0,0,0.4);padding:6px 10px;border-radius:8px;border:1px solid #1a2230}
   .user-info span{color:var(--neon3);font-weight:700}
 
@@ -110,75 +122,28 @@
   .section-title{display:flex;align-items:center;gap:8px;font-size:.7rem;font-weight:800;text-transform:uppercase;color:#5e7a94;margin-bottom:12px}
   .section-title::before{content:'';width:3px;height:14px;background:var(--neon);border-radius:2px}
 
-  /* ====== GIAO DIỆN TOGGLE CHẤT HƠN ====== */
-  .cheat-item {
-    display: flex; align-items: center; gap: 12px; padding: 12px 14px;
-    background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.05);
-    border-radius: 14px; margin-bottom: 10px; cursor: pointer;
-    transition: all 0.3s ease; position: relative; overflow: hidden;
-  }
+  .cheat-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.05); border-radius: 14px; margin-bottom: 10px; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
   .cheat-item:hover { background: rgba(255,255,255,.04); }
-  .cheat-item.active {
-    border-color: rgba(0, 240, 255, 0.4);
-    background: linear-gradient(90deg, rgba(0, 240, 255, 0.08), rgba(0,0,0,0));
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
-  }
-  .cheat-item.active .cheat-icon {
-    background: rgba(0, 240, 255, 0.15);
-    border-color: var(--neon);
-    box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
-    color: var(--neon);
-  }
+  .cheat-item.active { border-color: rgba(0, 240, 255, 0.4); background: linear-gradient(90deg, rgba(0, 240, 255, 0.08), rgba(0,0,0,0)); box-shadow: 0 0 20px rgba(0, 240, 255, 0.1); }
+  .cheat-item.active .cheat-icon { background: rgba(0, 240, 255, 0.15); border-color: var(--neon); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); color: var(--neon); }
   .cheat-item.active .name { color: #fff; text-shadow: 0 0 8px var(--neon); }
-
-  .cheat-icon {
-    width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
-    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
-    border-radius: 12px; font-size: 1.3rem; transition: 0.3s;
-  }
+  .cheat-icon { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: 12px; font-size: 1.3rem; transition: 0.3s; }
   .cheat-info { flex: 1; }
   .cheat-info .name { font-size: 0.95rem; font-weight: 700; color: #b0c4d8; transition: 0.3s; text-transform: uppercase; letter-spacing: 0.5px;}
   .cheat-info .desc { font-size: 0.65rem; color: #5e7a94; margin-top: 2px; }
 
-  /* Ô nhập UID hiển thị khi bật Buff Like */
-  .uid-input-box {
-    display: none; margin-top: -5px; margin-bottom: 10px; padding: 12px;
-    background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2);
-    border-radius: 12px; animation: slideDown 0.3s ease;
-  }
+  .uid-input-box { display: none; margin-top: -5px; margin-bottom: 10px; padding: 12px; background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 12px; animation: slideDown 0.3s ease; }
   .uid-input-box.show { display: flex; gap: 8px; align-items: center; }
   @keyframes slideDown { from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
-  .uid-input-box input {
-    padding: 10px; border-radius: 8px; border: 1px solid #2a3a4d;
-    background: #03060a; color: var(--neon); font-family: monospace; outline: none;
-  }
+  .uid-input-box input { padding: 10px; border-radius: 8px; border: 1px solid #2a3a4d; background: #03060a; color: var(--neon); font-family: monospace; outline: none; }
   .uid-input-box input:focus { border-color: var(--neon); box-shadow: 0 0 10px rgba(0,240,255,0.3); }
 
-  /* Nút gạt (Switch) phong cách Nam châm */
   .switch { position: relative; display: inline-block; width: 56px; height: 30px; flex-shrink: 0; }
   .switch input { opacity: 0; width: 0; height: 0; }
-  .slider {
-    position: absolute; cursor: pointer; inset: 0;
-    background: #101a24; border-radius: 30px;
-    border: 2px solid #2a3a4d; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
-  }
-  .slider:before {
-    content: ""; position: absolute; height: 20px; width: 20px;
-    left: 3px; bottom: 3px; background: #5a6a80; border-radius: 50%;
-    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-  }
-  input:checked + .slider {
-    background: rgba(0, 240, 255, 0.15);
-    border-color: var(--neon);
-    box-shadow: inset 0 0 10px rgba(0,240,255,0.3), 0 0 10px rgba(0,240,255,0.2);
-  }
-  input:checked + .slider:before {
-    transform: translateX(26px);
-    background: var(--neon);
-    box-shadow: 0 0 12px var(--neon), 0 0 4px #fff;
-  }
+  .slider { position: absolute; cursor: pointer; inset: 0; background: #101a24; border-radius: 30px; border: 2px solid #2a3a4d; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); }
+  .slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #5a6a80; border-radius: 50%; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+  input:checked + .slider { background: rgba(0, 240, 255, 0.15); border-color: var(--neon); box-shadow: inset 0 0 10px rgba(0,240,255,0.3), 0 0 10px rgba(0,240,255,0.2); }
+  input:checked + .slider:before { transform: translateX(26px); background: var(--neon); box-shadow: 0 0 12px var(--neon), 0 0 4px #fff; }
 
   .btn-row{display:flex;gap:10px}
   .btn{flex:1;padding:14px;border:none;border-radius:12px;font-weight:900;font-size:.85rem;text-transform:uppercase;cursor:pointer;letter-spacing:1px;transition:0.3s;}
@@ -186,10 +151,6 @@
   .btn-primary:active { transform: scale(0.95); }
   .btn-danger{background:linear-gradient(135deg,#ff3366,#aa0044);color:#fff;}
 
-  .status-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--card-bg);border:1px solid rgba(0,240,255,.25);border-radius:16px;}
-  .status-text{font-size:.78rem;font-weight:700;text-transform:uppercase;color:#8ba0b8}
-
-  .console{background:#03060a;border:1px solid rgba(0,240,255,.15);border-radius:12px;padding:10px;height:110px;overflow-y:auto;font-family:'Courier New',monospace;font-size:.7rem;color:#5e7a94;}
   .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
   .gallery a{display:block;aspect-ratio:1/1;border-radius:12px;overflow:hidden;border:1px solid rgba(0,240,255,.15);cursor:pointer}
   .gallery img{width:100%;height:100%;object-fit:cover;}
@@ -199,25 +160,21 @@
   .lightbox img{max-width:100%;max-height:90vh;border-radius:12px;border:2px solid var(--neon);}
   .lightbox-close{position:absolute;top:20px;right:20px;color:#fff;font-size:24px;cursor:pointer;background:rgba(0,240,255,0.2);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--neon);}
 
-  /* HIỆU ỨNG LOADING KHI KÍCH HOẠT */
-  .loading-overlay {
-    position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.85);
-    display: none; align-items: center; justify-content: center; flex-direction: column; gap: 20px;
-    backdrop-filter: blur(5px);
-  }
+  .loading-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 20px; backdrop-filter: blur(5px); }
   .loading-overlay.show { display: flex; }
-  .spinner {
-    width: 60px; height: 60px; border: 4px solid rgba(0,240,255,0.2);
-    border-top: 4px solid var(--neon); border-radius: 50%;
-    animation: spin 1s linear infinite;
-    box-shadow: 0 0 20px rgba(0,240,255,0.5);
-  }
+  .spinner { width: 60px; height: 60px; border: 4px solid rgba(0,240,255,0.2); border-top: 4px solid var(--neon); border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 20px rgba(0,240,255,0.5); }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  .loading-text {
-    color: var(--neon); font-weight: 900; font-size: 1.2rem;
-    letter-spacing: 2px; text-transform: uppercase; animation: pulseText 1.5s infinite;
-  }
+  .loading-text { color: var(--neon); font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; animation: pulseText 1.5s infinite; }
   @keyframes pulseText { 0%, 100% { opacity: 1; text-shadow: 0 0 10px var(--neon); } 50% { opacity: 0.5; text-shadow: none; } }
+
+  /* CSS CHO PHẦN THÔNG BÁO VÀ MÃ GIẢM GIÁ */
+  .mail-item { padding: 12px; border-bottom: 1px solid #1a2a3d; font-size: 0.85rem; color: #cfefff; line-height: 1.4; }
+  .mail-item:last-child { border-bottom: none; }
+  .mail-time { font-size: 0.65rem; color: #5e7a94; margin-top: 5px; display: block; }
+  
+  .coupon-box { display: flex; gap: 10px; margin-bottom: 15px; }
+  .coupon-box input { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #2a3a4d; background: #03060a; color: #ffaa00; font-weight: bold; outline: none; text-transform: uppercase; }
+  .coupon-box button { padding: 10px 15px; background: #ffaa00; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -226,6 +183,23 @@
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
   <div class="loading-text">ĐANG KÍCH HOẠT...</div>
+</div>
+
+<!-- HÒM THƯ (MAILBOX) -->
+<div class="mailbox-icon" onclick="openMailbox()">
+  📬
+  <div class="mailbox-badge" id="mailBadge" style="display:none;">1</div>
+</div>
+
+<!-- MODAL HÒM THƯ -->
+<div class="modal" id="mailModal">
+  <div class="modal-box" style="max-width:400px;">
+    <button class="modal-close" onclick="document.getElementById('mailModal').classList.remove('show')">✕</button>
+    <div class="modal-title">HÒM THƯ THÔNG BÁO</div>
+    <div id="mailList" style="max-height: 300px; overflow-y: auto; background: #03060a; border-radius: 10px; border: 1px solid #1a2a3d;">
+      <div style="padding:20px; text-align:center; color:#5e7a94;">Đang tải...</div>
+    </div>
+  </div>
 </div>
 
 <!-- LIGHTBOX -->
@@ -274,6 +248,13 @@
     </div>
 
     <div id="shop-keys" class="shop-tab-content">
+      <!-- Ô NHẬP MÃ GIẢM GIÁ -->
+      <div class="coupon-box">
+        <input type="text" id="couponInput" placeholder="Nhập mã giảm giá...">
+        <button onclick="applyCoupon()">ÁP DỤNG</button>
+      </div>
+      <div id="couponMsg" style="font-size:0.75rem; margin-bottom:10px; font-weight:bold;"></div>
+      
       <div id="shopList"></div>
     </div>
 
@@ -294,7 +275,6 @@
         <button class="btn-full" onclick="confirmTopup()" style="margin-top:15px; background:linear-gradient(135deg, #00ff88, #009944);">TÔI ĐÃ CHUYỂN KHOẢN</button>
       </div>
 
-      <!-- ĐÃ ĐỔI THÀNH NẠP TIỀN -->
       <button class="btn-full" id="btnShowQR" onclick="showQR()" style="margin-top:15px;">NẠP TIỀN</button>
     </div>
 
@@ -308,7 +288,7 @@
   <div class="lock-box">
     <div class="lock-logo">
       <h1>INNOVA</h1>
-      <p>▸ CHEAT ULTIMATE v10 ◂</p>
+      <p>▸ CHEAT ULTIMATE v11 ◂</p>
     </div>
     <div class="verify-section">
       <div class="verify-header">XÁC THỰC THIẾT BỊ</div>
@@ -347,14 +327,6 @@
   </div>
 </div>
 
-<div class="music-indicator" id="musicIndicator" style="position:fixed;bottom:16px;right:16px;z-index:50;display:none;align-items:center;gap:8px;padding:10px 14px;background:rgba(10,14,22,.95);border:1px solid rgba(0,240,255,.3);border-radius:30px;font-size:.68rem;color:var(--neon);font-weight:700;">
-  <span>NOW PLAYING</span>
-</div>
-
-<div class="bg-particles" id="particles"></div>
-<div class="grid-overlay"></div>
-
-<!-- APP CHÍNH (SAU KHI LOGIN) -->
 <div class="app" id="app" style="display:none">
   <div class="header">
     <div class="avatar-wrap">
@@ -377,18 +349,14 @@
     <button class="tab" data-tab="misc"><span class="ico">⚙️</span>MISC</button>
   </div>
 
-  <!-- TAB COMBAT -->
   <div class="panel active" id="panel-combat">
     <div class="section">
       <div class="section-title">COMBAT MODULES</div>
-      
-      <!-- BUFF LIKE -->
       <div class="cheat-item" id="buffLikeItem">
         <div class="cheat-icon">❤️</div>
         <div class="cheat-info"><div class="name">Buff Like</div><div class="desc">Tăng lượt thích cho UID</div></div>
         <label class="switch"><input type="checkbox" class="cheat-toggle" id="buffLikeToggle"><span class="slider"></span></label>
       </div>
-      <!-- Ô NHẬP UID VÀ SỐ LIKE -->
       <div class="uid-input-box" id="uidBox">
         <input type="number" id="uidInput" placeholder="Nhập UID (8-12 số)" style="flex:2;" min="10000000" max="999999999999">
         <select id="likeCount" class="form-input" style="flex:1; padding:10px; color:#00f0ff; background:#03060a;">
@@ -399,7 +367,6 @@
           <option value="10000">10.000 Like</option>
         </select>
       </div>
-
       <div class="cheat-item"><div class="cheat-icon">🎯</div><div class="cheat-info"><div class="name">Aimbot</div><div class="desc">Tự động khóa mục tiêu</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">✨</div><div class="cheat-info"><div class="name">Magic Bullet</div><div class="desc">Đạn xuyên vật cản</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">🔥</div><div class="cheat-info"><div class="name">Rapid Fire</div><div class="desc">Bắn siêu nhanh</div></div><label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label></div>
@@ -408,7 +375,6 @@
     </div>
   </div>
 
-  <!-- TAB MOVEMENT -->
   <div class="panel" id="panel-movement">
     <div class="section">
       <div class="section-title">MOVEMENT MODULES</div>
@@ -420,7 +386,6 @@
     </div>
   </div>
 
-  <!-- TAB VISUAL -->
   <div class="panel" id="panel-visual">
     <div class="section">
       <div class="section-title">VISUAL MODULES</div>
@@ -432,7 +397,6 @@
     </div>
   </div>
 
-  <!-- TAB CAMERA 360 -->
   <div class="panel" id="panel-camera">
     <div class="section">
       <div class="section-title">CAMERA MODULES</div>
@@ -441,7 +405,6 @@
     </div>
   </div>
 
-  <!-- TAB MISC -->
   <div class="panel" id="panel-misc">
     <div class="section">
       <div class="section-title">MISC MODULES</div>
@@ -475,14 +438,71 @@ const QR_IMAGE_URL = 'https://files.catbox.moe/4ot0fd.jpeg';
 
 let currentUser = null;
 let isRegisterMode = false;
-let checkStatusInterval = null; // Biến dùng để kiểm tra trạng thái nạp tiền tự động
+let checkStatusInterval = null;
+let currentDiscountCode = ""; // Biến lưu mã giảm giá đã áp dụng
 
 function openLightbox(src) {
   document.getElementById('lightboxImg').src = src;
   document.getElementById('lightbox').classList.add('show');
 }
 
-// PARTICLES
+// HÒM THƯ
+async function openMailbox() {
+  document.getElementById('mailModal').classList.add('show');
+  document.getElementById('mailBadge').style.display = 'none'; // Xóa chấm đỏ
+  const el = document.getElementById('mailList');
+  el.innerHTML = '<div style="padding:20px; text-align:center; color:#5e7a94;">Đang tải...</div>';
+  
+  try {
+    const r = await fetch(SERVER_URL + '/api/shop/notifications');
+    const d = await r.json();
+    el.innerHTML = '';
+    if(d.ok && d.notifications.length > 0) {
+      d.notifications.forEach(n => {
+        const div = document.createElement('div');
+        div.className = 'mail-item';
+        div.innerHTML = `
+          <div style="color:#00f0ff;">📢 ${n.message}</div>
+          <span class="mail-time">${new Date(n.created_at).toLocaleString('vi-VN')}</span>
+        `;
+        el.appendChild(div);
+      });
+    } else {
+      el.innerHTML = '<div style="padding:20px; text-align:center; color:#5e7a94;">Không có thông báo nào.</div>';
+    }
+  } catch(e) {
+    el.innerHTML = '<div style="padding:20px; text-align:center; color:#ff4466;">Lỗi kết nối!</div>';
+  }
+}
+
+// MÃ GIẢM GIÁ
+async function applyCoupon() {
+  const code = document.getElementById('couponInput').value.trim().toUpperCase();
+  const msg = document.getElementById('couponMsg');
+  if(!code) return;
+
+  msg.textContent = 'Đang kiểm tra...'; msg.style.color = '#fff';
+  
+  try {
+    const r = await fetch(SERVER_URL + '/api/shop/check-coupon', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ code })
+    });
+    const d = await r.json();
+    
+    if(d.ok) {
+      msg.textContent = `✓ Mã hợp lệ! Giảm ${d.discount}%`; msg.style.color = '#00ff88';
+      currentDiscountCode = code;
+    } else {
+      msg.textContent = '✗ ' + d.error; msg.style.color = '#ff4466';
+      currentDiscountCode = "";
+    }
+  } catch(e) {
+    msg.textContent = 'Lỗi kết nối!'; msg.style.color = '#ff4466';
+  }
+}
+
+// KHỞI TẠO PARTICLES VÀ CÁC HÀM KHÁC...
 const pWrap = document.getElementById('particles');
 for(let i=0;i<40;i++){
   const s = document.createElement('span');
@@ -493,7 +513,6 @@ for(let i=0;i<40;i++){
   pWrap.appendChild(s);
 }
 
-// XÁC THỰC
 let currentStep = 0, currentPercent = 0, verifyDone = false;
 const verifySteps = [{ end:25, msg:'Khởi tạo...' }, { end:60, msg:'Xác thực GPU...' }, { end:100, msg:'Hoàn tất!' }];
 function runVerification(){
@@ -523,11 +542,11 @@ function runVerification(){
 }
 setTimeout(runVerification, 500);
 
-// SHOP LOGIC
 function openShop() {
   if (currentUser) {
     document.getElementById('shopModal').classList.add('show');
     updateShopUI();
+    loadShopKeys(); // Load lại shop mỗi lần mở
   } else {
     document.getElementById('authModal').classList.add('show');
   }
@@ -535,11 +554,7 @@ function openShop() {
 
 function closeShopModal() {
   document.getElementById('shopModal').classList.remove('show');
-  // Tắt kiểm tra tự động nếu đang chạy
-  if(checkStatusInterval) {
-    clearInterval(checkStatusInterval);
-    checkStatusInterval = null;
-  }
+  if(checkStatusInterval) { clearInterval(checkStatusInterval); checkStatusInterval = null; }
 }
 
 function toggleAuthMode() {
@@ -635,14 +650,18 @@ async function buyKey(key, price) {
   if(!confirm('Bạn có chắc muốn mua Key này với giá ' + price.toLocaleString('vi-VN') + 'đ?')) return;
   const r = await fetch(SERVER_URL + '/api/shop/buy', {
     method: 'POST', headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ username: currentUser.username, key })
+    body: JSON.stringify({ username: currentUser.username, key, couponCode: currentDiscountCode })
   });
   const d = await r.json();
   if(d.ok) {
-    alert('Mua thành công! Xem lại trong Lịch sử.');
-    currentUser.balance -= price;
+    alert(`Mua thành công! Đã thanh toán: ${d.finalPrice.toLocaleString('vi-VN')}đ. Xem lại trong Lịch sử.`);
+    currentUser.balance -= d.finalPrice;
     updateShopUI();
     loadShopKeys();
+    // Xóa ô giảm giá sau khi mua thành công
+    document.getElementById('couponInput').value = '';
+    document.getElementById('couponMsg').textContent = '';
+    currentDiscountCode = "";
   } else {
     alert(d.error);
   }
@@ -683,7 +702,6 @@ async function confirmTopup() {
         </div>
       `;
 
-      // BẮT ĐẦU KIỂM TRA TRẠNG THÁI TỰ ĐỘNG (POLLING)
       if(checkStatusInterval) clearInterval(checkStatusInterval);
       checkStatusInterval = setInterval(async () => {
         try {
@@ -693,12 +711,8 @@ async function confirmTopup() {
           if (checkData.ok && checkData.status === 'success') {
             clearInterval(checkStatusInterval);
             checkStatusInterval = null;
-            
-            // Cập nhật lại số dư
             currentUser.balance = checkData.newBalance;
             updateShopUI();
-
-            // Hiển thị thông báo thành công
             document.getElementById('qrContainer').innerHTML = `
               <div style="background:rgba(0,255,136,0.1);border:1px solid var(--neon3);padding:20px;border-radius:12px;margin-top:15px;text-align:center;">
                 <h3 style="color:var(--neon3);font-size:1.1rem;margin-bottom:10px;">✅ NẠP THÀNH CÔNG</h3>
@@ -709,11 +723,8 @@ async function confirmTopup() {
               </div>
             `;
           }
-        } catch (err) {
-          console.log('Đang chờ duyệt...');
-        }
-      }, 3000); // Kiểm tra mỗi 3 giây
-
+        } catch (err) { console.log('Đang chờ duyệt...'); }
+      }, 3000);
     } else {
       alert(d.error);
       btn.textContent = 'TÔI ĐÃ CHUYỂN KHOẢN'; btn.disabled = false;
@@ -748,7 +759,6 @@ async function loadHistory() {
   }
 }
 
-// MỞ KHÓA KEY
 document.getElementById('unlockBtn').addEventListener('click', async ()=>{
   if(!verifyDone) return;
   const key = document.getElementById('keyInput').value.trim().toUpperCase();
@@ -788,7 +798,6 @@ document.getElementById('unlockBtn').addEventListener('click', async ()=>{
   }
 });
 
-// CHUYỂN TAB
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', ()=>{
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -797,7 +806,6 @@ document.querySelectorAll('.tab').forEach(tab => {
   });
 });
 
-// TOGGLE UI EFFECT & BUFF LIKE LOGIC
 document.querySelectorAll('.cheat-item').forEach(item => {
   item.addEventListener('click', (e) => {
     if(e.target.closest('.switch')) return;
@@ -812,49 +820,45 @@ document.querySelectorAll('.cheat-item').forEach(item => {
 document.querySelectorAll('.cheat-toggle').forEach(toggle => {
   toggle.addEventListener('change', function() {
     const item = this.closest('.cheat-item');
-    if(this.checked) {
-      item.classList.add('active');
-    } else {
-      item.classList.remove('active');
-    }
+    if(this.checked) item.classList.add('active');
+    else item.classList.remove('active');
 
     if (this.id === 'buffLikeToggle') {
       const uidBox = document.getElementById('uidBox');
-      if (this.checked) {
-        uidBox.classList.add('show');
-      } else {
-        uidBox.classList.remove('show');
-      }
+      if (this.checked) uidBox.classList.add('show');
+      else uidBox.classList.remove('show');
     }
   });
 });
 
-// XỬ LÝ NÚT KÍCH HOẠT VỚI HIỆU ỨNG LOADING
 document.getElementById('btnActivate').addEventListener('click', () => {
   const activeModules = document.querySelectorAll('.cheat-toggle:checked');
-  if (activeModules.length === 0) {
-    alert('Vui lòng bật ít nhất 1 chức năng trước khi kích hoạt!');
-    return;
-  }
+  if (activeModules.length === 0) return alert('Vui lòng bật ít nhất 1 chức năng trước khi kích hoạt!');
 
   if (document.getElementById('buffLikeToggle').checked) {
     const uid = document.getElementById('uidInput').value.trim();
-    if (!uid || uid.length < 8 || uid.length > 12) {
-      alert('Vui lòng nhập UID hợp lệ (từ 8 đến 12 chữ số) cho chức năng Buff Like!');
-      return;
-    }
-    const likes = document.getElementById('likeCount').value;
-    console.log(`Đang buff ${likes} like cho UID: ${uid}`);
+    if (!uid || uid.length < 8 || uid.length > 12) return alert('Vui lòng nhập UID hợp lệ (từ 8 đến 12 chữ số) cho chức năng Buff Like!');
   }
 
   const overlay = document.getElementById('loadingOverlay');
   overlay.classList.add('show');
-
   setTimeout(() => {
     overlay.classList.remove('show');
     alert('✅ KÍCH HOẠT THÀNH CÔNG!\nToàn bộ chức năng đã được áp dụng vào game.');
   }, 2500);
 });
+
+// KIỂM TRA THÔNG BÁO MỚI (Chấm đỏ)
+async function checkNewMail() {
+  try {
+    const r = await fetch(SERVER_URL + '/api/shop/notifications');
+    const d = await r.json();
+    if(d.ok && d.notifications.length > 0) {
+      document.getElementById('mailBadge').style.display = 'flex';
+    }
+  } catch(e) {}
+}
+checkNewMail();
 </script>
 </body>
 </html>
