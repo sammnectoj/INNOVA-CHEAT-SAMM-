@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'innova-admin-2024';
 
-// ✅ THÔNG TIN SUPABASE CỦA BẠN
+// ✅ THÔNG TIN SUPABASE
 const SUPABASE_URL = 'https://llvlcqfievwtvylsqslm.supabase.co'; 
 const SUPABASE_KEY = 'sb_publishable_37lYwmdntFwHgspQ7b3vgA_Jna_S5r1'; 
 
@@ -67,12 +67,15 @@ app.post('/api/shop/buy', async (req, res) => {
   if(!user || !keyData) return res.json({ ok: false, error: 'Lỗi dữ liệu' });
   if(user.balance < keyData.price) return res.json({ ok: false, error: 'Số dư không đủ' });
 
+  // Trừ tiền
   await supabase.from('users').update({ balance: user.balance - keyData.price }).eq('username', username);
-  await supabase.from('keys').update({ device_id: 'BOUGHT_BY_' + username }).eq('key', key);
+  
+  // Cập nhật key: đánh dấu đã bán cho user này (dùng device_id = 'BOUGHT_' + username)
+  await supabase.from('keys').update({ device_id: 'BOUGHT_' + username }).eq('key', key);
+  
   res.json({ ok: true, message: 'Mua thành công!' });
 });
 
-// API NẠP TIỀN: Ghi nhận 'pending'
 app.post('/api/shop/topup', async (req, res) => {
   const { username, amount } = req.body;
   const { error } = await supabase.from('topups').insert([{ 
@@ -87,7 +90,7 @@ app.post('/api/shop/topup', async (req, res) => {
 
 app.get('/api/shop/history', async (req, res) => {
   const { username } = req.query;
-  const { data } = await supabase.from('keys').select('*').eq('device_id', 'BOUGHT_BY_' + username);
+  const { data } = await supabase.from('keys').select('*').eq('device_id', 'BOUGHT_' + username);
   res.json({ ok: true, history: data || [] });
 });
 
@@ -135,7 +138,7 @@ app.post('/api/admin/approve-topup', async (req, res) => {
   res.json({ ok: true });
 });
 
-// CÁC API CŨ
+// ================= CÁC API CŨ (ĐÃ SỬA LỖI) =================
 app.post('/api/create', async (req, res) => {
   const pass = req.headers['x-admin-pass'];
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu Admin' });
@@ -153,13 +156,20 @@ app.post('/api/create', async (req, res) => {
 app.post('/api/verify', async (req, res) => {
   const { key, deviceId } = req.body || {};
   if (!key || !deviceId) return res.status(400).json({ ok: false, error: 'Thiếu key hoặc deviceId' });
+
   const { data: found } = await supabase.from('keys').select('*').eq('key', key.toUpperCase().trim()).single();
+  
   if (!found) return res.json({ ok: false, error: 'Key không tồn tại' });
-  if (found.device_id === 'BOUGHT_BY_' + deviceId) {
-      return res.json({ ok: true, type: found.type, isForever: !found.expires_at, remainingMs: found.expires_at ? Math.max(0, found.expires_at - Date.now()) : null });
+  
+  // SỬA LỖI: Nếu Key được mua từ Shop, tự động mở khóa (không chặn thiết bị)
+  if (found.device_id && found.device_id.startsWith('BOUGHT_')) {
+    if (found.expires_at && Date.now() > found.expires_at) return res.json({ ok: false, error: 'Key đã hết hạn' });
+    return res.json({ ok: true, type: found.type, isForever: !found.expires_at, remainingMs: found.expires_at ? Math.max(0, found.expires_at - Date.now()) : null });
   }
+
   if (found.expires_at && Date.now() > found.expires_at) return res.json({ ok: false, error: 'Key đã hết hạn' });
   if (found.device_id && found.device_id !== deviceId) return res.json({ ok: false, error: 'Key đã dùng trên thiết bị khác' });
+
   if (!found.device_id) await supabase.from('keys').update({ device_id: deviceId }).eq('key', found.key);
   res.json({ ok: true, type: found.type, isForever: !found.expires_at, remainingMs: found.expires_at ? Math.max(0, found.expires_at - Date.now()) : null });
 });
@@ -178,7 +188,7 @@ app.delete('/api/delete/:key', async (req, res) => {
   res.json({ ok: true });
 });
 
-// GIAO DIỆN ADMIN (Giữ nguyên như cũ)
+// ================= GIAO DIỆN ADMIN =================
 app.get('/admin', (req, res) => {
   res.send(`<!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"><title>Admin - Innova Shop</title>
@@ -291,7 +301,7 @@ async function loadList(){
   if(d.ok) d.keys.forEach(k=>{
     const tr=document.createElement('tr');
     const exp = k.expires_at ? new Date(k.expires_at).toLocaleString('vi-VN') : '∞';
-    const dev = k.device_id ? k.device_id.slice(0,10) : '<span style="color:#00ff88">Trống</span>';
+    const dev = k.device_id ? k.device_id.slice(0,15) : '<span style="color:#00ff88">Trống</span>';
     tr.innerHTML='<td class="key">'+k.key+'</td><td>'+exp+'</td><td>'+dev+'</td><td>'+(k.note||'—')+'</td><td><button style="background:#ff3366;padding:4px 8px;color:#fff" onclick="delKey(\\''+k.key+'\\')">X</button></td>';
     tb.appendChild(tr);
   });
