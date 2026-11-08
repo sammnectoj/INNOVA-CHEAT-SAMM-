@@ -3,179 +3,287 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INNOVA CHEAT · ULTIMATE v11</title>
+<title>INNOVA CHEAT · ULTIMATE v12</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-  :root { --neon:#00f0ff; --neon2:#ff00e5; --neon3:#00ff88; --neon4:#ffaa00; --bg-dark:#05070d; --card-bg:rgba(10,14,22,0.92); }
-  body { min-height:100vh; background: radial-gradient(circle at 20% 20%, #0a1220 0%, #05070d 70%); display:flex; justify-content:center; align-items:flex-start; padding:14px 10px 40px; overflow-x:hidden; position:relative; }
+  :root { 
+    --neon:#00f0ff; 
+    --neon2:#ff00e5; 
+    --neon3:#00ff88; 
+    --neon4:#ffaa00; 
+    --bg-dark:#05070d; 
+    --glass: rgba(16, 24, 38, 0.6);
+    --glass-border: rgba(0, 240, 255, 0.25);
+  }
+  body { 
+    min-height:100vh; 
+    background: radial-gradient(circle at 10% 10%, #0a1525 0%, #03050a 100%); 
+    display:flex; justify-content:center; align-items:flex-start; 
+    padding:14px 10px 40px; overflow-x:hidden; position:relative; 
+    color: #e0eef5;
+  }
   
+  /* Hiệu ứng nền */
   .bg-particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
   .bg-particles span{position:absolute;width:3px;height:3px;border-radius:50%;opacity:.4;animation:floatUp linear infinite}
   @keyframes floatUp{0%{transform:translateY(100vh) scale(.5);opacity:0}10%{opacity:.6}90%{opacity:.3}100%{transform:translateY(-10vh) scale(1.2);opacity:0}}
-  .grid-overlay{position:fixed;inset:0;background-image:linear-gradient(rgba(0,240,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+  .grid-overlay{position:fixed;inset:0;background-image:linear-gradient(rgba(0,240,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+  .glow-orb { position: fixed; width: 300px; height: 300px; border-radius: 50%; background: rgba(0, 240, 255, 0.15); filter: blur(100px); z-index: 0; pointer-events: none; }
+  .glow-orb.top-left { top: -100px; left: -100px; }
+  .glow-orb.bottom-right { bottom: -100px; right: -100px; background: rgba(255, 0, 229, 0.1); }
 
-  /* HÒM THƯ (MAILBOX) */
+  /* HÒM THƯ */
   .mailbox-icon {
     position: absolute; top: 15px; right: 15px; z-index: 50;
-    background: rgba(0, 240, 255, 0.1); border: 1px solid var(--neon);
-    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--glass); border: 1px solid var(--glass-border);
+    width: 44px; height: 44px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer; transition: 0.3s; font-size: 1.2rem;
-    box-shadow: 0 0 10px rgba(0,240,255,0.3);
+    box-shadow: 0 0 15px rgba(0,240,255,0.2); backdrop-filter: blur(8px);
   }
   .mailbox-icon:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--neon); }
   .mailbox-badge {
-    position: absolute; top: -5px; right: -5px; background: #ff3366;
+    position: absolute; top: -2px; right: -2px; background: #ff3366;
     color: #fff; font-size: 0.6rem; font-weight: bold; width: 18px; height: 18px;
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    border: 2px solid var(--bg-dark);
+    border: 2px solid var(--bg-dark); box-shadow: 0 0 8px #ff3366;
   }
 
-  .modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;padding:15px;backdrop-filter:blur(8px);opacity:0;transition:opacity 0.3s}
+  /* MODAL CHUNG (GLASSMORPHISM) */
+  .modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;padding:15px;backdrop-filter:blur(10px);opacity:0;transition:opacity 0.3s}
   .modal.show{display:flex;opacity:1}
-  .modal-box{width:100%;max-width:460px;background:#0a1220;border:1px solid rgba(0,240,255,.4);border-radius:20px;padding:24px;box-shadow:0 0 40px rgba(0,240,255,.2);position:relative;max-height:90vh;overflow-y:auto}
-  .modal-close{position:absolute;top:15px;right:15px;color:#fff;background:#1a2a3d;border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-weight:bold}
-  .modal-title{font-size:1.2rem;color:var(--neon);text-align:center;margin-bottom:20px;text-transform:uppercase;letter-spacing:2px}
+  .modal-box{
+    width:100%;max-width:440px;background:var(--glass);border:1px solid var(--glass-border);
+    border-radius:24px;padding:24px;box-shadow:0 20px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,240,255,0.05);
+    position:relative;max-height:90vh;overflow-y:auto; backdrop-filter: blur(15px);
+    animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes zoomIn { from{transform: scale(0.9); opacity:0;} to{transform: scale(1); opacity:1;} }
+  
+  .modal-close{position:absolute;top:15px;right:15px;color:#fff;background:rgba(255,255,255,0.1);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-weight:bold; transition: 0.2s;}
+  .modal-close:hover { background: #ff3366; }
+  .modal-title{font-size:1.2rem;color:var(--neon);text-align:center;margin-bottom:20px;text-transform:uppercase;letter-spacing:2px; text-shadow: 0 0 10px rgba(0,240,255,0.5);}
+  
   .form-group{margin-bottom:15px}
-  .form-group label{display:block;font-size:0.75rem;color:#8ba0b8;margin-bottom:5px;font-weight:600;text-transform:uppercase}
-  .form-input{width:100%;padding:12px;background:#03060a;border:1px solid #1a2230;border-radius:10px;color:var(--neon);font-size:0.9rem;outline:none;transition:0.3s}
-  .form-input:focus{border-color:var(--neon);box-shadow:0 0 10px rgba(0,240,255,.3)}
-  .btn-full{width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--neon),#0099cc);color:#001a22;font-weight:900;font-size:0.9rem;cursor:pointer;margin-top:10px;text-transform:uppercase;letter-spacing:1px;transition:0.2s}
-  .btn-full:hover{transform:translateY(-2px);box-shadow:0 0 20px var(--neon)}
+  .form-group label{display:block;font-size:0.75rem;color:#8ba0b8;margin-bottom:5px;font-weight:600;text-transform:uppercase; letter-spacing: 1px;}
+  .form-input{width:100%;padding:14px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:var(--neon);font-size:0.9rem;outline:none;transition:0.3s}
+  .form-input:focus{border-color:var(--neon);box-shadow:0 0 15px rgba(0,240,255,0.2)}
+  .btn-full{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--neon),#0099cc);color:#001a22;font-weight:900;font-size:0.9rem;cursor:pointer;margin-top:10px;text-transform:uppercase;letter-spacing:1px;transition:0.3s; box-shadow: 0 5px 15px rgba(0,240,255,0.3);}
+  .btn-full:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,240,255,0.5)}
   .switch-form{text-align:center;font-size:0.8rem;color:#8ba0b8;margin-top:15px}
-  .switch-form a{color:var(--neon2);text-decoration:none;font-weight:bold;cursor:pointer}
+  .switch-form a{color:var(--neon2);text-decoration:none;font-weight:bold;cursor:pointer; text-shadow: 0 0 8px rgba(255,0,229,0.5);}
   
-  .shop-header{display:flex;justify-content:space-between;align-items:center;background:rgba(0,240,255,0.1);padding:12px 15px;border-radius:12px;margin-bottom:15px;border:1px solid rgba(0,240,255,0.2)}
-  .shop-balance{font-size:1rem;color:var(--neon3);font-weight:800}
-  .shop-nav{display:flex;gap:8px;margin-bottom:15px;overflow-x:auto;padding-bottom:5px}
-  .shop-nav button{flex:1;padding:10px;background:#1a2a3d;border:none;border-radius:8px;color:#cfefff;font-weight:bold;cursor:pointer;white-space:nowrap;font-size:0.75rem}
-  .shop-nav button.active{background:var(--neon);color:#000}
+  /* SHOP UI */
+  .shop-header{display:flex;justify-content:space-between;align-items:center;background:rgba(0,240,255,0.08);padding:14px 16px;border-radius:16px;margin-bottom:15px;border:1px solid rgba(0,240,255,0.2)}
+  .shop-balance{font-size:1.1rem;color:var(--neon3);font-weight:900; text-shadow: 0 0 10px rgba(0,255,136,0.3);}
+  .shop-nav{display:flex;gap:8px;margin-bottom:15px;overflow-x:auto;padding-bottom:5px; scrollbar-width: none;}
+  .shop-nav button{flex:1;padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#8ba0b8;font-weight:bold;cursor:pointer;white-space:nowrap;font-size:0.75rem; transition: 0.3s;}
+  .shop-nav button.active{background:var(--neon);color:#000; border-color: var(--neon); box-shadow: 0 0 15px rgba(0,240,255,0.4);}
   
-  .shop-item{display:flex;gap:12px;background:#101a24;padding:10px;border-radius:12px;margin-bottom:10px;border:1px solid #1a2a3d;align-items:center}
-  .shop-item img{width:70px;height:70px;border-radius:10px;object-fit:cover;border:1px solid #2a3a4d}
+  .shop-item{display:flex;gap:12px;background:rgba(0,0,0,0.4);padding:12px;border-radius:16px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.05);align-items:center; transition: 0.3s;}
+  .shop-item:hover { border-color: rgba(0,240,255,0.3); background: rgba(0,240,255,0.05); }
+  .shop-item img{width:70px;height:70px;border-radius:12px;object-fit:cover;border:1px solid rgba(255,255,255,0.1)}
   .shop-item-info{flex:1}
   .shop-item-name{font-weight:bold;color:#fff;font-size:0.95rem}
-  .shop-item-price{color:var(--neon4);font-weight:800;margin:4px 0;font-size:0.9rem}
-  .btn-buy{padding:8px 12px;background:var(--neon);color:#000;border:none;border-radius:8px;font-weight:bold;cursor:pointer;font-size:0.75rem}
+  .shop-item-price{color:var(--neon4);font-weight:800;margin:4px 0;font-size:0.95rem}
+  .btn-buy{padding:8px 16px;background:linear-gradient(135deg, var(--neon), #0099cc);color:#000;border:none;border-radius:8px;font-weight:900;cursor:pointer;font-size:0.75rem; box-shadow: 0 0 10px rgba(0,240,255,0.3);}
 
-  .lock-screen{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 30%,#0a1220 0%,#03050a 100%);display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity .6s,visibility .6s; overflow-y: auto;}
+  /* LOCK SCREEN (GIAO DIỆN CHÍNH) */
+  .lock-screen{position:fixed;inset:0;z-index:100;background:transparent;display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity .6s,visibility .6s; overflow-y: auto;}
   .lock-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
-  .lock-box{width:100%;max-width:440px;background:rgba(10,14,22,.95);border:1px solid rgba(0,240,255,.3);border-radius:24px;padding:32px 24px;box-shadow:0 0 40px rgba(0,240,255,.2);position:relative;overflow:hidden; margin: 20px 0;}
-  .lock-logo{text-align:center;margin-bottom:22px}
-  .lock-logo h1{font-size:2rem;font-weight:900;letter-spacing:4px;background:linear-gradient(90deg,var(--neon),var(--neon2),var(--neon));background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gm 3s linear infinite;text-transform:uppercase}
-  @keyframes gm{0%{background-position:0% center}100%{background-position:200% center}}
-  .lock-logo p{font-size:.72rem;color:#5e7a94;letter-spacing:3px;text-transform:uppercase;margin-top:4px;font-weight:600}
+  
+  .lock-box{
+    width:100%;max-width:420px;background:var(--glass);border:1px solid var(--glass-border);
+    border-radius:28px;padding:36px 28px;
+    box-shadow:0 25px 50px rgba(0,0,0,0.8), inset 0 0 30px rgba(0,240,255,0.05);
+    position:relative;overflow:hidden; margin: 20px 0; backdrop-filter: blur(20px);
+  }
+  
+  /* Hiệu ứng ánh sáng chạy qua viền */
+  .lock-box::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: conic-gradient(transparent, var(--neon), transparent 30%);
+    animation: rotateBorder 4s linear infinite; z-index: -1;
+  }
+  .lock-box::after {
+    content: ''; position: absolute; inset: 2px; background: var(--bg-dark); border-radius: 26px; z-index: -1;
+  }
+  @keyframes rotateBorder { 100% { transform: rotate(360deg); } }
 
-  .verify-section{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px;margin-bottom:18px}
-  .verify-header{display:flex;align-items:center;gap:8px;font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#5e7a94;margin-bottom:12px}
-  .progress-bar{height:10px;background:#0a1220;border-radius:10px;overflow:hidden;border:1px solid #1a2230;margin-bottom:8px;}
-  .progress-fill{height:100%;width:0%;border-radius:10px;background:linear-gradient(90deg,#003d4d,var(--neon),#00ff88);background-size:200% auto;box-shadow:0 0 15px var(--neon);transition:width .15s linear}
-  .progress-info{display:flex;justify-content:space-between;align-items:center;font-size:.7rem;color:#6a7d94;font-family:'Courier New',monospace}
-  .progress-percent{color:var(--neon);font-weight:700;font-size:.9rem;}
-  .verify-status{font-size:.65rem;color:#5e7a94;margin-top:6px;font-style:italic}
+  .lock-logo{text-align:center;margin-bottom:30px}
+  .lock-logo h1{
+    font-size:2.4rem;font-weight:900;letter-spacing:6px;
+    background:linear-gradient(90deg,#fff,var(--neon),var(--neon2),#fff);background-size:300% auto;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation: gm 4s linear infinite;text-transform:uppercase;
+    filter: drop-shadow(0 0 10px rgba(0,240,255,0.5));
+  }
+  @keyframes gm{0%{background-position:0% center}100%{background-position:300% center}}
+  .lock-logo p{font-size:.75rem;color:#8ba0b8;letter-spacing:4px;text-transform:uppercase;margin-top:6px;font-weight:600}
 
-  .key-section{margin-bottom:12px}
-  .key-label{display:block;font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#5e7a94;margin-bottom:8px}
-  .key-input-wrap{display:flex;gap:8px}
-  .key-input{flex:1;padding:13px 14px;background:#03060a;border:1px solid #1a2230;border-radius:12px;color:var(--neon);font-weight:700;font-family:'Courier New',monospace;font-size:.9rem;outline:none;box-shadow:inset 0 2px 8px rgba(0,0,0,.6)}
-  .btn-unlock{padding:13px 20px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--neon),#0099cc);color:#001a22;font-weight:900;font-size:.78rem;cursor:pointer;}
-  .btn-unlock:disabled{opacity:.4;cursor:not-allowed;}
-  .key-msg{font-size:.72rem;margin-top:8px;min-height:16px;font-weight:600;}
-  .key-msg.ok{color:var(--neon3);} .key-msg.err{color:#ff4466;} .key-msg.info{color:var(--neon)}
+  .key-section{margin-bottom:20px}
+  .key-label{display:block;font-size:.75rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#8ba0b8;margin-bottom:10px; text-align: center;}
+  .key-input-wrap{display:flex;gap:8px; background: rgba(0,0,0,0.5); padding: 6px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s;}
+  .key-input-wrap:focus-within { border-color: var(--neon); box-shadow: 0 0 20px rgba(0,240,255,0.2); }
+  .key-input{flex:1;padding:12px 14px;background:transparent;border:none;color:#fff;font-weight:700;font-family:'Courier New',monospace;font-size:1rem;outline:none; text-align: center; letter-spacing: 1px;}
+  .key-input::placeholder { color: #4a5a70; }
+  .btn-unlock{padding:12px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--neon),#0099cc);color:#001a22;font-weight:900;font-size:.8rem;cursor:pointer; transition: 0.3s;}
+  .btn-unlock:disabled{opacity:.3;cursor:not-allowed; filter: grayscale(1);}
+  .btn-unlock:hover:not(:disabled) { box-shadow: 0 0 15px var(--neon); transform: scale(1.05); }
+  
+  .key-msg{font-size:.75rem;margin-top:10px;min-height:16px;font-weight:600; text-align: center;}
+  .key-msg.ok{color:var(--neon3); text-shadow: 0 0 8px rgba(0,255,136,0.5);} 
+  .key-msg.err{color:#ff4466; text-shadow: 0 0 8px rgba(255,68,102,0.5);} 
+  .key-msg.info{color:var(--neon)}
 
   .shop-btn-container { margin-top: 15px; display: flex; gap: 10px; }
   .btn-shop-trigger {
-    flex: 1; padding: 12px; background: linear-gradient(135deg, #ff00e5, #7000ff);
-    color: #fff; font-weight: 900; font-size: 0.85rem; text-align: center;
-    border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 0 15px rgba(255,0,229,0.4);
-    text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 8px;
-    transition: 0.3s;
+    flex: 1; padding: 16px; background: linear-gradient(135deg, #ff00e5, #7000ff);
+    color: #fff; font-weight: 900; font-size: 0.95rem; text-align: center;
+    border-radius: 16px; border: none; cursor: pointer; box-shadow: 0 5px 20px rgba(255,0,229,0.4);
+    text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 10px;
+    transition: 0.3s; position: relative; overflow: hidden;
   }
-  .btn-shop-trigger:hover { transform: scale(1.02); box-shadow: 0 0 25px rgba(255,0,229,0.7); }
+  .btn-shop-trigger::before {
+    content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: skewX(-20deg); transition: 0.5s;
+  }
+  .btn-shop-trigger:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(255,0,229,0.6); }
+  .btn-shop-trigger:hover::before { left: 200%; }
 
-  .extra-section { margin-top: 20px; padding-top: 16px; border-top: 1px dashed rgba(0, 240, 255, 0.2); text-align: center; }
-  .zalo-btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #0068FF, #00C6FF); color: #fff; padding: 10px 20px; border-radius: 30px; font-weight: 800; text-decoration: none; font-size: 0.85rem; box-shadow: 0 4px 15px rgba(0, 104, 255, 0.4); margin-bottom: 12px; text-transform: uppercase; transition: 0.3s; }
-  .zalo-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 104, 255, 0.6); }
-  .zalo-btn img { width: 20px; height: 20px; }
-  .app-intro { font-size: 0.65rem; color: #5e7a94; line-height: 1.5; margin-top: 10px; }
+  .extra-section { margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(255,255,255,0.1); text-align: center; }
+  .zalo-btn { 
+    display: inline-flex; align-items: center; gap: 8px; 
+    background: linear-gradient(135deg, #0068FF, #00C6FF); color: #fff; 
+    padding: 12px 24px; border-radius: 30px; font-weight: 800; text-decoration: none; 
+    font-size: 0.9rem; box-shadow: 0 5px 15px rgba(0, 104, 255, 0.4); margin-bottom: 15px; 
+    text-transform: uppercase; transition: 0.3s; 
+  }
+  .zalo-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 25px rgba(0, 104, 255, 0.6); }
+  .app-intro { font-size: 0.7rem; color: #8ba0b8; line-height: 1.6; margin-top: 10px; }
   .app-intro strong { color: #00f0ff; }
-  .lock-footer{text-align:center;font-size:.6rem;color:#3a4a5c;letter-spacing:1.5px;text-transform:uppercase;padding-top:14px}
 
-  .app{position:relative;z-index:2;width:100%;max-width:540px;display:flex;flex-direction:column;gap:14px}
-  .header{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--card-bg);border:1px solid rgba(0,240,255,.3);border-radius:20px;}
+  /* MAIN APP UI */
+  .app{position:relative;z-index:2;width:100%;max-width:540px;display:flex;flex-direction:column;gap:14px; display:none;}
+  
+  .header{display:flex;align-items:center;gap:14px;padding:16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:20px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
   .avatar-wrap{position:relative;flex-shrink:0}
-  .avatar-wrap img{width:68px;height:68px;border-radius:50%;object-fit:cover;border:2px solid var(--neon);}
+  .avatar-wrap img{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--neon); box-shadow: 0 0 15px rgba(0,240,255,0.4);}
   .title-wrap{flex:1;min-width:0}
-  .title-wrap h1{font-size:1.7rem;font-weight:900;letter-spacing:3px;background:linear-gradient(90deg,var(--neon),var(--neon2),var(--neon));-webkit-background-clip:text;color:transparent;line-height:1.1;text-transform:uppercase}
-  .user-info{display:none;flex-direction:column;gap:2px;font-size:0.65rem;color:#8899aa;margin-top:6px;background:rgba(0,0,0,0.4);padding:6px 10px;border-radius:8px;border:1px solid #1a2230}
-  .user-info span{color:var(--neon3);font-weight:700}
+  .title-wrap h1{font-size:1.6rem;font-weight:900;letter-spacing:2px;background:linear-gradient(90deg,var(--neon),var(--neon2));-webkit-background-clip:text;color:transparent;line-height:1.1;text-transform:uppercase}
+  
+  .user-info{display:none;flex-direction:column;gap:4px;font-size:0.7rem;color:#8ba0b8;margin-top:8px;background:rgba(0,0,0,0.5);padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.05)}
+  .user-info span{color:var(--neon3);font-weight:700; text-shadow: 0 0 5px rgba(0,255,136,0.3);}
 
-  .tabs{display:flex;gap:6px;padding:6px;background:var(--card-bg);border:1px solid rgba(0,240,255,.2);border-radius:16px;overflow-x:auto;scrollbar-width:none}
-  .tab{flex-shrink:0;padding:9px 14px;border:none;border-radius:10px;background:transparent;color:#5e7a94;font-weight:700;font-size:.72rem;text-transform:uppercase;cursor:pointer;}
-  .tab.active{background:linear-gradient(135deg,rgba(0,240,255,.2),rgba(255,0,229,.2));color:#fff;border:1px solid rgba(0,240,255,.4)}
+  .tabs{display:flex;gap:8px;padding:8px;background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;overflow-x:auto;scrollbar-width:none; backdrop-filter: blur(10px);}
+  .tab{flex-shrink:0;padding:10px 16px;border:none;border-radius:12px;background:transparent;color:#8ba0b8;font-weight:700;font-size:.75rem;text-transform:uppercase;cursor:pointer; transition: 0.3s;}
+  .tab.active{background:rgba(0,240,255,0.15);color:var(--neon);border:1px solid rgba(0,240,255,0.3); box-shadow: 0 0 15px rgba(0,240,255,0.1);}
+  
   .panel{display:none;flex-direction:column;gap:10px}
-  .panel.active{display:flex;animation:fadeIn .35s ease}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .panel.active{display:flex;animation:fadeIn .3s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-  .section{background:var(--card-bg);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:14px;}
-  .section-title{display:flex;align-items:center;gap:8px;font-size:.7rem;font-weight:800;text-transform:uppercase;color:#5e7a94;margin-bottom:12px}
-  .section-title::before{content:'';width:3px;height:14px;background:var(--neon);border-radius:2px}
+  .section{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:16px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+  .section-title{display:flex;align-items:center;gap:8px;font-size:.75rem;font-weight:800;text-transform:uppercase;color:#8ba0b8;margin-bottom:16px; letter-spacing: 1px;}
+  .section-title::before{content:'';width:4px;height:16px;background:var(--neon);border-radius:4px; box-shadow: 0 0 10px var(--neon);}
 
-  .cheat-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.05); border-radius: 14px; margin-bottom: 10px; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
-  .cheat-item:hover { background: rgba(255,255,255,.04); }
-  .cheat-item.active { border-color: rgba(0, 240, 255, 0.4); background: linear-gradient(90deg, rgba(0, 240, 255, 0.08), rgba(0,0,0,0)); box-shadow: 0 0 20px rgba(0, 240, 255, 0.1); }
-  .cheat-item.active .cheat-icon { background: rgba(0, 240, 255, 0.15); border-color: var(--neon); box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); color: var(--neon); }
-  .cheat-item.active .name { color: #fff; text-shadow: 0 0 8px var(--neon); }
-  .cheat-icon { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: 12px; font-size: 1.3rem; transition: 0.3s; }
+  /* CHEAT ITEM (CỰC CHẤT) */
+  .cheat-item { 
+    display: flex; align-items: center; gap: 14px; padding: 14px 16px; 
+    background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); 
+    border-radius: 16px; margin-bottom: 12px; cursor: pointer; 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden;
+  }
+  .cheat-item:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
+  .cheat-item.active { 
+    border-color: rgba(0,240,255,0.5); 
+    background: linear-gradient(90deg, rgba(0,240,255,0.1), rgba(0,0,0,0.2)); 
+    box-shadow: 0 0 25px rgba(0,240,255,0.15); transform: translateY(-2px);
+  }
+  .cheat-item.active::before { content: ''; position: absolute; left: 0; top: 0; width: 4px; height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); }
+  
+  .cheat-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; font-size: 1.4rem; transition: 0.3s; }
+  .cheat-item.active .cheat-icon { background: rgba(0,240,255,0.15); border-color: var(--neon); box-shadow: 0 0 15px rgba(0,240,255,0.3); color: var(--neon); }
+  
   .cheat-info { flex: 1; }
-  .cheat-info .name { font-size: 0.95rem; font-weight: 700; color: #b0c4d8; transition: 0.3s; text-transform: uppercase; letter-spacing: 0.5px;}
-  .cheat-info .desc { font-size: 0.65rem; color: #5e7a94; margin-top: 2px; }
+  .cheat-info .name { font-size: 0.95rem; font-weight: 800; color: #fff; transition: 0.3s; text-transform: uppercase; letter-spacing: 0.5px;}
+  .cheat-info .desc { font-size: 0.7rem; color: #8ba0b8; margin-top: 2px; }
+  .cheat-item.active .name { color: var(--neon); text-shadow: 0 0 10px rgba(0,240,255,0.5); }
 
-  .uid-input-box { display: none; margin-top: -5px; margin-bottom: 10px; padding: 12px; background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 12px; animation: slideDown 0.3s ease; }
-  .uid-input-box.show { display: flex; gap: 8px; align-items: center; }
+  /* Ô NHẬP UID */
+  .uid-input-box { display: none; margin-top: -6px; margin-bottom: 12px; padding: 14px; background: rgba(0,240,255,0.05); border: 1px dashed rgba(0,240,255,0.3); border-radius: 16px; animation: slideDown 0.3s ease; }
+  .uid-input-box.show { display: flex; gap: 10px; align-items: center; }
   @keyframes slideDown { from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
-  .uid-input-box input { padding: 10px; border-radius: 8px; border: 1px solid #2a3a4d; background: #03060a; color: var(--neon); font-family: monospace; outline: none; }
-  .uid-input-box input:focus { border-color: var(--neon); box-shadow: 0 0 10px rgba(0,240,255,0.3); }
+  .uid-input-box input { padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: var(--neon); font-family: monospace; outline: none; font-weight: bold;}
+  .uid-input-box input:focus { border-color: var(--neon); box-shadow: 0 0 10px rgba(0,240,255,0.2); }
 
-  .switch { position: relative; display: inline-block; width: 56px; height: 30px; flex-shrink: 0; }
+  /* NÚT GẠT XỊN HƠN */
+  .switch { position: relative; display: inline-block; width: 60px; height: 32px; flex-shrink: 0; }
   .switch input { opacity: 0; width: 0; height: 0; }
-  .slider { position: absolute; cursor: pointer; inset: 0; background: #101a24; border-radius: 30px; border: 2px solid #2a3a4d; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); }
-  .slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #5a6a80; border-radius: 50%; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-  input:checked + .slider { background: rgba(0, 240, 255, 0.15); border-color: var(--neon); box-shadow: inset 0 0 10px rgba(0,240,255,0.3), 0 0 10px rgba(0,240,255,0.2); }
-  input:checked + .slider:before { transform: translateX(26px); background: var(--neon); box-shadow: 0 0 12px var(--neon), 0 0 4px #fff; }
+  .slider { 
+    position: absolute; cursor: pointer; inset: 0; 
+    background: #0f1722; border-radius: 30px; 
+    border: 2px solid #2a3a4d; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); 
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.8);
+  }
+  .slider:before { 
+    content: ""; position: absolute; height: 22px; width: 22px; 
+    left: 3px; bottom: 3px; background: #5a6a80; border-radius: 50%; 
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  }
+  input:checked + .slider { 
+    background: rgba(0,240,255,0.15); border-color: var(--neon); 
+    box-shadow: inset 0 0 15px rgba(0,240,255,0.3), 0 0 15px rgba(0,240,255,0.2); 
+  }
+  input:checked + .slider:before { 
+    transform: translateX(28px); background: var(--neon); 
+    box-shadow: 0 0 15px var(--neon), 0 0 5px #fff; 
+  }
 
-  .btn-row{display:flex;gap:10px}
-  .btn{flex:1;padding:14px;border:none;border-radius:12px;font-weight:900;font-size:.85rem;text-transform:uppercase;cursor:pointer;letter-spacing:1px;transition:0.3s;}
-  .btn-primary{background:linear-gradient(135deg,var(--neon),#0099cc);color:#001a22;box-shadow: 0 0 15px rgba(0,240,255,.3);}
-  .btn-primary:active { transform: scale(0.95); }
-  .btn-danger{background:linear-gradient(135deg,#ff3366,#aa0044);color:#fff;}
+  .btn-row{display:flex;gap:12px; margin-top: 5px;}
+  .btn{flex:1;padding:16px;border:none;border-radius:16px;font-weight:900;font-size:.9rem;text-transform:uppercase;cursor:pointer;letter-spacing:1px;transition:0.3s;}
+  .btn-primary{background:linear-gradient(135deg,var(--neon),#0099cc);color:#001a22;box-shadow: 0 5px 20px rgba(0,240,255,0.3);}
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,240,255,0.5); }
+  .btn-danger{background:rgba(255,51,102,0.1);border:1px solid #ff3366;color:#ff3366;}
+  .btn-danger:hover { background: #ff3366; color: #fff; box-shadow: 0 5px 20px rgba(255,51,102,0.4); }
 
-  .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .gallery a{display:block;aspect-ratio:1/1;border-radius:12px;overflow:hidden;border:1px solid rgba(0,240,255,.15);cursor:pointer}
+  .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .gallery a{display:block;aspect-ratio:1/1;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);cursor:pointer; transition: 0.3s;}
+  .gallery a:hover { border-color: var(--neon); transform: scale(1.05); box-shadow: 0 0 15px rgba(0,240,255,0.3); }
   .gallery img{width:100%;height:100%;object-fit:cover;}
   
-  .lightbox{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px);}
+  .lightbox{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(10px);}
   .lightbox.show{display:flex;}
-  .lightbox img{max-width:100%;max-height:90vh;border-radius:12px;border:2px solid var(--neon);}
-  .lightbox-close{position:absolute;top:20px;right:20px;color:#fff;font-size:24px;cursor:pointer;background:rgba(0,240,255,0.2);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--neon);}
+  .lightbox img{max-width:100%;max-height:90vh;border-radius:16px;border:2px solid var(--neon); box-shadow: 0 0 50px rgba(0,240,255,0.3);}
+  .lightbox-close{position:absolute;top:20px;right:20px;color:#fff;font-size:24px;cursor:pointer;background:rgba(255,255,255,0.1);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.2); transition: 0.3s;}
+  .lightbox-close:hover { background: #ff3366; transform: rotate(90deg); }
 
-  .loading-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 20px; backdrop-filter: blur(5px); }
+  .loading-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 20px; backdrop-filter: blur(10px); }
   .loading-overlay.show { display: flex; }
-  .spinner { width: 60px; height: 60px; border: 4px solid rgba(0,240,255,0.2); border-top: 4px solid var(--neon); border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 20px rgba(0,240,255,0.5); }
+  .spinner { width: 70px; height: 70px; border: 4px solid rgba(0,240,255,0.1); border-top: 4px solid var(--neon); border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 30px rgba(0,240,255,0.3); }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  .loading-text { color: var(--neon); font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; animation: pulseText 1.5s infinite; }
-  @keyframes pulseText { 0%, 100% { opacity: 1; text-shadow: 0 0 10px var(--neon); } 50% { opacity: 0.5; text-shadow: none; } }
+  .loading-text { color: var(--neon); font-weight: 900; font-size: 1.3rem; letter-spacing: 3px; text-transform: uppercase; animation: pulseText 1.5s infinite; }
+  @keyframes pulseText { 0%, 100% { opacity: 1; text-shadow: 0 0 20px var(--neon); } 50% { opacity: 0.5; text-shadow: none; } }
 
-  .mail-item { padding: 12px; border-bottom: 1px solid #1a2a3d; font-size: 0.85rem; color: #cfefff; line-height: 1.4; }
+  .mail-item { padding: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; color: #cfefff; line-height: 1.5; }
   .mail-item:last-child { border-bottom: none; }
-  .mail-time { font-size: 0.65rem; color: #5e7a94; margin-top: 5px; display: block; }
+  .mail-time { font-size: 0.65rem; color: #5e7a94; margin-top: 6px; display: block; }
   
   .coupon-box { display: flex; gap: 10px; margin-bottom: 15px; }
-  .coupon-box input { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #2a3a4d; background: #03060a; color: #ffaa00; font-weight: bold; outline: none; text-transform: uppercase; }
-  .coupon-box button { padding: 10px 15px; background: #ffaa00; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+  .coupon-box input { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: #ffaa00; font-weight: bold; outline: none; text-transform: uppercase; transition: 0.3s;}
+  .coupon-box input:focus { border-color: #ffaa00; box-shadow: 0 0 10px rgba(255,170,0,0.2); }
+  .coupon-box button { padding: 12px 18px; background: rgba(255,170,0,0.1); border: 1px solid #ffaa00; color: #ffaa00; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s;}
+  .coupon-box button:hover { background: #ffaa00; color: #000; box-shadow: 0 0 15px rgba(255,170,0,0.4); }
 </style>
 </head>
 <body>
+
+<div class="glow-orb top-left"></div>
+<div class="glow-orb bottom-right"></div>
+<div class="bg-particles" id="particles"></div>
+<div class="grid-overlay"></div>
 
 <!-- HIỆU ỨNG LOADING -->
 <div class="loading-overlay" id="loadingOverlay">
@@ -194,7 +302,7 @@
   <div class="modal-box" style="max-width:400px;">
     <button class="modal-close" onclick="document.getElementById('mailModal').classList.remove('show')">✕</button>
     <div class="modal-title">HÒM THƯ THÔNG BÁO</div>
-    <div id="mailList" style="max-height: 300px; overflow-y: auto; background: #03060a; border-radius: 10px; border: 1px solid #1a2a3d;">
+    <div id="mailList" style="max-height: 350px; overflow-y: auto; background: rgba(0,0,0,0.5); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
       <div style="padding:20px; text-align:center; color:#5e7a94;">Đang tải...</div>
     </div>
   </div>
@@ -228,15 +336,15 @@
 
 <!-- MODAL SHOP -->
 <div class="modal" id="shopModal">
-  <div class="modal-box" style="max-width: 500px;">
+  <div class="modal-box" style="max-width: 480px;">
     <button class="modal-close" onclick="closeShopModal()">✕</button>
     
     <div class="shop-header">
       <div>
-        <div style="font-size:0.65rem;color:#8ba0b8">XIN CHÀO, <span id="shopUser" style="color:var(--neon)"></span></div>
+        <div style="font-size:0.65rem;color:#8ba0b8; text-transform:uppercase; letter-spacing:1px;">XIN CHÀO, <span id="shopUser" style="color:var(--neon); font-weight:900;"></span></div>
         <div class="shop-balance">💰 <span id="shopBalance">0</span>đ</div>
       </div>
-      <button style="background:#ff3366;color:#fff;border:none;padding:6px 12px;border-radius:8px;font-size:0.7rem;font-weight:bold;cursor:pointer" onclick="logoutShop()">ĐĂNG XUẤT</button>
+      <button style="background:rgba(255,51,102,0.2);color:#ff3366;border:1px solid #ff3366;padding:8px 14px;border-radius:10px;font-size:0.75rem;font-weight:bold;cursor:pointer; transition:0.3s;" onmouseover="this.style.background='#ff3366'; this.style.color='#fff'" onmouseout="this.style.background='rgba(255,51,102,0.2)'; this.style.color='#ff3366'" onclick="logoutShop()">ĐĂNG XUẤT</button>
     </div>
 
     <div class="shop-nav">
@@ -262,12 +370,12 @@
       </div>
       
       <div id="qrContainer" style="display:none; text-align:center; margin-top:15px;">
-        <p style="font-size:0.8rem;color:#8ba0b8;margin-bottom:10px">Quét mã QR bên dưới để thanh toán</p>
-        <img id="qrImage" src="" style="width:200px;height:200px;border-radius:12px;border:2px solid var(--neon);object-fit:cover; margin-bottom:10px;">
+        <p style="font-size:0.8rem;color:#8ba0b8;margin-bottom:15px">Quét mã QR bên dưới để thanh toán</p>
+        <img id="qrImage" src="" style="width:220px;height:220px;border-radius:16px;border:2px solid var(--neon);object-fit:cover; margin-bottom:15px; box-shadow: 0 0 20px rgba(0,240,255,0.2);">
         
-        <div style="background:rgba(255,170,0,0.1);border:1px solid var(--neon4);padding:10px;border-radius:8px;margin-top:10px;">
-           <p style="color:var(--neon4);font-size:0.75rem;font-weight:bold;margin-bottom:5px;">⚠️ QUAN TRỌNG</p>
-           <p style="font-size:0.7rem;color:#8ba0b8;line-height:1.5">Vui lòng chuyển <strong style="color:#fff">ĐÚNG SỐ TIỀN</strong> đã nhập và khi bên server duyệt thì hiện thông báo thành công cho họ biết.</p>
+        <div style="background:rgba(255,170,0,0.1);border:1px solid var(--neon4);padding:14px;border-radius:12px;margin-top:10px;">
+           <p style="color:var(--neon4);font-size:0.8rem;font-weight:bold;margin-bottom:6px; text-transform:uppercase;">⚠️ QUAN TRỌNG</p>
+           <p style="font-size:0.75rem;color:#cfefff;line-height:1.6">Vui lòng chuyển <strong style="color:#fff">ĐÚNG SỐ TIỀN</strong> đã nhập và khi bên server duyệt thì hiện thông báo thành công cho họ biết.</p>
         </div>
         <button class="btn-full" onclick="confirmTopup()" style="margin-top:15px; background:linear-gradient(135deg, #00ff88, #009944);">TÔI ĐÃ CHUYỂN KHOẢN</button>
       </div>
@@ -281,26 +389,19 @@
   </div>
 </div>
 
+<!-- MÀN HÌNH CHÍNH (BỎ XÁC THỰC THIẾT BỊ) -->
 <div class="lock-screen" id="lockScreen">
   <div class="lock-box">
     <div class="lock-logo">
       <h1>INNOVA</h1>
-      <p>▸ CHEAT ULTIMATE v11 ◂</p>
-    </div>
-    <div class="verify-section">
-      <div class="verify-header">XÁC THỰC THIẾT BỊ</div>
-      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-      <div class="progress-info">
-        <span class="verify-status" id="verifyStatus">Đang khởi tạo...</span>
-        <span class="progress-percent" id="progressPercent">0%</span>
-      </div>
+      <p>▸ ULTIMATE v12 ◂</p>
     </div>
     
-    <div class="key-section">
+    <div class="key-section" style="margin-top: 30px;">
       <label class="key-label">🔑 NHẬP KEY BẢN QUYỀN</label>
       <div class="key-input-wrap">
         <input type="text" class="key-input" id="keyInput" placeholder="INNOVA-XXXX-XXXX-XXXX" maxlength="30" autocomplete="off">
-        <button class="btn-unlock" id="unlockBtn" disabled>MỞ KHÓA</button>
+        <button class="btn-unlock" id="unlockBtn">MỞ KHÓA</button>
       </div>
       <div class="key-msg" id="keyMsg"></div>
     </div>
@@ -324,7 +425,8 @@
   </div>
 </div>
 
-<div class="app" id="app" style="display:none">
+<!-- APP CHÍNH (SAU KHI LOGIN) -->
+<div class="app" id="app">
   <div class="header">
     <div class="avatar-wrap">
       <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/68/1a2230/00f0ff?text=IC'">
@@ -356,7 +458,7 @@
       </div>
       <div class="uid-input-box" id="uidBox">
         <input type="number" id="uidInput" placeholder="Nhập UID (8-12 số)" style="flex:2;" min="10000000" max="999999999999">
-        <select id="likeCount" class="form-input" style="flex:1; padding:10px; color:#00f0ff; background:#03060a;">
+        <select id="likeCount" class="form-input" style="flex:1; padding:12px; color:#00f0ff; background:rgba(0,0,0,0.5); border-radius:10px;">
           <option value="100">100 Like</option>
           <option value="500">500 Like</option>
           <option value="1000" selected>1000 Like</option>
@@ -438,6 +540,18 @@ let isRegisterMode = false;
 let checkStatusInterval = null;
 let currentDiscountCode = ""; 
 
+// KHỞI TẠO PARTICLES
+const pWrap = document.getElementById('particles');
+for(let i=0;i<50;i++){
+  const s = document.createElement('span');
+  s.style.left = Math.random()*100 + '%';
+  s.style.animationDuration = (5 + Math.random()*10) + 's';
+  s.style.animationDelay = (Math.random()*5) + 's';
+  s.style.background = ['#00f0ff','#ff00e5','#00ff88'][Math.floor(Math.random()*3)];
+  s.style.width = s.style.height = (1 + Math.random()*3) + 'px';
+  pWrap.appendChild(s);
+}
+
 function openLightbox(src) {
   document.getElementById('lightboxImg').src = src;
   document.getElementById('lightbox').classList.add('show');
@@ -457,7 +571,7 @@ async function openMailbox() {
       d.notifications.forEach(n => {
         const div = document.createElement('div');
         div.className = 'mail-item';
-        div.innerHTML = `<div style="color:#00f0ff;">📢 ${n.message}</div><span class="mail-time">${new Date(n.created_at).toLocaleString('vi-VN')}</span>`;
+        div.innerHTML = `<div style="color:#00f0ff; font-weight: 600;">📢 ${n.message}</div><span class="mail-time">${new Date(n.created_at).toLocaleString('vi-VN')}</span>`;
         el.appendChild(div);
       });
     } else {
@@ -493,45 +607,6 @@ async function applyCoupon() {
     msg.textContent = 'Lỗi kết nối!'; msg.style.color = '#ff4466';
   }
 }
-
-const pWrap = document.getElementById('particles');
-for(let i=0;i<40;i++){
-  const s = document.createElement('span');
-  s.style.left = Math.random()*100 + '%';
-  s.style.animationDuration = (6 + Math.random()*10) + 's';
-  s.style.background = ['#00f0ff','#ff00e5','#00ff88'][Math.floor(Math.random()*3)];
-  s.style.width = s.style.height = (1 + Math.random()*3) + 'px';
-  pWrap.appendChild(s);
-}
-
-let currentStep = 0, currentPercent = 0, verifyDone = false;
-const verifySteps = [{ end:25, msg:'Khởi tạo...' }, { end:60, msg:'Xác thực GPU...' }, { end:100, msg:'Hoàn tất!' }];
-function runVerification(){
-  if(currentStep >= verifySteps.length){
-    verifyDone = true;
-    document.getElementById('progressFill').style.width = '100%';
-    document.getElementById('progressPercent').textContent = '100%';
-    document.getElementById('verifyStatus').textContent = '✓ Thiết bị đã xác thực';
-    document.getElementById('verifyStatus').style.color = '#00ff88';
-    document.getElementById('unlockBtn').disabled = false;
-    document.getElementById('keyMsg').textContent = '🔓 Nhập key để mở khóa';
-    document.getElementById('keyMsg').className = 'key-msg info';
-    return;
-  }
-  const step = verifySteps[currentStep];
-  document.getElementById('verifyStatus').textContent = step.msg;
-  const target = step.end, start = currentPercent, time = performance.now();
-  function anim(now){
-    const prog = Math.min((now-time)/400, 1);
-    currentPercent = start + (target-start)*prog;
-    document.getElementById('progressFill').style.width = currentPercent + '%';
-    document.getElementById('progressPercent').textContent = Math.floor(currentPercent) + '%';
-    if(prog < 1) requestAnimationFrame(anim);
-    else { currentStep++; setTimeout(runVerification, 200); }
-  }
-  requestAnimationFrame(anim);
-}
-setTimeout(runVerification, 500);
 
 function openShop() {
   if (currentUser) {
@@ -614,7 +689,7 @@ function switchShopTab(tabId, btn) {
 
 async function loadShopKeys() {
   const el = document.getElementById('shopList');
-  el.innerHTML = '<p style="text-align:center;color:#8ba0b8">Đang tải...</p>';
+  el.innerHTML = '<p style="text-align:center;color:#8ba0b8; padding: 20px;">Đang tải...</p>';
   const r = await fetch(SERVER_URL + '/api/shop/keys');
   const d = await r.json();
   el.innerHTML = '';
@@ -633,7 +708,7 @@ async function loadShopKeys() {
       el.appendChild(div);
     });
   } else {
-    el.innerHTML = '<p style="text-align:center;color:#8ba0b8">Cửa hàng đang trống.</p>';
+    el.innerHTML = '<p style="text-align:center;color:#8ba0b8; padding: 20px;">Cửa hàng đang trống.</p>';
   }
 }
 
@@ -682,13 +757,13 @@ async function confirmTopup() {
     
     if(d.ok) {
       document.getElementById('qrContainer').innerHTML = `
-        <div style="background:rgba(0,240,255,0.1);border:1px solid var(--neon);padding:20px;border-radius:12px;margin-top:15px;text-align:center;">
-          <h3 style="color:var(--neon);font-size:1.1rem;margin-bottom:10px;">⏳ ĐANG XÁC THỰC</h3>
-          <p style="font-size:0.8rem;color:#8ba0b8;line-height:1.6;">
+        <div style="background:rgba(0,240,255,0.1);border:1px solid var(--neon);padding:24px;border-radius:16px;margin-top:15px;text-align:center;">
+          <h3 style="color:var(--neon);font-size:1.1rem;margin-bottom:12px;">⏳ ĐANG XÁC THỰC</h3>
+          <p style="font-size:0.85rem;color:#cfefff;line-height:1.6;">
             Yêu cầu nạp <strong>${amt.toLocaleString('vi-VN')}đ</strong> của bạn đã được gửi.<br>
-            Vui lòng chờ <strong>Admin kiểm tra và cộng tiền</strong>. Quá trình này có thể mất vài phút.
+            Vui lòng chờ <strong>Admin kiểm tra và cộng tiền</strong>.
           </p>
-          <button class="btn-full" onclick="closeShopModal(); location.reload();" style="margin-top:15px;background:#334">ĐÓNG</button>
+          <button class="btn-full" onclick="closeShopModal(); location.reload();" style="margin-top:20px;background:rgba(255,255,255,0.1); border: 1px solid #fff; color: #fff;">ĐÓNG</button>
         </div>
       `;
 
@@ -704,12 +779,12 @@ async function confirmTopup() {
             currentUser.balance = checkData.newBalance;
             updateShopUI();
             document.getElementById('qrContainer').innerHTML = `
-              <div style="background:rgba(0,255,136,0.1);border:1px solid var(--neon3);padding:20px;border-radius:12px;margin-top:15px;text-align:center;">
-                <h3 style="color:var(--neon3);font-size:1.1rem;margin-bottom:10px;">✅ NẠP THÀNH CÔNG</h3>
-                <p style="font-size:0.8rem;color:#8ba0b8;line-height:1.6;">
-                  Số tiền <strong>${amt.toLocaleString('vi-VN')}đ</strong> đã được cộng vào tài khoản của bạn!
+              <div style="background:rgba(0,255,136,0.1);border:1px solid var(--neon3);padding:24px;border-radius:16px;margin-top:15px;text-align:center;">
+                <h3 style="color:var(--neon3);font-size:1.1rem;margin-bottom:12px;">✅ NẠP THÀNH CÔNG</h3>
+                <p style="font-size:0.85rem;color:#cfefff;line-height:1.6;">
+                  Số tiền <strong>${amt.toLocaleString('vi-VN')}đ</strong> đã được cộng vào tài khoản!
                 </p>
-                <button class="btn-full" onclick="closeShopModal()" style="margin-top:15px;background:var(--neon3); color:#000;">HOÀN TẤT</button>
+                <button class="btn-full" onclick="closeShopModal()" style="margin-top:20px;background:var(--neon3); color:#000;">HOÀN TẤT</button>
               </div>
             `;
           }
@@ -727,7 +802,7 @@ async function confirmTopup() {
 
 async function loadHistory() {
   const el = document.getElementById('historyList');
-  el.innerHTML = '<p style="text-align:center;color:#8ba0b8">Đang tải...</p>';
+  el.innerHTML = '<p style="text-align:center;color:#8ba0b8; padding: 20px;">Đang tải...</p>';
   const r = await fetch(SERVER_URL + '/api/shop/history?username=' + currentUser.username);
   const d = await r.json();
   el.innerHTML = '';
@@ -735,22 +810,21 @@ async function loadHistory() {
     d.history.forEach(k => {
       const div = document.createElement('div');
       div.className = 'shop-item';
-      div.style.padding = '15px';
+      div.style.padding = '16px';
       div.innerHTML = `
         <div style="flex:1">
-          <div style="color:#00ff88;font-family:monospace;font-size:1rem;font-weight:bold">${k.key}</div>
-          <div style="font-size:0.7rem;color:#8ba0b8;margin-top:5px">${k.name || 'Key'} - Đã mua</div>
+          <div style="color:#00ff88;font-family:monospace;font-size:1rem;font-weight:bold; letter-spacing:1px;">${k.key}</div>
+          <div style="font-size:0.75rem;color:#8ba0b8;margin-top:6px">${k.name || 'Key'} - Đã mua</div>
         </div>
       `;
       el.appendChild(div);
     });
   } else {
-    el.innerHTML = '<p style="text-align:center;color:#8ba0b8">Chưa mua Key nào.</p>';
+    el.innerHTML = '<p style="text-align:center;color:#8ba0b8; padding: 20px;">Chưa mua Key nào.</p>';
   }
 }
 
 document.getElementById('unlockBtn').addEventListener('click', async ()=>{
-  if(!verifyDone) return;
   const key = document.getElementById('keyInput').value.trim().toUpperCase();
   const msg = document.getElementById('keyMsg');
   if(!key){ msg.textContent = '⚠️ Vui lòng nhập key'; msg.className = 'key-msg err'; return; }
@@ -761,7 +835,6 @@ document.getElementById('unlockBtn').addEventListener('click', async ()=>{
     window.audioEl = new Audio('https://files.catbox.moe/ij9uix.mp3');
     window.audioEl.loop = true;
     window.audioEl.play().catch(e=>console.log('Autoplay blocked'));
-    document.getElementById('musicIndicator').style.display = 'flex';
   }
 
   try {
