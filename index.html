@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INNOVA CHEAT · ULTIMATE v14</title>
+<title>INNOVA CHEAT · ULTIMATE v15</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
   :root { 
@@ -12,7 +12,7 @@
     --neon3:#00ff88; 
     --neon4:#ffaa00; 
     --bg-dark:#05070d; 
-    --glass: rgba(16, 24, 38, 0.7);
+    --glass: rgba(16, 24, 38, 0.75);
     --glass-border: rgba(0, 240, 255, 0.25);
   }
   body { 
@@ -34,11 +34,11 @@
 
   /* HÒM THƯ */
   .mailbox-icon {
-    position: absolute; top: 15px; right: 15px; z-index: 50;
+    position: absolute; top: 10px; right: 10px; z-index: 50;
     background: var(--glass); border: 1px solid var(--glass-border);
-    width: 44px; height: 44px; border-radius: 50%;
+    width: 40px; height: 40px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: 0.3s; font-size: 1.2rem;
+    cursor: pointer; transition: 0.3s; font-size: 1.1rem;
     box-shadow: 0 0 15px rgba(0,240,255,0.2); backdrop-filter: blur(8px);
   }
   .mailbox-icon:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--neon); }
@@ -88,14 +88,15 @@
   .btn-buy{padding:8px 16px;background:linear-gradient(135deg, var(--neon), #0099cc);color:#000;border:none;border-radius:8px;font-weight:900;cursor:pointer;font-size:0.75rem; box-shadow: 0 0 10px rgba(0,240,255,0.3);}
 
   /* MÀN HÌNH CHÍNH (LOCK SCREEN) */
-  .lock-screen{position:fixed;inset:0;z-index:100;background:transparent;display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity .6s,visibility .6s; overflow-y: auto;}
+  .lock-screen{position:fixed;inset:0;z-index:100;background:transparent;display:flex;align-items:center;justify-content:center;padding:15px;transition:opacity .6s,visibility .6s; overflow-y: auto;}
   .lock-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
   
   .lock-box{
-    width:100%;max-width:440px;background:var(--glass);border:1px solid var(--glass-border);
-    border-radius:28px;padding:30px 24px;
+    width:100%;max-width:400px; /* Thu nhỏ chiều rộng */
+    background:var(--glass);border:1px solid var(--glass-border);
+    border-radius:24px;padding:24px 20px; /* Thu nhỏ padding */
     box-shadow:0 25px 50px rgba(0,0,0,0.8), inset 0 0 30px rgba(0,240,255,0.05);
-    position:relative;overflow:hidden; margin: 20px 0; backdrop-filter: blur(20px);
+    position:relative;overflow:hidden; margin: 15px 0; backdrop-filter: blur(20px);
   }
   
   /* Hiệu ứng ánh sáng chạy qua viền */
@@ -105,44 +106,44 @@
     animation: rotateBorder 4s linear infinite; z-index: -1;
   }
   .lock-box::after {
-    content: ''; position: absolute; inset: 2px; background: var(--bg-dark); border-radius: 26px; z-index: -1;
+    content: ''; position: absolute; inset: 2px; background: var(--bg-dark); border-radius: 22px; z-index: -1;
   }
   @keyframes rotateBorder { 100% { transform: rotate(360deg); } }
 
-  /* AVATAR & TÊN */
+  /* AVATAR & TÊN (ĐÃ THU NHỎ) */
   .app-profile {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    margin-bottom: 24px; text-align: center;
+    margin-bottom: 20px; text-align: center;
   }
   .app-profile img {
-    width: 85px; height: 85px; border-radius: 50%; object-fit: cover;
-    border: 3px solid var(--neon); box-shadow: 0 0 20px rgba(0,240,255,0.4);
-    margin-bottom: 12px; background: #000;
+    width: 65px; height: 65px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--neon); box-shadow: 0 0 15px rgba(0,240,255,0.4);
+    margin-bottom: 8px; background: #000;
   }
   .app-profile h1 {
-    font-size: 1.8rem; font-weight: 900; letter-spacing: 3px;
+    font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;
     background: linear-gradient(90deg, #fff, var(--neon), var(--neon2), #fff); background-size: 300% auto;
     -webkit-background-clip: text; background-clip: text; color: transparent;
     animation: gm 4s linear infinite; text-transform: uppercase;
-    filter: drop-shadow(0 0 10px rgba(0,240,255,0.5));
+    filter: drop-shadow(0 0 8px rgba(0,240,255,0.5));
   }
   @keyframes gm { 0%{background-position:0% center} 100%{background-position:300% center} }
   .app-profile p {
-    font-size: 0.65rem; color: var(--neon); letter-spacing: 4px; text-transform: uppercase;
-    margin-top: 4px; font-weight: 700;
+    font-size: 0.6rem; color: var(--neon); letter-spacing: 3px; text-transform: uppercase;
+    margin-top: 2px; font-weight: 700;
   }
 
   .key-section{margin-bottom:20px}
-  .key-label{display:block;font-size:.75rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#8ba0b8;margin-bottom:10px; text-align: center;}
-  .key-input-wrap{display:flex;gap:8px; background: rgba(0,0,0,0.5); padding: 6px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s;}
-  .key-input-wrap:focus-within { border-color: var(--neon); box-shadow: 0 0 20px rgba(0,240,255,0.2); }
-  .key-input{flex:1;padding:12px 14px;background:transparent;border:none;color:#fff;font-weight:700;font-family:'Courier New',monospace;font-size:1rem;outline:none; text-align: center; letter-spacing: 1px;}
+  .key-label{display:block;font-size:.7rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#8ba0b8;margin-bottom:8px; text-align: center;}
+  .key-input-wrap{display:flex;gap:6px; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s;}
+  .key-input-wrap:focus-within { border-color: var(--neon); box-shadow: 0 0 15px rgba(0,240,255,0.2); }
+  .key-input{flex:1;padding:10px 12px;background:transparent;border:none;color:#fff;font-weight:700;font-family:'Courier New',monospace;font-size:0.9rem;outline:none; text-align: center; letter-spacing: 1px;}
   .key-input::placeholder { color: #4a5a70; }
-  .btn-unlock{padding:12px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--neon),#0099cc);color:#001a22;font-weight:900;font-size:.8rem;cursor:pointer; transition: 0.3s;}
+  .btn-unlock{padding:10px 16px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--neon),#0099cc);color:#001a22;font-weight:900;font-size:.75rem;cursor:pointer; transition: 0.3s;}
   .btn-unlock:disabled{opacity:.3;cursor:not-allowed; filter: grayscale(1);}
   .btn-unlock:hover:not(:disabled) { box-shadow: 0 0 15px var(--neon); transform: scale(1.05); }
   
-  .key-msg{font-size:.75rem;margin-top:10px;min-height:16px;font-weight:600; text-align: center;}
+  .key-msg{font-size:.7rem;margin-top:8px;min-height:16px;font-weight:600; text-align: center;}
   .key-msg.ok{color:var(--neon3); text-shadow: 0 0 8px rgba(0,255,136,0.5);} 
   .key-msg.err{color:#ff4466; text-shadow: 0 0 8px rgba(255,68,102,0.5);} 
   .key-msg.info{color:var(--neon)}
@@ -150,28 +151,28 @@
   /* CÁC BƯỚC CÀI ĐẶT */
   .install-steps {
     background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 16px; padding: 16px; margin-top: 20px; margin-bottom: 10px;
+    border-radius: 14px; padding: 14px; margin-top: 15px; margin-bottom: 10px;
   }
   .install-title {
-    font-size: 0.75rem; color: var(--neon4); font-weight: 800; text-transform: uppercase;
-    letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+    font-size: 0.7rem; color: var(--neon4); font-weight: 800; text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
   }
-  .step-item { display: flex; gap: 12px; margin-bottom: 12px; position: relative; }
+  .step-item { display: flex; gap: 10px; margin-bottom: 10px; position: relative; }
   .step-item:last-child { margin-bottom: 0; }
   .step-num {
-    width: 24px; height: 24px; border-radius: 50%; background: rgba(0,240,255,0.1);
-    border: 1px solid var(--neon); color: var(--neon); font-size: 0.75rem; font-weight: bold;
+    width: 20px; height: 20px; border-radius: 50%; background: rgba(0,240,255,0.1);
+    border: 1px solid var(--neon); color: var(--neon); font-size: 0.65rem; font-weight: bold;
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
-  .step-text { font-size: 0.75rem; color: #b0c4d8; line-height: 1.5; }
+  .step-text { font-size: 0.7rem; color: #b0c4d8; line-height: 1.4; }
   .step-text strong { color: #fff; }
 
   .shop-btn-container { margin-top: 15px; display: flex; gap: 10px; }
   .btn-shop-trigger {
-    flex: 1; padding: 16px; background: linear-gradient(135deg, #ff00e5, #7000ff);
-    color: #fff; font-weight: 900; font-size: 0.95rem; text-align: center;
-    border-radius: 16px; border: none; cursor: pointer; box-shadow: 0 5px 20px rgba(255,0,229,0.4);
-    text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 10px;
+    flex: 1; padding: 14px; background: linear-gradient(135deg, #ff00e5, #7000ff);
+    color: #fff; font-weight: 900; font-size: 0.85rem; text-align: center;
+    border-radius: 14px; border: none; cursor: pointer; box-shadow: 0 5px 20px rgba(255,0,229,0.4);
+    text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 8px;
     transition: 0.3s; position: relative; overflow: hidden;
   }
   .btn-shop-trigger::before {
@@ -182,16 +183,16 @@
   .btn-shop-trigger:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(255,0,229,0.6); }
   .btn-shop-trigger:hover::before { left: 200%; }
 
-  .extra-section { margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(255,255,255,0.1); text-align: center; }
+  .extra-section { margin-top: 20px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); text-align: center; }
   .zalo-btn { 
-    display: inline-flex; align-items: center; gap: 8px; 
+    display: inline-flex; align-items: center; gap: 6px; 
     background: linear-gradient(135deg, #0068FF, #00C6FF); color: #fff; 
-    padding: 12px 24px; border-radius: 30px; font-weight: 800; text-decoration: none; 
-    font-size: 0.9rem; box-shadow: 0 5px 15px rgba(0, 104, 255, 0.4); margin-bottom: 15px; 
+    padding: 10px 20px; border-radius: 30px; font-weight: 800; text-decoration: none; 
+    font-size: 0.8rem; box-shadow: 0 5px 15px rgba(0, 104, 255, 0.4); margin-bottom: 12px; 
     text-transform: uppercase; transition: 0.3s; 
   }
   .zalo-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 25px rgba(0, 104, 255, 0.6); }
-  .app-intro { font-size: 0.7rem; color: #8ba0b8; line-height: 1.6; margin-top: 10px; }
+  .app-intro { font-size: 0.65rem; color: #8ba0b8; line-height: 1.5; margin-top: 8px; }
   .app-intro strong { color: #00f0ff; }
 
   /* MAIN APP UI */
@@ -218,7 +219,7 @@
   .section-title{display:flex;align-items:center;gap:8px;font-size:.75rem;font-weight:800;text-transform:uppercase;color:#8ba0b8;margin-bottom:16px; letter-spacing: 1px;}
   .section-title::before{content:'';width:4px;height:16px;background:var(--neon);border-radius:4px; box-shadow: 0 0 10px var(--neon);}
 
-  /* CHEAT ITEM (UPDATE THEO ẢNH) */
+  /* CHEAT ITEM */
   .cheat-item { 
     display: flex; align-items: center; gap: 14px; padding: 14px 16px; 
     background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); 
@@ -241,13 +242,7 @@
   .cheat-info .desc { font-size: 0.7rem; color: #8ba0b8; margin-top: 2px; }
   .cheat-item.active .name { color: var(--neon); text-shadow: 0 0 10px rgba(0,240,255,0.5); }
 
-  .uid-input-box { display: none; margin-top: -6px; margin-bottom: 12px; padding: 14px; background: rgba(0,240,255,0.05); border: 1px dashed rgba(0,240,255,0.3); border-radius: 16px; animation: slideDown 0.3s ease; }
-  .uid-input-box.show { display: flex; gap: 10px; align-items: center; }
-  @keyframes slideDown { from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
-  .uid-input-box input { padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: var(--neon); font-family: monospace; outline: none; font-weight: bold;}
-  .uid-input-box input:focus { border-color: var(--neon); box-shadow: 0 0 10px rgba(0,240,255,0.2); }
-
-  .switch { position: relative; display: inline-block; width: 60px; height: 32px; flex-shrink: 0; }
+  .switch { position: relative; display: inline-block; width: 56px; height: 30px; flex-shrink: 0; }
   .switch input { opacity: 0; width: 0; height: 0; }
   .slider { 
     position: absolute; cursor: pointer; inset: 0; 
@@ -256,7 +251,7 @@
     box-shadow: inset 0 3px 6px rgba(0,0,0,0.8);
   }
   .slider:before { 
-    content: ""; position: absolute; height: 22px; width: 22px; 
+    content: ""; position: absolute; height: 20px; width: 20px; 
     left: 3px; bottom: 3px; background: #5a6a80; border-radius: 50%; 
     transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); 
     box-shadow: 0 2px 5px rgba(0,0,0,0.5);
@@ -266,7 +261,7 @@
     box-shadow: inset 0 0 15px rgba(0,240,255,0.3), 0 0 15px rgba(0,240,255,0.2); 
   }
   input:checked + .slider:before { 
-    transform: translateX(28px); background: var(--neon); 
+    transform: translateX(26px); background: var(--neon); 
     box-shadow: 0 0 15px var(--neon), 0 0 5px #fff; 
   }
 
@@ -279,7 +274,7 @@
 
   /* GALLERY CHUYỂN RA NGOÀI */
   .gallery-section {
-    width: 100%; max-width: 440px; margin-top: 20px;
+    width: 100%; max-width: 400px; margin-top: 20px; /* Thu nhỏ chiều rộng */
     background: var(--glass); border: 1px solid var(--glass-border);
     border-radius: 24px; padding: 20px; backdrop-filter: blur(15px);
     box-shadow: 0 25px 50px rgba(0,0,0,0.8);
@@ -431,7 +426,7 @@
     <div class="app-profile">
       <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/85/1a2230/00f0ff?text=IC'">
       <h1>INNOVACHEAT</h1>
-      <p>▸ ULTIMATE v14 ◂</p>
+      <p>▸ ULTIMATE v15 ◂</p>
     </div>
 
     <!-- Ô NHẬP KEY ĐÃ ĐƯỢC ĐƯA VÀO ĐÚNG VỊ TRÍ -->
@@ -488,7 +483,7 @@
     </div>
   </div>
 
-  <!-- ẢNH GIỚI THIỆU -->
+  <!-- ẢNH GIỚI THIỆU (THU NHỎ) -->
   <div class="gallery-section">
     <div class="section-title" style="margin-bottom:12px; color:#8ba0b8;">HÌNH ẢNH GIỚI THIỆU</div>
     <div class="gallery">
@@ -501,7 +496,7 @@
   </div>
 </div>
 
-<!-- APP CHÍNH (ĐÃ CẬP NHẬT CHỨC NĂNG THEO ẢNH) -->
+<!-- APP CHÍNH -->
 <div class="app" id="app">
   <div class="header">
     <div class="avatar-wrap">
@@ -522,7 +517,7 @@
     <button class="tab" data-tab="misc"><span class="ico">⚙️</span>MISC</button>
   </div>
 
-  <!-- TAB COMBAT (CẬP NHẬT THEO ẢNH 1) -->
+  <!-- TAB COMBAT -->
   <div class="panel active" id="panel-combat">
     <div class="section">
       <div class="section-title">COMBAT MODULES</div>
@@ -555,7 +550,7 @@
     </div>
   </div>
 
-  <!-- TAB VISUAL (CẬP NHẬT THEO ẢNH 2) -->
+  <!-- TAB VISUAL -->
   <div class="panel" id="panel-visual">
     <div class="section">
       <div class="section-title">VISUAL MODULES</div>
@@ -588,7 +583,7 @@
     </div>
   </div>
 
-  <!-- TAB MISC (CẬP NHẬT THEO ẢNH 3, 4, 5) -->
+  <!-- TAB MISC -->
   <div class="panel" id="panel-misc">
     <div class="section">
       <div class="section-title">MISC MODULES</div>
