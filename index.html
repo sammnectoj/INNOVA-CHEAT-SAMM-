@@ -257,7 +257,7 @@
 <!-- MODAL SHOP -->
 <div class="modal" id="shopModal">
   <div class="modal-box" style="max-width: 500px;">
-    <button class="modal-close" onclick="document.getElementById('shopModal').classList.remove('show')">✕</button>
+    <button class="modal-close" onclick="closeShopModal()">✕</button>
     
     <div class="shop-header">
       <div>
@@ -289,12 +289,13 @@
         
         <div style="background:rgba(255,170,0,0.1);border:1px solid var(--neon4);padding:10px;border-radius:8px;margin-top:10px;">
            <p style="color:var(--neon4);font-size:0.75rem;font-weight:bold;margin-bottom:5px;">⚠️ QUAN TRỌNG</p>
-           <p style="font-size:0.7rem;color:#8ba0b8;line-height:1.5">Vui lòng chuyển <strong style="color:#fff">ĐÚNG SỐ TIỀN</strong> đã nhập. Hệ thống sẽ tự động hiển thị trạng thái <strong>Chờ Duyệt</strong> sau khi bạn chuyển khoản.</p>
+           <p style="font-size:0.7rem;color:#8ba0b8;line-height:1.5">Vui lòng chuyển <strong style="color:#fff">ĐÚNG SỐ TIỀN</strong> đã nhập và khi bên server duyệt thì hiện thông báo thành công cho họ biết.</p>
         </div>
         <button class="btn-full" onclick="confirmTopup()" style="margin-top:15px; background:linear-gradient(135deg, #00ff88, #009944);">TÔI ĐÃ CHUYỂN KHOẢN</button>
       </div>
 
-      <button class="btn-full" id="btnShowQR" onclick="showQR()" style="margin-top:15px;">LẤY MÃ QR NẠP TIỀN</button>
+      <!-- ĐÃ ĐỔI THÀNH NẠP TIỀN -->
+      <button class="btn-full" id="btnShowQR" onclick="showQR()" style="margin-top:15px;">NẠP TIỀN</button>
     </div>
 
     <div id="shop-history" class="shop-tab-content" style="display:none">
@@ -474,6 +475,7 @@ const QR_IMAGE_URL = 'https://files.catbox.moe/4ot0fd.jpeg';
 
 let currentUser = null;
 let isRegisterMode = false;
+let checkStatusInterval = null; // Biến dùng để kiểm tra trạng thái nạp tiền tự động
 
 function openLightbox(src) {
   document.getElementById('lightboxImg').src = src;
@@ -531,6 +533,15 @@ function openShop() {
   }
 }
 
+function closeShopModal() {
+  document.getElementById('shopModal').classList.remove('show');
+  // Tắt kiểm tra tự động nếu đang chạy
+  if(checkStatusInterval) {
+    clearInterval(checkStatusInterval);
+    checkStatusInterval = null;
+  }
+}
+
 function toggleAuthMode() {
   isRegisterMode = !isRegisterMode;
   document.getElementById('authTitle').textContent = isRegisterMode ? 'ĐĂNG KÝ TÀI KHOẢN' : 'ĐĂNG NHẬP SHOP';
@@ -580,7 +591,7 @@ function updateShopUI() {
 
 function logoutShop() {
   currentUser = null;
-  document.getElementById('shopModal').classList.remove('show');
+  closeShopModal();
   document.getElementById('authModal').classList.remove('show');
   document.getElementById('authUser').value = '';
   document.getElementById('authPass').value = '';
@@ -668,9 +679,41 @@ async function confirmTopup() {
             Yêu cầu nạp <strong>${amt.toLocaleString('vi-VN')}đ</strong> của bạn đã được gửi.<br>
             Vui lòng chờ <strong>Admin kiểm tra và cộng tiền</strong>. Quá trình này có thể mất vài phút.
           </p>
-          <button class="btn-full" onclick="location.reload()" style="margin-top:15px;background:#334">ĐÓNG</button>
+          <button class="btn-full" onclick="closeShopModal(); location.reload();" style="margin-top:15px;background:#334">ĐÓNG</button>
         </div>
       `;
+
+      // BẮT ĐẦU KIỂM TRA TRẠNG THÁI TỰ ĐỘNG (POLLING)
+      if(checkStatusInterval) clearInterval(checkStatusInterval);
+      checkStatusInterval = setInterval(async () => {
+        try {
+          const checkRes = await fetch(SERVER_URL + '/api/shop/check-topup-status?username=' + currentUser.username);
+          const checkData = await checkRes.json();
+          
+          if (checkData.ok && checkData.status === 'success') {
+            clearInterval(checkStatusInterval);
+            checkStatusInterval = null;
+            
+            // Cập nhật lại số dư
+            currentUser.balance = checkData.newBalance;
+            updateShopUI();
+
+            // Hiển thị thông báo thành công
+            document.getElementById('qrContainer').innerHTML = `
+              <div style="background:rgba(0,255,136,0.1);border:1px solid var(--neon3);padding:20px;border-radius:12px;margin-top:15px;text-align:center;">
+                <h3 style="color:var(--neon3);font-size:1.1rem;margin-bottom:10px;">✅ NẠP THÀNH CÔNG</h3>
+                <p style="font-size:0.8rem;color:#8ba0b8;line-height:1.6;">
+                  Số tiền <strong>${amt.toLocaleString('vi-VN')}đ</strong> đã được cộng vào tài khoản của bạn!
+                </p>
+                <button class="btn-full" onclick="closeShopModal()" style="margin-top:15px;background:var(--neon3); color:#000;">HOÀN TẤT</button>
+              </div>
+            `;
+          }
+        } catch (err) {
+          console.log('Đang chờ duyệt...');
+        }
+      }, 3000); // Kiểm tra mỗi 3 giây
+
     } else {
       alert(d.error);
       btn.textContent = 'TÔI ĐÃ CHUYỂN KHOẢN'; btn.disabled = false;
@@ -761,7 +804,6 @@ document.querySelectorAll('.cheat-item').forEach(item => {
     const toggle = item.querySelector('.cheat-toggle');
     if(toggle) {
       toggle.checked = !toggle.checked;
-      // Kích hoạt sự kiện change thủ công
       toggle.dispatchEvent(new Event('change'));
     }
   });
@@ -776,7 +818,6 @@ document.querySelectorAll('.cheat-toggle').forEach(toggle => {
       item.classList.remove('active');
     }
 
-    // Logic hiển thị ô nhập UID khi bật Buff Like
     if (this.id === 'buffLikeToggle') {
       const uidBox = document.getElementById('uidBox');
       if (this.checked) {
@@ -790,14 +831,12 @@ document.querySelectorAll('.cheat-toggle').forEach(toggle => {
 
 // XỬ LÝ NÚT KÍCH HOẠT VỚI HIỆU ỨNG LOADING
 document.getElementById('btnActivate').addEventListener('click', () => {
-  // Kiểm tra xem có chức năng nào đang bật không
   const activeModules = document.querySelectorAll('.cheat-toggle:checked');
   if (activeModules.length === 0) {
     alert('Vui lòng bật ít nhất 1 chức năng trước khi kích hoạt!');
     return;
   }
 
-  // Kiểm tra nếu bật Buff Like thì phải nhập UID
   if (document.getElementById('buffLikeToggle').checked) {
     const uid = document.getElementById('uidInput').value.trim();
     if (!uid || uid.length < 8 || uid.length > 12) {
@@ -808,11 +847,9 @@ document.getElementById('btnActivate').addEventListener('click', () => {
     console.log(`Đang buff ${likes} like cho UID: ${uid}`);
   }
 
-  // Hiển thị hiệu ứng Loading
   const overlay = document.getElementById('loadingOverlay');
   overlay.classList.add('show');
 
-  // Đợi 2.5 giây rồi thông báo thành công
   setTimeout(() => {
     overlay.classList.remove('show');
     alert('✅ KÍCH HOẠT THÀNH CÔNG!\nToàn bộ chức năng đã được áp dụng vào game.');
