@@ -101,8 +101,9 @@
   .app-intro { font-size: 0.7rem; color: #d0a0a0; line-height: 1.6; margin-top: 10px; }
   .app-intro strong { color: var(--neon); }
 
-  /* APP CHÍNH */
+  /* APP CHÍNH (GIAO DIỆN CYBERPUNK) */
   .app{position:relative;z-index:2;width:100%;max-width:540px;display:flex;flex-direction:column;gap:16px; display:none;}
+  
   .header{display:flex;align-items:center;gap:14px;padding:16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:20px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); position: relative; overflow: hidden;}
   .header::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--neon), transparent); opacity: 0.5;}
   .avatar-wrap{position:relative;flex-shrink:0}
@@ -113,9 +114,11 @@
   .user-info{display:none;flex-direction:column;gap:4px;font-size:0.7rem;color:#d0a0a0;margin-top:8px;}
   .user-info span{color:var(--neon3);font-weight:700;}
 
+  /* NÚT ĐĂNG XUẤT NHỎ */
   .btn-logout { position: absolute; top: 16px; right: 16px; background: transparent; border: 1px solid #552222; color: #d0a0a0; padding: 6px 12px; border-radius: 8px; font-size: 0.65rem; font-weight: 700; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
   .btn-logout:hover { background: #ff0033; color: #fff; border-color: #ff0033; box-shadow: 0 0 15px rgba(255,0,51,0.5); }
 
+  /* GAME SELECTOR */
   .game-selector { display: flex; gap: 10px; margin-bottom: 10px;}
   .game-btn { flex: 1; padding: 12px; border: 1px solid rgba(255,0,51,0.3); background: rgba(0,0,0,0.5); border-radius: 12px; color: #d0a0a0; font-weight: 800; font-size: 0.8rem; text-align: center; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
   .game-btn.active { background: rgba(255,0,51,0.2); border-color: var(--neon); color: #fff; box-shadow: 0 0 20px rgba(255,0,51,0.4); text-shadow: 0 0 10px var(--neon); }
@@ -169,6 +172,7 @@
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   .loading-text { color: #fff; font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase;}
 
+  /* CHATBOT UI (RED NEON) */
   .chatbot-btn { position: fixed; bottom: 20px; right: 20px; z-index: 600; width: 65px; height: 65px; border-radius: 50%; background: linear-gradient(135deg, var(--neon), #990011); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; cursor: pointer; box-shadow: 0 0 30px rgba(255,0,51,0.6); animation: floatBot 3s ease-in-out infinite; transition: 0.3s; border: 2px solid rgba(255,255,255,0.3); }
   .chatbot-btn:hover { transform: scale(1.1); box-shadow: 0 0 40px rgba(255,0,51,1); }
   @keyframes floatBot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -346,6 +350,7 @@
 </div>
 
 <script>
+// ✅ ĐÃ CẬP NHẬT ĐÚNG LINK SERVER RENDER
 const SERVER_URL = 'https://innova-key.onrender.com';
 const BANK_ID = 'MB'; 
 const ACCOUNT_NO = '2333612345555'; 
