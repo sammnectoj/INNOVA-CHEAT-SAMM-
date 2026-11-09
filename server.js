@@ -16,13 +16,11 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 app.use(cors());
 app.use(express.json());
 
-// Hàm tạo Key ngẫu nhiên
 function generateKey() {
   const part = () => crypto.randomBytes(2).toString('hex').toUpperCase();
   return `INNOVA-${part()}-${part()}-${part()}`;
 }
 
-// Hàm tính thời gian hết hạn
 function calcExpiry(type) {
   const now = Date.now();
   const HOUR = 3600 * 1000, DAY = 24 * HOUR;
@@ -36,14 +34,12 @@ function calcExpiry(type) {
   }
 }
 
-// ================= API DÀNH CHO KHÁCH HÀNG (SHOP) =================
+// ================= API KHÁCH HÀNG =================
 app.post('/api/shop/register', async (req, res) => {
   const { username, password } = req.body;
   if(!username || !password) return res.json({ ok: false, error: 'Thiếu thông tin' });
-  
   const { data: exists } = await supabase.from('users').select('*').eq('username', username).single();
   if(exists) return res.json({ ok: false, error: 'Tài khoản đã tồn tại' });
-
   const { error } = await supabase.from('users').insert([{ username, password, balance: 0 }]);
   if(error) return res.json({ ok: false, error: error.message });
   res.json({ ok: true, message: 'Đăng ký thành công' });
@@ -56,7 +52,6 @@ app.post('/api/shop/login', async (req, res) => {
   res.json({ ok: true, user: { username: user.username, balance: user.balance } });
 });
 
-// Lấy thông báo (cho Chatbot)
 app.get('/api/shop/notifications', async (req, res) => {
   const { data } = await supabase.from('notifications').select('*').order('created_at', { ascending: false }).limit(5);
   res.json({ ok: true, notifications: data || [] });
@@ -65,33 +60,23 @@ app.get('/api/shop/notifications', async (req, res) => {
 // Chatbot mua NHIỀU Key cùng lúc
 app.post('/api/bot/buy-multiple', async (req, res) => {
   const { username, type, count, discount } = req.body;
-  
   const { data: user } = await supabase.from('users').select('*').eq('username', username).single();
-  if(!user) return res.json({ ok: false, error: 'Bạn chưa đăng nhập hoặc tài khoản không tồn tại.' });
+  if(!user) return res.json({ ok: false, error: 'Bạn chưa đăng nhập.' });
 
   let basePrice = 0;
   if(type === 'day') basePrice = 20000;
   else if(type === 'week') basePrice = 50000;
   else if(type === 'month') basePrice = 80000;
   else if(type === 'forever') basePrice = 200000;
-  else return res.json({ ok: false, error: 'Loại Key không hợp lệ.' });
-
-  let finalPricePerKey = basePrice;
-  if (discount && discount > 0) {
-    finalPricePerKey = basePrice - (basePrice * discount / 100);
-  }
   
+  let finalPricePerKey = basePrice;
+  if (discount && discount > 0) finalPricePerKey = basePrice - (basePrice * discount / 100);
   const totalPrice = finalPricePerKey * count;
 
-  if(user.balance < totalPrice) {
-    return res.json({ ok: false, error: `Số dư không đủ. Bạn cần thêm ${(totalPrice - user.balance).toLocaleString('vi-VN')}đ.` });
-  }
+  if(user.balance < totalPrice) return res.json({ ok: false, error: `Số dư không đủ. Cần thêm ${(totalPrice - user.balance).toLocaleString('vi-VN')}đ.` });
 
   const { data: keyDatas } = await supabase.from('keys').select('*').eq('type', type).is('device_id', null).limit(count);
-  
-  if(!keyDatas || keyDatas.length < count) {
-    return res.json({ ok: false, error: `Rất tiếc, kho chỉ còn ${keyDatas ? keyDatas.length : 0} Key loại này. Vui lòng liên hệ Admin.` });
-  }
+  if(!keyDatas || keyDatas.length < count) return res.json({ ok: false, error: `Kho chỉ còn ${keyDatas ? keyDatas.length : 0} Key.` });
 
   const newBalance = user.balance - totalPrice;
   await supabase.from('users').update({ balance: newBalance }).eq('username', username);
@@ -101,47 +86,35 @@ app.post('/api/bot/buy-multiple', async (req, res) => {
     await supabase.from('keys').update({ device_id: 'BOUGHT_' + username }).eq('key', keyData.key);
     keysToReturn.push(keyData.key);
   }
-
   res.json({ ok: true, keys: keysToReturn, totalPrice, newBalance });
 });
 
-// Lấy danh sách Key của User (Xem lịch sử mua)
 app.get('/api/bot/my-keys', async (req, res) => {
   const { username } = req.query;
   const { data } = await supabase.from('keys').select('*').eq('device_id', 'BOUGHT_' + username).order('created_at', { ascending: false });
   res.json({ ok: true, keys: data || [] });
 });
 
-// Chatbot nạp tiền
 app.post('/api/shop/topup', async (req, res) => {
   const { username, amount } = req.body;
-  const { error } = await supabase.from('topups').insert([{ 
-    username, amount: parseInt(amount), created_at: Date.now(), status: 'pending' 
-  }]);
+  const { error } = await supabase.from('topups').insert([{ username, amount: parseInt(amount), created_at: Date.now(), status: 'pending' }]);
   if(error) return res.json({ ok: false, error: error.message });
   res.json({ ok: true, message: 'Đã gửi yêu cầu' });
 });
 
-// API kiểm tra mã giảm giá (Cho App và Chatbot)
 app.post('/api/shop/check-coupon', async (req, res) => {
   const { code } = req.body;
   const { data } = await supabase.from('coupons').select('*').eq('code', code.toUpperCase()).single();
-  
-  if(!data || data.status !== 'active') return res.json({ ok: false, error: 'Mã không hợp lệ hoặc đã khóa' });
-  if(data.used_count >= data.max_uses) return res.json({ ok: false, error: 'Mã đã hết lượt sử dụng' });
-  
+  if(!data || data.status !== 'active') return res.json({ ok: false, error: 'Mã không hợp lệ' });
+  if(data.used_count >= data.max_uses) return res.json({ ok: false, error: 'Mã đã hết lượt' });
   res.json({ ok: true, discount: data.discount });
 });
 
-// Kiểm tra trạng thái nạp (Polling cho Chatbot)
 app.get('/api/shop/check-topup-status', async (req, res) => {
   const { username } = req.query;
-  const { data: topups } = await supabase.from('topups')
-    .select('*').eq('username', username).order('created_at', { ascending: false }).limit(1);
-
+  const { data: topups } = await supabase.from('topups').select('*').eq('username', username).order('created_at', { ascending: false }).limit(1);
   if (!topups || topups.length === 0) return res.json({ ok: true, status: 'none' });
   const latest = topups[0];
-  
   if (latest.status === 'success') {
     const { data: user } = await supabase.from('users').select('balance').eq('username', username).single();
     return res.json({ ok: true, status: 'success', newBalance: user ? user.balance : 0 });
@@ -149,20 +122,17 @@ app.get('/api/shop/check-topup-status', async (req, res) => {
   res.json({ ok: true, status: latest.status });
 });
 
-// ================= API XÁC THỰC KEY =================
+// ================= API XÁC THỰC =================
 app.post('/api/verify', async (req, res) => {
   const { key, deviceId } = req.body || {};
-  if (!key || !deviceId) return res.status(400).json({ ok: false, error: 'Thiếu key hoặc deviceId' });
+  if (!key || !deviceId) return res.status(400).json({ ok: false, error: 'Thiếu thông tin' });
   const { data: found } = await supabase.from('keys').select('*').eq('key', key.toUpperCase().trim()).single();
   
   if (!found) return res.json({ ok: false, error: 'Key không tồn tại' });
-  
-  // Nếu là Key mua từ Shop/Chatbot -> Tự động cho qua
   if (found.device_id && found.device_id.startsWith('BOUGHT_')) {
     if (found.expires_at && Date.now() > found.expires_at) return res.json({ ok: false, error: 'Key đã hết hạn' });
     return res.json({ ok: true, type: found.type, isForever: !found.expires_at, remainingMs: found.expires_at ? Math.max(0, found.expires_at - Date.now()) : null });
   }
-
   if (found.expires_at && Date.now() > found.expires_at) return res.json({ ok: false, error: 'Key đã hết hạn' });
   if (found.device_id && found.device_id !== deviceId) return res.json({ ok: false, error: 'Key đã dùng trên thiết bị khác' });
   if (!found.device_id) await supabase.from('keys').update({ device_id: deviceId }).eq('key', found.key);
@@ -172,7 +142,7 @@ app.post('/api/verify', async (req, res) => {
 // ================= ADMIN API =================
 app.post('/api/create', async (req, res) => {
   const pass = req.headers['x-admin-pass'];
-  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu Admin' });
+  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai pass' });
   const { type = 'day', count = 1, note = '' } = req.body;
   const n = Math.min(Math.max(parseInt(count) || 1, 1), 100);
   const created = [];
@@ -184,51 +154,68 @@ app.post('/api/create', async (req, res) => {
   res.json({ ok: true, created });
 });
 
+// THÊM NHIỀU KEY VÀO SHOP CÙNG LÚC
+app.post('/api/admin/add-shop-key-multiple', async (req, res) => {
+  const pass = req.headers['x-admin-pass'];
+  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai pass' });
+
+  const { name, image, price, type, count } = req.body;
+  const n = Math.min(Math.max(parseInt(count) || 1, 1), 100);
+  const created = [];
+  
+  for (let i = 0; i < n; i++) {
+    const item = {
+      key: generateKey(), type, created_at: Date.now(), expires_at: calcExpiry(type),
+      note: 'Shop Item', device_id: null, name, image, price: parseInt(price)
+    };
+    const { error } = await supabase.from('keys').insert([item]);
+    if(!error) created.push(item);
+  }
+  
+  if(created.length > 0) {
+    await supabase.from('notifications').insert([{ message: `SAMM VIP ĐÃ THÊM ${n} sản phẩm ${name} VÀO SHOP`, created_at: Date.now() }]);
+  }
+  
+  res.json({ ok: true, count: created.length });
+});
+
 app.get('/api/admin/users', async (req, res) => {
   const pass = req.query.pass;
-  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
+  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai pass' });
   const { data } = await supabase.from('users').select('*');
   res.json({ ok: true, users: data || [] });
 });
 
 app.get('/api/admin/topups', async (req, res) => {
   const pass = req.query.pass;
-  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
+  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai pass' });
   const { data } = await supabase.from('topups').select('*').order('created_at', { ascending: false });
   res.json({ ok: true, topups: data || [] });
 });
 
 app.post('/api/admin/approve-topup', async (req, res) => {
   const pass = req.headers['x-admin-pass'];
-  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
-
+  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai pass' });
   const { id, username, amount } = req.body;
   await supabase.from('topups').update({ status: 'success' }).eq('id', id);
-  
   const { data: user } = await supabase.from('users').select('*').eq('username', username).single();
-  if(user) {
-    await supabase.from('users').update({ balance: user.balance + amount }).eq('username', username);
-  }
+  if(user) await supabase.from('users').update({ balance: user.balance + amount }).eq('username', username);
   res.json({ ok: true });
 });
 
 app.post('/api/admin/edit-topup', async (req, res) => {
   const pass = req.headers['x-admin-pass'];
-  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
-
+  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai pass' });
   const { id, amount, status, username } = req.body;
   const { data: oldTopup } = await supabase.from('topups').select('*').eq('id', id).single();
   if(!oldTopup) return res.json({ ok: false, error: 'Không tìm thấy đơn' });
-
   await supabase.from('topups').update({ amount: parseInt(amount), status }).eq('id', id);
-
   const { data: user } = await supabase.from('users').select('*').eq('username', username).single();
   if(user) {
     let balanceChange = 0;
     if(oldTopup.status !== 'success' && status === 'success') balanceChange = parseInt(amount);
     else if(oldTopup.status === 'success' && status !== 'success') balanceChange = -oldTopup.amount;
     else if(oldTopup.status === 'success' && status === 'success' && oldTopup.amount !== parseInt(amount)) balanceChange = parseInt(amount) - oldTopup.amount;
-
     if(balanceChange !== 0) await supabase.from('users').update({ balance: user.balance + balanceChange }).eq('username', username);
   }
   res.json({ ok: true });
@@ -236,43 +223,39 @@ app.post('/api/admin/edit-topup', async (req, res) => {
 
 app.get('/api/admin/coupons', async (req, res) => {
   const pass = req.query.pass;
-  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
+  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai pass' });
   const { data } = await supabase.from('coupons').select('*').order('id', { ascending: false });
   res.json({ ok: true, coupons: data || [] });
 });
 
 app.post('/api/admin/add-coupon', async (req, res) => {
   const pass = req.headers['x-admin-pass'];
-  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
-
+  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai pass' });
   const { code, discount, max_uses } = req.body;
   const item = { code: code.toUpperCase(), discount: parseInt(discount), max_uses: parseInt(max_uses), used_count: 0, status: 'active' };
-  
   const { error } = await supabase.from('coupons').insert([item]);
   if(error) return res.json({ ok: false, error: error.message });
-  
   await supabase.from('notifications').insert([{ message: `SAMM VIP ĐÃ CẬP NHẬP MÃ GIẢM GIÁ MỚI: ${code.toUpperCase()}`, created_at: Date.now() }]);
-  
   res.json({ ok: true });
 });
 
 app.delete('/api/admin/delete-coupon/:id', async (req, res) => {
   const pass = req.query.pass;
-  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
+  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai pass' });
   await supabase.from('coupons').delete().eq('id', req.params.id);
   res.json({ ok: true });
 });
 
 app.get('/api/list', async (req, res) => {
   const pass = req.query.pass;
-  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
+  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai pass' });
   const { data } = await supabase.from('keys').select('*').order('created_at', { ascending: false });
   res.json({ ok: true, keys: data || [] });
 });
 
 app.delete('/api/delete/:key', async (req, res) => {
   const pass = req.query.pass;
-  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
+  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai pass' });
   await supabase.from('keys').delete().eq('key', req.params.key.toUpperCase());
   res.json({ ok: true });
 });
@@ -311,6 +294,7 @@ app.get('/admin', (req, res) => {
 
 <div class="tabs">
   <div class="tab active" onclick="switchTab('tab-key')">Quản Lý Key</div>
+  <div class="tab" onclick="switchTab('tab-shop')">Thêm Key Shop</div>
   <div class="tab" onclick="switchTab('tab-user')">Khách Hàng</div>
   <div class="tab" onclick="switchTab('tab-topup')">Duyệt Nạp Tiền</div>
   <div class="tab" onclick="switchTab('tab-coupon')">Mã Giảm Giá</div>
@@ -350,6 +334,22 @@ app.get('/admin', (req, res) => {
       <button class="btn-gray" onclick="loadList()">LOAD DS</button>
     </div>
     <table id="tbl"><thead><tr><th>Key</th><th>Hạn</th><th>Thiết bị</th><th>Ghi chú</th><th>Xóa</th></tr></thead><tbody></tbody></table>
+  </div>
+</div>
+
+<div id="tab-shop" class="panel">
+  <div class="box">
+    <h3 style="margin-bottom:10px; color:#00ff88">Thêm Key Bán Trong Shop</h3>
+    <div class="row">
+      <input id="s_name" type="text" placeholder="Tên gói (VD: Gói VIP 1 Tháng)" style="flex:1">
+      <input id="s_price" type="number" placeholder="Giá tiền (VNĐ)" style="width:150px">
+    </div>
+    <div class="row">
+      <input id="s_img" type="text" placeholder="Link ảnh (VD: https://...)" style="flex:1">
+      <select id="s_type"><option value="day">1 Ngày</option><option value="week">1 Tuần</option><option value="month">1 Tháng</option><option value="forever">Vĩnh viễn</option></select>
+      <input id="s_count" type="number" value="1" min="1" max="100" style="width:80px" title="Số lượng muốn thêm">
+      <button onclick="addShopKeyMultiple()">THÊM VÀO SHOP</button>
+    </div>
   </div>
 </div>
 
@@ -398,6 +398,19 @@ async function createKey(){
   const d = await r.json();
   alert(d.ok ? 'Tạo thành công!' : 'Lỗi: '+d.error);
   if(d.ok) loadList();
+}
+
+async function addShopKeyMultiple(){
+  if(!getPass()) return alert('Nhập pass!');
+  const r = await fetch('/api/admin/add-shop-key-multiple',{method:'POST',headers:{'Content-Type':'application/json','x-admin-pass':getPass()},body:JSON.stringify({
+    name:document.getElementById('s_name').value, 
+    image:document.getElementById('s_img').value, 
+    price:document.getElementById('s_price').value, 
+    type:document.getElementById('s_type').value,
+    count:document.getElementById('s_count').value
+  })});
+  const d = await r.json();
+  alert(d.ok ? `Đã thêm ${d.count} Key vào Shop!` : 'Lỗi: '+d.error);
 }
 
 async function loadList(){
