@@ -16,13 +16,11 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 app.use(cors());
 app.use(express.json());
 
-// Hàm tạo Key ngẫu nhiên
 function generateKey() {
   const part = () => crypto.randomBytes(2).toString('hex').toUpperCase();
   return `INNOVA-${part()}-${part()}-${part()}`;
 }
 
-// Hàm tính thời gian hết hạn
 function calcExpiry(type) {
   const now = Date.now();
   const HOUR = 3600 * 1000, DAY = 24 * HOUR;
@@ -36,14 +34,12 @@ function calcExpiry(type) {
   }
 }
 
-// ================= API DÀNH CHO KHÁCH HÀNG (SHOP) =================
+// ================= API KHÁCH HÀNG =================
 app.post('/api/shop/register', async (req, res) => {
   const { username, password } = req.body;
   if(!username || !password) return res.json({ ok: false, error: 'Thiếu thông tin' });
-  
   const { data: exists } = await supabase.from('users').select('*').eq('username', username).single();
   if(exists) return res.json({ ok: false, error: 'Tài khoản đã tồn tại' });
-
   const { error } = await supabase.from('users').insert([{ username, password, balance: 0 }]);
   if(error) return res.json({ ok: false, error: error.message });
   res.json({ ok: true, message: 'Đăng ký thành công' });
@@ -63,22 +59,20 @@ app.get('/api/shop/notifications', async (req, res) => {
 
 app.post('/api/bot/buy-multiple', async (req, res) => {
   const { username, type, count, discount } = req.body;
-  
   const { data: user } = await supabase.from('users').select('*').eq('username', username).single();
-  if(!user) return res.json({ ok: false, error: 'Bạn chưa đăng nhập hoặc tài khoản không tồn tại.' });
+  if(!user) return res.json({ ok: false, error: 'Bạn chưa đăng nhập.' });
 
   let basePrice = 0;
   if(type === 'day') basePrice = 20000;
   else if(type === 'week') basePrice = 50000;
   else if(type === 'month') basePrice = 80000;
   else if(type === 'forever') basePrice = 200000;
-  else return res.json({ ok: false, error: 'Loại Key không hợp lệ.' });
-
+  
   let finalPricePerKey = basePrice;
   if (discount && discount > 0) finalPricePerKey = basePrice - (basePrice * discount / 100);
   const totalPrice = finalPricePerKey * count;
 
-  if(user.balance < totalPrice) return res.json({ ok: false, error: `Số dư không đủ. Bạn cần thêm ${(totalPrice - user.balance).toLocaleString('vi-VN')}đ.` });
+  if(user.balance < totalPrice) return res.json({ ok: false, error: `Số dư không đủ. Cần thêm ${(totalPrice - user.balance).toLocaleString('vi-VN')}đ.` });
 
   const { data: keyDatas } = await supabase.from('keys').select('*').eq('type', type).is('device_id', null).limit(count);
   if(!keyDatas || keyDatas.length < count) return res.json({ ok: false, error: `Kho chỉ còn ${keyDatas ? keyDatas.length : 0} Key.` });
@@ -282,8 +276,8 @@ app.get('/admin', (req, res) => {
   table { width: 100%; border-collapse: collapse; font-size: 13px; overflow-x: auto; display: block; margin-top: 10px;}
   th,td { padding: 10px; border-bottom: 1px solid #1a2a3d; text-align: left; white-space: nowrap; }
   .key { color: #00ff88; font-family: monospace; font-weight: bold; }
-  .tabs { display:flex; gap:10px; margin-bottom:20px; overflow-x: auto; padding-bottom: 5px;}
-  .tab { padding:10px 20px; background:#1a2a3d; border-radius:8px; cursor:pointer; font-weight:bold; white-space: nowrap;}
+  .tabs { display:flex; flex-wrap: wrap; gap:10px; margin-bottom:20px; padding-bottom: 5px;}
+  .tab { padding:10px 20px; background:#1a2a3d; border-radius:8px; cursor:pointer; font-weight:bold; white-space: nowrap; font-size: 13px;}
   .tab.active { background:#ff0033; color:#fff; }
   .panel { display:none; }
   .panel.active { display:block; }
