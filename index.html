@@ -11,20 +11,20 @@
     --neon2:#ff00e5; 
     --neon3:#00ff88; 
     --neon4:#ffaa00; 
-    --bg-dark:#0a0505; 
-    --glass: rgba(24, 10, 12, 0.85);
-    --glass-border: rgba(255, 0, 51, 0.4);
+    --bg-dark:#000000; /* Đổi sang nền đen tuyền */
+    --glass: rgba(10, 10, 10, 0.9);
+    --glass-border: rgba(255, 0, 51, 0.3);
   }
   body { 
-    min-height:100vh; background: #030000; 
-    background-image: radial-gradient(circle at 0% 0%, rgba(255,0,51,0.2) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(255,0,229,0.15) 0%, transparent 50%);
+    min-height:100vh; background: var(--bg-dark); 
+    background-image: radial-gradient(circle at 0% 0%, rgba(255,0,51,0.1) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(255,0,229,0.05) 0%, transparent 50%);
     display:flex; justify-content:center; align-items:flex-start; 
-    padding:14px 10px 40px; overflow-x:hidden; position:relative; color: #f5e0e0;
+    padding:14px 10px 40px; overflow-x:hidden; position:relative; color: #e0e0e0;
   }
   
   /* NỀN */
   .bg-particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-  .bg-particles span{position:absolute;width:3px;height:3px;border-radius:50%;opacity:.6;animation:floatUp linear infinite; box-shadow: 0 0 10px currentColor;}
+  .bg-particles span{position:absolute;width:3px;height:3px;border-radius:50%;opacity:.4;animation:floatUp linear infinite; box-shadow: 0 0 10px currentColor;}
   @keyframes floatUp{0%{transform:translateY(100vh) scale(.5);opacity:0}10%{opacity:1}90%{opacity:.5}100%{transform:translateY(-10vh) scale(1.5);opacity:0}}
 
   /* TOAST THÔNG BÁO */
@@ -33,14 +33,14 @@
     z-index: 1000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: 90%; max-width: 350px;
   }
   .toast {
-    background: rgba(255, 0, 51, 0.95); color: #fff; padding: 14px 20px;
+    background: rgba(20, 20, 20, 0.95); color: #fff; padding: 14px 20px;
     border-radius: 12px; font-weight: 900; font-size: 0.85rem; text-align: center;
-    box-shadow: 0 0 30px rgba(255, 0, 51, 0.8), inset 0 0 10px rgba(255,255,255,0.3); border: 1px solid #fff;
+    box-shadow: 0 0 20px rgba(255, 0, 51, 0.5); border: 1px solid var(--neon);
     animation: slideDownFade 0.3s ease, fadeOut 0.3s ease 1.7s forwards;
     text-transform: uppercase; letter-spacing: 1px;
   }
-  .toast.off { background: rgba(50, 50, 50, 0.95); box-shadow: 0 0 20px rgba(0,0,0,0.8); border: 1px solid #888; }
-  .toast.success { background: rgba(0, 255, 136, 0.95); color: #000; border: 1px solid #fff;}
+  .toast.off { border-color: #555; box-shadow: none; }
+  .toast.success { border-color: var(--neon3); box-shadow: 0 0 20px rgba(0, 255, 136, 0.5); color: var(--neon3);}
   @keyframes slideDownFade { from{opacity:0; transform:translateY(-20px) scale(0.9);} to{opacity:1; transform:translateY(0) scale(1);} }
   @keyframes fadeOut { to{opacity:0; transform:translateY(-20px);} }
 
@@ -50,7 +50,7 @@
   
   .lock-box{
     width:100%;max-width:380px; background:var(--glass);border:1px solid var(--glass-border);
-    border-radius:28px;padding:26px 22px; box-shadow:0 30px 60px rgba(0,0,0,0.9), inset 0 0 50px rgba(255,0,51,0.1);
+    border-radius:28px;padding:26px 22px; box-shadow:0 0 40px rgba(255,0,51,0.1);
     position:relative;overflow:hidden; backdrop-filter: blur(20px);
   }
   .lock-box::before {
@@ -58,195 +58,184 @@
     background: conic-gradient(transparent, var(--neon), transparent 30%);
     animation: rotateBorder 3s linear infinite; z-index: -1;
   }
-  .lock-box::after { content: ''; position: absolute; inset: 2px; background: #0a0505; border-radius: 26px; z-index: -1; }
+  .lock-box::after { content: ''; position: absolute; inset: 2px; background: #050505; border-radius: 26px; z-index: -1; }
   @keyframes rotateBorder { 100% { transform: rotate(360deg); } }
 
   .app-profile { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 24px; text-align: center; }
-  .app-profile img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--neon); box-shadow: 0 0 25px rgba(255,0,51,0.7); margin-bottom: 10px; background: #000; }
-  .app-profile h1 { font-size: 1.7rem; font-weight: 900; letter-spacing: 3px; background: linear-gradient(90deg, #fff, var(--neon), var(--neon2), #fff); background-size: 300% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: gm 3s linear infinite; text-transform: uppercase; filter: drop-shadow(0 0 15px rgba(255,0,51,0.8)); }
-  @keyframes gm { 0%{background-position:0% center} 100%{background-position:300% center} }
-  .app-profile p { font-size: 0.7rem; color: var(--neon); letter-spacing: 5px; text-transform: uppercase; margin-top: 2px; font-weight: 700; text-shadow: 0 0 10px rgba(255,0,51,0.5);}
+  .app-profile img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--neon); box-shadow: 0 0 20px rgba(255,0,51,0.5); margin-bottom: 10px; background: #000; }
+  .app-profile h1 { font-size: 1.7rem; font-weight: 900; letter-spacing: 3px; color: #fff; text-transform: uppercase; filter: drop-shadow(0 0 10px rgba(255,0,51,0.5)); }
+  .app-profile p { font-size: 0.7rem; color: var(--neon); letter-spacing: 5px; text-transform: uppercase; margin-top: 2px; font-weight: 700;}
+
+  /* XÁC THỰC THIẾT BỊ */
+  .verify-section{background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:16px;margin-bottom:18px; display: none;}
+  .verify-section.show { display: block; }
+  .verify-header{display:flex;align-items:center;gap:8px;font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:12px}
+  .progress-bar{height:8px;background:#111;border-radius:10px;overflow:hidden;border:1px solid #222;margin-bottom:8px;}
+  .progress-fill{height:100%;width:0%;border-radius:10px;background:linear-gradient(90deg,#990011,var(--neon));box-shadow:0 0 15px var(--neon);transition:width .15s linear}
+  .progress-info{display:flex;justify-content:space-between;align-items:center;font-size:.7rem;color:#888;font-family:'Courier New',monospace}
+  .progress-percent{color:var(--neon);font-weight:700;font-size:.9rem;}
+  .verify-status{font-size:.65rem;color:#888;margin-top:6px;font-style:italic}
 
   .key-section{margin-bottom:24px}
-  .key-label{display:block;font-size:.75rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#d0a0a0;margin-bottom:10px; text-align: center;}
-  .key-input-wrap{display:flex;gap:8px; background: rgba(0,0,0,0.7); padding: 6px; border-radius: 16px; border: 1px solid rgba(255,0,51,0.3); transition: 0.3s; box-shadow: inset 0 2px 15px rgba(0,0,0,0.9);}
-  .key-input-wrap:focus-within { border-color: var(--neon); box-shadow: 0 0 25px rgba(255,0,51,0.4), inset 0 2px 15px rgba(0,0,0,0.9); }
+  .key-label{display:block;font-size:.75rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#888;margin-bottom:10px; text-align: center;}
+  .key-input-wrap{display:flex;gap:8px; background: rgba(0,0,0,0.8); padding: 6px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s;}
+  .key-input-wrap:focus-within { border-color: var(--neon); box-shadow: 0 0 20px rgba(255,0,51,0.2); }
   .key-input{flex:1;padding:12px 14px;background:transparent;border:none;color:#fff;font-weight:800;font-family:'Courier New',monospace;font-size:1rem;outline:none; text-align: center; letter-spacing: 2px;}
-  .key-input::placeholder { color: #5a3a3a; font-weight: 600;}
-  .btn-unlock{padding:12px 20px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--neon),#990011);color:#fff;font-weight:900;font-size:.85rem;cursor:pointer; transition: 0.3s; text-transform: uppercase; box-shadow: 0 0 15px rgba(255,0,51,0.5);}
+  .key-input::placeholder { color: #444; font-weight: 600;}
+  .btn-unlock{padding:12px 20px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--neon),#990011);color:#fff;font-weight:900;font-size:.85rem;cursor:pointer; transition: 0.3s; text-transform: uppercase;}
   .btn-unlock:disabled{opacity:.4;cursor:not-allowed; filter: grayscale(1);}
-  .btn-unlock:hover:not(:disabled) { box-shadow: 0 0 25px var(--neon); transform: scale(1.05); }
+  .btn-unlock:hover:not(:disabled) { box-shadow: 0 0 20px var(--neon); transform: scale(1.05); }
   
   .key-msg{font-size:.8rem;margin-top:10px;min-height:18px;font-weight:700; text-align: center;}
-  .key-msg.ok{color:var(--neon3); text-shadow: 0 0 10px rgba(0,255,136,0.8);} 
-  .key-msg.err{color:var(--neon); text-shadow: 0 0 10px rgba(255,0,51,0.8);} 
+  .key-msg.ok{color:var(--neon3);} 
+  .key-msg.err{color:var(--neon);} 
   .key-msg.info{color:var(--neon2)}
 
-  .install-steps { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,0,51,0.2); border-radius: 16px; padding: 16px; margin-top: 20px; box-shadow: inset 0 0 25px rgba(0,0,0,0.8);}
-  .install-title { font-size: 0.75rem; color: var(--neon4); font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(255,170,0,0.5);}
+  .install-steps { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 16px; margin-top: 20px;}
+  .install-title { font-size: 0.75rem; color: var(--neon4); font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;}
   .step-item { display: flex; gap: 12px; margin-bottom: 12px; position: relative; }
   .step-item:last-child { margin-bottom: 0; }
-  .step-num { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,0,51,0.15); border: 1px solid var(--neon); color: var(--neon); font-size: 0.7rem; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 10px rgba(255,0,51,0.3);}
-  .step-text { font-size: 0.75rem; color: #c4b0b0; line-height: 1.5; }
+  .step-num { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,0,51,0.1); border: 1px solid var(--neon); color: var(--neon); font-size: 0.7rem; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0;}
+  .step-text { font-size: 0.75rem; color: #aaa; line-height: 1.5; }
   .step-text strong { color: #fff; }
 
-  .extra-section { margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(255,0,51,0.3); text-align: center; }
-  .zalo-btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #0068FF, #00C6FF); color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 900; text-decoration: none; font-size: 0.85rem; box-shadow: 0 5px 20px rgba(0, 104, 255, 0.5); margin-bottom: 15px; text-transform: uppercase; transition: 0.3s; }
-  .zalo-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 30px rgba(0, 104, 255, 0.7); }
-  .app-intro { font-size: 0.7rem; color: #d0a0a0; line-height: 1.6; margin-top: 10px; }
-  .app-intro strong { color: var(--neon); text-shadow: 0 0 8px rgba(255,0,51,0.5);}
+  .extra-section { margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(255,255,255,0.1); text-align: center; }
+  .zalo-btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #0068FF, #00C6FF); color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 900; text-decoration: none; font-size: 0.85rem; margin-bottom: 15px; text-transform: uppercase; transition: 0.3s; }
+  .app-intro { font-size: 0.7rem; color: #888; line-height: 1.6; margin-top: 10px; }
+  .app-intro strong { color: var(--neon); }
 
-  /* MAIN APP UI */
+  /* MAIN APP UI (MÀU ĐEN) */
   .app{position:relative;z-index:2;width:100%;max-width:540px;display:flex;flex-direction:column;gap:16px; display:none;}
-  .header{display:flex;align-items:center;gap:14px;padding:16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:20px; backdrop-filter: blur(10px); box-shadow: 0 10px 40px rgba(0,0,0,0.7), inset 0 0 20px rgba(255,0,51,0.1);}
+  .header{display:flex;align-items:center;gap:14px;padding:16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:20px; position: relative;}
   .avatar-wrap{position:relative;flex-shrink:0}
-  .avatar-wrap img{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--neon); box-shadow: 0 0 20px rgba(255,0,51,0.5);}
+  .avatar-wrap img{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--neon);}
   .title-wrap{flex:1;min-width:0}
-  .title-wrap h1{font-size:1.6rem;font-weight:900;letter-spacing:2px;background:linear-gradient(90deg,var(--neon),var(--neon2));-webkit-background-clip:text;color:transparent;line-height:1.1;text-transform:uppercase; filter: drop-shadow(0 0 8px rgba(255,0,51,0.5));}
+  .title-wrap h1{font-size:1.6rem;font-weight:900;letter-spacing:2px;color: var(--neon); line-height:1.1;text-transform:uppercase;}
   
-  .user-info{display:none;flex-direction:column;gap:4px;font-size:0.7rem;color:#d0a0a0;margin-top:8px;background:rgba(0,0,0,0.6);padding:8px 12px;border-radius:10px;border:1px solid rgba(255,0,51,0.2)}
-  .user-info span{color:var(--neon3);font-weight:700; text-shadow: 0 0 8px rgba(0,255,136,0.4);}
+  .user-info{display:none;flex-direction:column;gap:4px;font-size:0.7rem;color:#aaa;margin-top:8px;}
+  .user-info span{color:var(--neon3);font-weight:700;}
 
-  /* CHỌN GAME */
-  .game-selector {
-    display: flex; gap: 10px; margin-bottom: 10px;
+  /* NÚT ĐĂNG XUẤT NHỎ GÓC TRÊN */
+  .btn-logout {
+    position: absolute; top: 16px; right: 16px;
+    background: transparent; border: 1px solid #555; color: #888;
+    padding: 6px 12px; border-radius: 8px; font-size: 0.65rem; font-weight: 700;
+    cursor: pointer; transition: 0.3s; text-transform: uppercase;
   }
-  .game-btn {
-    flex: 1; padding: 12px; border: 1px solid rgba(255,0,51,0.3);
-    background: rgba(0,0,0,0.5); border-radius: 12px; color: #d0a0a0;
-    font-weight: 800; font-size: 0.8rem; text-align: center; cursor: pointer;
-    transition: 0.3s; text-transform: uppercase;
-  }
-  .game-btn.active {
-    background: rgba(255,0,51,0.2); border-color: var(--neon); color: #fff;
-    box-shadow: 0 0 15px rgba(255,0,51,0.4);
-  }
+  .btn-logout:hover { background: #ff0033; color: #fff; border-color: #ff0033; }
 
-  .tabs{display:flex;gap:8px;padding:8px;background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;overflow-x:auto;scrollbar-width:none; backdrop-filter: blur(10px); box-shadow: 0 5px 20px rgba(0,0,0,0.5);}
-  .tab{flex-shrink:0;padding:12px 18px;border:none;border-radius:12px;background:transparent;color:#d0a0a0;font-weight:800;font-size:.75rem;text-transform:uppercase;cursor:pointer; transition: 0.3s; letter-spacing: 0.5px;}
-  .tab.active{background:linear-gradient(135deg, rgba(255,0,51,0.2), rgba(255,0,229,0.1));color:#fff;border:1px solid var(--neon); box-shadow: 0 0 20px rgba(255,0,51,0.3); text-shadow: 0 0 8px var(--neon);}
+  .tabs{display:flex;gap:8px;padding:8px;background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;overflow-x:auto;scrollbar-width:none;}
+  .tab{flex-shrink:0;padding:12px 18px;border:none;border-radius:12px;background:transparent;color:#888;font-weight:800;font-size:.75rem;text-transform:uppercase;cursor:pointer; transition: 0.3s;}
+  .tab.active{background:rgba(255,0,51,0.15);color:var(--neon);border:1px solid rgba(255,0,51,0.3);}
   
   .panel{display:none;flex-direction:column;gap:10px}
   .panel.active{display:flex;animation:fadeIn .3s ease}
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-  .section{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:16px; backdrop-filter: blur(10px); box-shadow: 0 10px 40px rgba(0,0,0,0.6);}
-  .section-title{display:flex;align-items:center;gap:8px;font-size:.75rem;font-weight:800;text-transform:uppercase;color:#d0a0a0;margin-bottom:16px; letter-spacing: 1px;}
-  .section-title::before{content:'';width:4px;height:16px;background:var(--neon);border-radius:4px; box-shadow: 0 0 15px var(--neon);}
+  .section{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:16px;}
+  .section-title{display:flex;align-items:center;gap:8px;font-size:.75rem;font-weight:800;text-transform:uppercase;color:#888;margin-bottom:16px; letter-spacing: 1px;}
+  .section-title::before{content:'';width:4px;height:16px;background:var(--neon);border-radius:4px;}
 
-  .cheat-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
-  .cheat-item:hover { background: rgba(255,0,51,0.05); border-color: rgba(255,0,51,0.3); transform: translateY(-2px); }
-  .cheat-item.active { border-color: var(--neon); background: linear-gradient(90deg, rgba(255,0,51,0.15), rgba(0,0,0,0.3)); box-shadow: 0 0 30px rgba(255,0,51,0.25), inset 0 0 15px rgba(255,0,51,0.1); transform: translateY(-2px); }
-  .cheat-item.active::before { content: ''; position: absolute; left: 0; top: 0; width: 4px; height: 100%; background: var(--neon); box-shadow: 0 0 15px var(--neon); }
+  .cheat-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
+  .cheat-item:hover { border-color: rgba(255,255,255,0.2); }
+  .cheat-item.active { border-color: var(--neon); background: rgba(255,0,51,0.1); box-shadow: 0 0 20px rgba(255,0,51,0.15); }
+  .cheat-item.active::before { content: ''; position: absolute; left: 0; top: 0; width: 4px; height: 100%; background: var(--neon); }
   
-  .cheat-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; font-size: 1.4rem; transition: 0.3s; }
-  .cheat-item.active .cheat-icon { background: rgba(255,0,51,0.2); border-color: var(--neon); box-shadow: 0 0 20px rgba(255,0,51,0.5); color: #fff; transform: scale(1.05); }
+  .cheat-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 12px; font-size: 1.4rem; transition: 0.3s; }
+  .cheat-item.active .cheat-icon { background: rgba(255,0,51,0.2); color: #fff; }
   
   .cheat-info { flex: 1; }
-  .cheat-info .name { font-size: 0.95rem; font-weight: 800; color: #fff; transition: 0.3s; text-transform: uppercase; letter-spacing: 0.5px;}
-  .cheat-info .desc { font-size: 0.7rem; color: #c4b0b0; margin-top: 2px; }
-  .cheat-item.active .name { color: var(--neon); text-shadow: 0 0 12px rgba(255,0,51,0.8); }
-
-  /* THANH TRƯỢT ĐỘ NHẠY */
-  .slider-box { margin-top: -6px; margin-bottom: 12px; padding: 14px; background: rgba(255,0,51,0.05); border: 1px dashed rgba(255,0,51,0.4); border-radius: 16px; display: none; box-shadow: inset 0 0 15px rgba(0,0,0,0.5);}
-  .slider-box.show { display: block; }
-  .slider-box label { font-size: 0.75rem; color: #d0a0a0; margin-bottom: 8px; display: block; text-transform: uppercase; font-weight: 800;}
-  .slider-box input[type=range] { width: 100%; accent-color: var(--neon); }
+  .cheat-info .name { font-size: 0.95rem; font-weight: 800; color: #ddd; transition: 0.3s; text-transform: uppercase;}
+  .cheat-info .desc { font-size: 0.7rem; color: #666; margin-top: 2px; }
+  .cheat-item.active .name { color: #fff; }
 
   .switch { position: relative; display: inline-block; width: 56px; height: 30px; flex-shrink: 0; }
   .switch input { opacity: 0; width: 0; height: 0; }
-  .slider { position: absolute; cursor: pointer; inset: 0; background: #221010; border-radius: 30px; border: 2px solid #4a2a2a; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); box-shadow: inset 0 3px 6px rgba(0,0,0,0.8); }
-  .slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #806060; border-radius: 50%; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
-  input:checked + .slider { background: rgba(255,0,51,0.2); border-color: var(--neon); box-shadow: inset 0 0 15px rgba(255,0,51,0.5), 0 0 20px rgba(255,0,51,0.4); }
-  input:checked + .slider:before { transform: translateX(26px); background: var(--neon); box-shadow: 0 0 20px var(--neon), 0 0 8px #fff; }
+  .slider { position: absolute; cursor: pointer; inset: 0; background: #111; border-radius: 30px; border: 1px solid #333; transition: all 0.4s; }
+  .slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #555; border-radius: 50%; transition: all 0.4s; }
+  input:checked + .slider { background: rgba(255,0,51,0.2); border-color: var(--neon); }
+  input:checked + .slider:before { transform: translateX(26px); background: var(--neon); box-shadow: 0 0 10px var(--neon); }
 
   .btn-row{display:flex;gap:12px; margin-top: 5px;}
   .btn{flex:1;padding:16px;border:none;border-radius:16px;font-weight:900;font-size:.9rem;text-transform:uppercase;cursor:pointer;letter-spacing:1px;transition:0.3s;}
-  .btn-primary{background:linear-gradient(135deg,var(--neon),#990011);color:#fff;box-shadow: 0 5px 25px rgba(255,0,51,0.5); border: 1px solid rgba(255,255,255,0.2);}
-  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 35px rgba(255,0,51,0.8); }
-  .btn-danger{background:rgba(255,255,255,0.05);border:1px solid #fff;color:#fff;}
-  .btn-danger:hover { background: #fff; color: #000; box-shadow: 0 5px 25px rgba(255,255,255,0.5); }
+  .btn-primary{background:linear-gradient(135deg,var(--neon),#990011);color:#fff;}
+  .btn-danger{background:rgba(255,255,255,0.05);border:1px solid #333;color:#888;}
+  .btn-danger:hover { background: #333; color: #fff; }
 
+  /* HIỆU ỨNG LOADING KHI VÀO GAME */
   .loading-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 20px; backdrop-filter: blur(10px); }
   .loading-overlay.show { display: flex; }
-  .spinner { width: 80px; height: 80px; border: 5px solid rgba(255,0,51,0.1); border-top: 5px solid var(--neon); border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 40px rgba(255,0,51,0.4); }
+  .spinner { width: 80px; height: 80px; border: 4px solid rgba(255,0,51,0.1); border-top: 4px solid var(--neon); border-radius: 50%; animation: spin 1s linear infinite; }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  .loading-text { color: var(--neon); font-weight: 900; font-size: 1.4rem; letter-spacing: 4px; text-transform: uppercase; animation: pulseText 1.5s infinite; text-shadow: 0 0 20px rgba(255,0,51,0.8);}
-  @keyframes pulseText { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.95); } }
+  .loading-text { color: #fff; font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase;}
 
-  /* ====== CHATBOT UI (CHẤT HƠN) ====== */
+  /* CHATBOT UI (MÀU ĐEN) */
   .chatbot-btn {
     position: fixed; bottom: 20px; right: 20px; z-index: 600;
-    width: 65px; height: 65px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--neon), #990011);
+    width: 60px; height: 60px; border-radius: 50%;
+    background: #111; border: 2px solid var(--neon);
     display: flex; align-items: center; justify-content: center;
-    font-size: 2.2rem; cursor: pointer;
-    box-shadow: 0 5px 30px rgba(255,0,51,0.7), inset 0 0 15px rgba(255,255,255,0.4);
-    animation: floatBot 3s ease-in-out infinite;
-    transition: 0.3s; border: 2px solid rgba(255,255,255,0.3);
+    font-size: 2rem; cursor: pointer;
+    box-shadow: 0 0 20px rgba(255,0,51,0.4);
+    transition: 0.3s;
   }
-  .chatbot-btn:hover { transform: scale(1.1); box-shadow: 0 5px 40px rgba(255,0,51,1); }
-  @keyframes floatBot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-  .chatbot-badge {
-    position: absolute; top: -5px; right: -5px; background: #ffaa00;
-    color: #000; font-size: 0.75rem; font-weight: 900; width: 22px; height: 22px;
-    border-radius: 50%; display: none; align-items: center; justify-content: center;
-    border: 2px solid #000; box-shadow: 0 0 15px #ffaa00;
-  }
-
+  .chatbot-btn:hover { transform: scale(1.1); box-shadow: 0 0 30px var(--neon); }
+  
   .chat-window {
-    position: fixed; bottom: 95px; right: 20px; z-index: 600;
+    position: fixed; bottom: 90px; right: 20px; z-index: 600;
     width: calc(100% - 40px); max-width: 350px; height: 500px;
-    background: rgba(15, 5, 8, 0.98); border: 1px solid var(--neon);
+    background: #0a0a0a; border: 1px solid var(--neon);
     border-radius: 20px; display: none; flex-direction: column;
-    box-shadow: 0 15px 50px rgba(0,0,0,0.9), 0 0 30px rgba(255,0,51,0.3);
-    backdrop-filter: blur(15px); overflow: hidden;
-    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    overflow: hidden;
   }
   .chat-window.show { display: flex; }
-  @keyframes slideUp { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-  .chat-header { background: linear-gradient(90deg, rgba(255,0,51,0.2), rgba(0,0,0,0.5)); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,0,51,0.4); }
-  .chat-header h3 { font-size: 1rem; color: var(--neon); font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 0 10px rgba(255,0,51,0.6);}
-  .chat-close { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; transition: 0.3s;}
-  .chat-close:hover { color: var(--neon); transform: rotate(90deg); }
+  .chat-header { background: #111; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
+  .chat-header h3 { font-size: 0.9rem; color: var(--neon); font-weight: 900; text-transform: uppercase;}
+  .chat-close { background: none; border: none; color: #888; font-size: 1.2rem; cursor: pointer; }
 
   .chat-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-  .chat-body::-webkit-scrollbar { width: 4px; }
-  .chat-body::-webkit-scrollbar-thumb { background: rgba(255,0,51,0.5); border-radius: 4px; }
-  .chat-msg { max-width: 85%; padding: 12px 16px; border-radius: 14px; font-size: 0.85rem; line-height: 1.5; word-wrap: break-word;}
-  .msg-bot { background: rgba(255,0,51,0.15); color: #ffd6d6; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid rgba(255,0,51,0.3); box-shadow: 0 4px 15px rgba(0,0,0,0.3);}
-  .msg-user { background: linear-gradient(135deg, var(--neon), #990011); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; font-weight: 600; box-shadow: 0 4px 20px rgba(255,0,51,0.5);}
+  .chat-msg { max-width: 85%; padding: 12px 16px; border-radius: 12px; font-size: 0.85rem; line-height: 1.5; word-wrap: break-word;}
+  .msg-bot { background: #1a1a1a; color: #ccc; align-self: flex-start; border-bottom-left-radius: 2px; }
+  .msg-user { background: var(--neon); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; font-weight: 600;}
 
-  .chat-input-area { padding: 12px; border-top: 1px solid rgba(255,0,51,0.3); display: flex; gap: 10px; background: rgba(0,0,0,0.4);}
-  .chat-input { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid rgba(255,0,51,0.3); background: rgba(0,0,0,0.6); color: #fff; outline: none; font-size: 0.9rem; transition: 0.3s;}
-  .chat-input:focus { border-color: var(--neon); box-shadow: 0 0 15px rgba(255,0,51,0.3);}
-  .chat-send { padding: 12px 18px; border-radius: 20px; border: none; background: linear-gradient(135deg, var(--neon), #990011); color: #fff; font-weight: 900; cursor: pointer; box-shadow: 0 0 15px rgba(255,0,51,0.4); transition: 0.3s;}
-  .chat-send:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(255,0,51,0.8); }
+  .chat-input-area { padding: 10px; border-top: 1px solid #333; display: flex; gap: 10px; background: #000;}
+  .chat-input { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid #333; background: #111; color: #fff; outline: none; font-size: 0.9rem;}
+  .chat-input:focus { border-color: var(--neon); }
+  .chat-send { padding: 12px 18px; border-radius: 20px; border: none; background: var(--neon); color: #fff; font-weight: 900; cursor: pointer;}
 
-  .qr-img { width: 100%; max-width: 220px; border-radius: 12px; margin-top: 12px; border: 2px solid var(--neon); display: block; margin-left: auto; margin-right: auto; box-shadow: 0 0 20px rgba(255,0,51,0.4);}
+  .qr-img { width: 100%; max-width: 220px; border-radius: 12px; margin-top: 12px; border: 1px solid var(--neon); display: block; margin-left: auto; margin-right: auto;}
 </style>
 </head>
 <body>
 
 <div class="bg-particles" id="particles"></div>
-
-<!-- KHU VỰC HIỆN THÔNG BÁO TOAST -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- HIỆU ỨNG LOADING -->
+<!-- HIỆU ỨNG LOADING KHI VÀO GAME -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
-  <div class="loading-text">ĐANG VÀO GAME...</div>
+  <div class="loading-text">ĐANG KẾT NỐI...</div>
 </div>
 
 <!-- MÀN HÌNH CHÍNH -->
 <div class="lock-screen" id="lockScreen" style="flex-direction: column;">
   <div class="lock-box">
     <div class="app-profile">
-      <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/85/1a2230/ff0033?text=IC'">
+      <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/85/000000/ff0033?text=IC'">
       <h1>HEADLOCK VIP</h1>
       <p>▸ PRO MAX ◂</p>
+    </div>
+
+    <!-- XÁC THỰC THIẾT BỊ (HIỆN KHI BẤM MỞ KHÓA) -->
+    <div class="verify-section" id="verifySection">
+      <div class="verify-header">XÁC THỰC THIẾT BỊ</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-info">
+        <span class="verify-status" id="verifyStatus">Đang khởi tạo...</span>
+        <span class="progress-percent" id="progressPercent">0%</span>
+      </div>
     </div>
 
     <div class="key-section">
@@ -262,32 +251,23 @@
       <div class="install-title">⚙️ CÁC BƯỚC CÀI ĐẶT</div>
       <div class="step-item">
         <div class="step-num">1</div>
-        <div class="step-text">
-          <strong>Nhập Key bản quyền:</strong> Bấm nút Mở Khóa và điền mã Key (áp dụng từ 1 Giờ trở lên) để xác thực bản quyền & liên kết thiết bị.
-        </div>
+        <div class="step-text"><strong>Nhập Key:</strong> Bấm Mở Khóa, điền Key để xác thực.</div>
       </div>
       <div class="step-item">
         <div class="step-num">2</div>
-        <div class="step-text">
-          <strong>Xác nhận tải về:</strong> Khi Safari hiện thông báo "muốn cài đặt...", chọn Cài đặt và về Màn hình chính xem app tải.
-        </div>
+        <div class="step-text"><strong>Cài đặt:</strong> Chọn Cài đặt khi trình duyệt hỏi.</div>
       </div>
       <div class="step-item">
         <div class="step-num">3</div>
-        <div class="step-text">
-          <strong>Tin cậy chứng chỉ:</strong> Vào Cài đặt > Cài đặt chung > Quản lý VPN & Thiết bị > Chọn chứng chỉ doanh nghiệp và bấm Tin cậy.
-        </div>
+        <div class="step-text"><strong>Tin cậy:</strong> Vào Cài đặt > Quản lý VPN & Thiết bị > Tin cậy.</div>
       </div>
     </div>
 
     <div class="extra-section">
-      <a href="https://zalo.me/0355757211" target="_blank" class="zalo-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 5.92 2 10.75c0 2.76 1.44 5.21 3.68 6.76-.1.71-.36 1.89-.9 2.85-.13.24.04.53.31.46 1.65-.38 3.16-1.17 4.17-1.82 1.05.24 2.16.37 3.31.37 5.52 0 10-3.92 10-8.75S17.52 2 12 2zm1.6 12.12c-.18.13-.44.14-.62-.01l-2.62-2.06-3.48 2.73c-.3.23-.71.18-.94-.12-.23-.3-.18-.71.12-.94l3.98-3.12c.18-.14.44-.15.63-.01l2.6 2.05 3.32-2.58c.3-.23.71-.18.94.12.23.3.18.71-.12.94l-3.81 3z"/></svg>
-        TÊN ZALO SAMM VIP
-      </a>
+      <a href="https://zalo.me/0355757211" target="_blank" class="zalo-btn">TÊN ZALO SAMM VIP</a>
       <div class="app-intro">
-        <strong>HEADLOCK VIP</strong> là ứng dụng hỗ trợ game với hàng chục tính năng hiện đại.<br>
-        👉 <strong>ẤN VÀO NÚT ZALO</strong> bên trên để được cấp Key và nhận hỗ trợ trực tiếp 24/7 (Hotline: <strong>0355757211</strong>).
+        <strong>HEADLOCK VIP</strong> - Hỗ trợ game chuyên nghiệp.<br>
+        👉 <strong>Hotline:</strong> 0355757211
       </div>
     </div>
   </div>
@@ -297,7 +277,7 @@
 <div class="app" id="app">
   <div class="header">
     <div class="avatar-wrap">
-      <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/64/1a2230/ff0033?text=IC'">
+      <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/64/000000/ff0033?text=IC'">
     </div>
     <div class="title-wrap">
       <h1>HEADLOCK VIP</h1>
@@ -306,12 +286,14 @@
         <div>Hạn dùng: <span id="uiExpiry">...</span></div>
       </div>
     </div>
+    <!-- NÚT ĐĂNG XUẤT -->
+    <button class="btn-logout" onclick="logoutApp()">Đăng Xuất</button>
   </div>
 
   <!-- CHỌN GAME -->
-  <div class="game-selector">
-    <div class="game-btn active" onclick="selectGame(this, 'Free Fire')" id="gameFF">Free Fire</div>
-    <div class="game-btn" onclick="selectGame(this, 'Free Fire Max')" id="gameFFMax">Free Fire Max</div>
+  <div class="game-selector" style="display: flex; gap: 10px; margin-bottom: 10px;">
+    <div class="game-btn active" onclick="selectGame(this, 'Free Fire')" style="flex:1; padding:12px; border:1px solid #333; background:#111; border-radius:12px; color:#888; font-weight:800; text-align:center; cursor:pointer; transition:0.3s;">Free Fire</div>
+    <div class="game-btn" onclick="selectGame(this, 'Free Fire Max')" style="flex:1; padding:12px; border:1px solid #333; background:#111; border-radius:12px; color:#888; font-weight:800; text-align:center; cursor:pointer; transition:0.3s;">Free Fire Max</div>
   </div>
 
   <div class="tabs" id="tabs">
@@ -325,27 +307,10 @@
   <div class="panel active" id="panel-aim">
     <div class="section">
       <div class="section-title">AIMLOCK MODULES</div>
-      
-      <div class="cheat-item">
-        <div class="cheat-icon">🎯</div>
-        <div class="cheat-info"><div class="name">AIMLOCK V1</div><div class="desc">Khóa mục tiêu cơ bản</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIMLOCK V1"><span class="slider"></span></label>
-      </div>
-      <div class="cheat-item">
-        <div class="cheat-icon">🎯</div>
-        <div class="cheat-info"><div class="name">AIMLOCK V2</div><div class="desc">Khóa mục tiêu nâng cao</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIMLOCK V2"><span class="slider"></span></label>
-      </div>
-      <div class="cheat-item">
-        <div class="cheat-icon">🎯</div>
-        <div class="cheat-info"><div class="name">AIMLOCK V3</div><div class="desc">Khóa mục tiêu siêu mượt</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIMLOCK V3"><span class="slider"></span></label>
-      </div>
-      <div class="cheat-item">
-        <div class="cheat-icon">🎯</div>
-        <div class="cheat-info"><div class="name">AIMLOCK V6</div><div class="desc">Khóa mục tiêu Pro Max</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIMLOCK V6"><span class="slider"></span></label>
-      </div>
+      <div class="cheat-item"><div class="cheat-icon">🎯</div><div class="cheat-info"><div class="name">AIMLOCK V1</div><div class="desc">Khóa mục tiêu cơ bản</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIMLOCK V1"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🎯</div><div class="cheat-info"><div class="name">AIMLOCK V2</div><div class="desc">Khóa mục tiêu nâng cao</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIMLOCK V2"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🎯</div><div class="cheat-info"><div class="name">AIMLOCK V3</div><div class="desc">Khóa mục tiêu siêu mượt</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIMLOCK V3"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🎯</div><div class="cheat-info"><div class="name">AIMLOCK V6</div><div class="desc">Khóa mục tiêu Pro Max</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIMLOCK V6"><span class="slider"></span></label></div>
     </div>
   </div>
 
@@ -353,52 +318,23 @@
   <div class="panel" id="panel-cheat">
     <div class="section">
       <div class="section-title">AIM CHEAT MODULES</div>
-      
-      <div class="cheat-item">
-        <div class="cheat-icon">🔥</div>
-        <div class="cheat-info"><div class="name">AIM CHEAT 1.0</div><div class="desc">Hỗ trợ ngắm bắn thế hệ 1</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIM CHEAT 1.0"><span class="slider"></span></label>
+      <div class="cheat-item"><div class="cheat-icon">🔥</div><div class="cheat-info"><div class="name">AIM CHEAT 1.0</div><div class="desc">Hỗ trợ ngắm bắn thế hệ 1</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIM CHEAT 1.0"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🔥</div><div class="cheat-info"><div class="name">AIM CHEAT 2.0</div><div class="desc">Hỗ trợ ngắm bắn thế hệ 2</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIM CHEAT 2.0"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">🎚️</div><div class="cheat-info"><div class="name">ĐỘ NHẠY</div><div class="desc">Tùy chỉnh độ nhạy ngắm bắn</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" id="sensToggle" data-name="ĐỘ NHẠY"><span class="slider"></span></label></div>
+      <div class="slider-box" id="sensBox" style="display:none; padding:10px; background:#111; border-radius:10px; margin-bottom:10px;">
+        <label style="font-size:0.75rem; color:#888;">Độ nhạy: <span id="sensValue" style="color:var(--neon);">50%</span></label>
+        <input type="range" min="1" max="100" value="50" id="sensRange" style="width:100%; margin-top:5px;">
       </div>
-      <div class="cheat-item">
-        <div class="cheat-icon">🔥</div>
-        <div class="cheat-info"><div class="name">AIM CHEAT 2.0</div><div class="desc">Hỗ trợ ngắm bắn thế hệ 2</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIM CHEAT 2.0"><span class="slider"></span></label>
-      </div>
-
-      <!-- THANH TRƯỢT ĐỘ NHẠY -->
-      <div class="cheat-item">
-        <div class="cheat-icon">🎚️</div>
-        <div class="cheat-info"><div class="name">ĐỘ NHẠY (SENSITIVITY)</div><div class="desc">Tùy chỉnh độ nhạy ngắm bắn</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle" id="sensToggle" data-name="ĐỘ NHẠY"><span class="slider"></span></label>
-      </div>
-      <div class="slider-box" id="sensBox">
-        <label>Độ nhạy: <span id="sensValue" style="color:var(--neon);">50%</span></label>
-        <input type="range" min="1" max="100" value="50" id="sensRange">
-      </div>
-
     </div>
   </div>
 
-  <!-- TAB MOD SKIN (CHỈ ĐƯỢC CHỌN 1) -->
+  <!-- TAB MOD SKIN -->
   <div class="panel" id="panel-skin">
     <div class="section">
-      <div class="section-title">MOD SKIN MODULES (CHỌN 1)</div>
-      
-      <div class="cheat-item">
-        <div class="cheat-icon">👕</div>
-        <div class="cheat-info"><div class="name">MOD SKIN V1</div><div class="desc">Bộ skin cơ bản</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="MOD SKIN V1"><span class="slider"></span></label>
-      </div>
-      <div class="cheat-item">
-        <div class="cheat-icon">👕</div>
-        <div class="cheat-info"><div class="name">MOD SKIN V2</div><div class="desc">Bộ skin nâng cao</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="MOD SKIN V2"><span class="slider"></span></label>
-      </div>
-      <div class="cheat-item">
-        <div class="cheat-icon">👕</div>
-        <div class="cheat-info"><div class="name">MOD SKIN V3</div><div class="desc">Bộ skin cao cấp</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="MOD SKIN V3"><span class="slider"></span></label>
-      </div>
+      <div class="section-title">MOD SKIN (CHỌN 1)</div>
+      <div class="cheat-item"><div class="cheat-icon">👕</div><div class="cheat-info"><div class="name">MOD SKIN V1</div><div class="desc">Bộ skin cơ bản</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="MOD SKIN V1"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">👕</div><div class="cheat-info"><div class="name">MOD SKIN V2</div><div class="desc">Bộ skin nâng cao</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="MOD SKIN V2"><span class="slider"></span></label></div>
+      <div class="cheat-item"><div class="cheat-icon">👕</div><div class="cheat-info"><div class="name">MOD SKIN V3</div><div class="desc">Bộ skin cao cấp</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="MOD SKIN V3"><span class="slider"></span></label></div>
     </div>
   </div>
 
@@ -406,13 +342,7 @@
   <div class="panel" id="panel-misc">
     <div class="section">
       <div class="section-title">MISC MODULES</div>
-      
-      <div class="cheat-item">
-        <div class="cheat-icon">🛡️</div>
-        <div class="cheat-info"><div class="name">ANTIBAN</div><div class="desc">Chống bị khóa tài khoản</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="ANTIBAN"><span class="slider"></span></label>
-      </div>
-
+      <div class="cheat-item"><div class="cheat-icon">🛡️</div><div class="cheat-info"><div class="name">ANTIBAN</div><div class="desc">Chống bị khóa tài khoản</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="ANTIBAN"><span class="slider"></span></label></div>
     </div>
   </div>
 
@@ -422,9 +352,9 @@
   </div>
 </div>
 
-<!-- ====== CHATBOT UI ====== -->
+<!-- CHATBOT UI -->
 <div class="chatbot-btn" onclick="toggleChat()">🤖
-  <div class="chatbot-badge" id="chatBadge">1</div>
+  <div class="chatbot-badge" id="chatBadge" style="display:none; position:absolute; top:-5px; right:-5px; background:#ffaa00; color:#000; width:20px; height:20px; border-radius:50%; font-size:0.7rem; font-weight:bold; display:flex; align-items:center; justify-content:center;">1</div>
 </div>
 
 <div class="chat-window" id="chatWindow">
@@ -433,7 +363,7 @@
     <button class="chat-close" onclick="toggleChat()">✕</button>
   </div>
   <div class="chat-body" id="chatBody">
-    <div class="chat-msg msg-bot">Xin chào! Tôi là Headlock Bot. Bạn cần mua Key hay nạp tiền? Gõ "help" để xem hướng dẫn.</div>
+    <div class="chat-msg msg-bot">Xin chào! Tôi là Bot. Gõ "help" để xem hướng dẫn.</div>
   </div>
   <div class="chat-input-area">
     <input type="text" class="chat-input" id="chatInput" placeholder="Nhập tin nhắn..." onkeypress="handleChatEnter(event)">
@@ -443,8 +373,6 @@
 
 <script>
 const SERVER_URL = 'https://innova-key.onrender.com';
-
-// THÔNG TIN NGÂN HÀNG ĐỂ TẠO MÃ QR ĐỘNG
 const BANK_ID = 'MB'; 
 const ACCOUNT_NO = '2333612345555'; 
 const ACCOUNT_NAME = 'CA VAN SAM'; 
@@ -455,7 +383,8 @@ let checkStatusInterval = null;
 let lastNotificationId = null;
 let selectedGame = 'Free Fire'; 
 let selectedSkin = null; 
-let currentDiscount = 0; // Biến lưu mã giảm giá
+let currentDiscount = 0; 
+let pendingBuyType = null; // Lưu loại key đang chờ mua
 
 // KHỞI TẠO PARTICLES
 const pWrap = document.getElementById('particles');
@@ -472,8 +401,14 @@ for(let i=0;i<60;i++){
 
 // HÀM CHỌN GAME
 function selectGame(element, gameName) {
-  document.querySelectorAll('.game-btn').forEach(btn => btn.classList.remove('active'));
-  element.classList.add('active');
+  document.querySelectorAll('.game-btn').forEach(btn => {
+    btn.style.borderColor = '#333';
+    btn.style.background = '#111';
+    btn.style.color = '#888';
+  });
+  element.style.borderColor = 'var(--neon)';
+  element.style.background = 'rgba(255,0,51,0.2)';
+  element.style.color = '#fff';
   selectedGame = gameName;
   showToast(`ĐÃ CHỌN: ${gameName}`);
 }
@@ -485,10 +420,7 @@ function showToast(message, isOff = false, isSuccess = false) {
   toast.className = `toast ${isOff ? 'off' : ''} ${isSuccess ? 'success' : ''}`;
   toast.textContent = message;
   container.appendChild(toast);
-  
-  setTimeout(() => {
-    if(toast.parentNode) toast.parentNode.removeChild(toast);
-  }, 2000);
+  setTimeout(() => { if(toast.parentNode) toast.parentNode.removeChild(toast); }, 2000);
 }
 
 // XỬ LÝ THANH TRƯỢT ĐỘ NHẠY
@@ -498,36 +430,28 @@ const sensRange = document.getElementById('sensRange');
 const sensValue = document.getElementById('sensValue');
 
 sensToggle.addEventListener('change', function() {
-  if(this.checked) sensBox.classList.add('show');
-  else sensBox.classList.remove('show');
+  if(this.checked) sensBox.style.display = 'block';
+  else sensBox.style.display = 'none';
 });
-
 sensRange.addEventListener('input', function() {
   sensValue.textContent = this.value + '%';
 });
 
-// HÀM XỬ LÝ NHẬP MÃ GIẢM GIÁ QUA CHATBOT
-async function applyCoupon(code) {
-  try {
-    const r = await fetch(SERVER_URL + '/api/shop/check-coupon', {
-      method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ code })
-    });
-    const d = await r.json();
-    
-    if(d.ok) {
-      currentDiscount = d.discount;
-      addMessage(`✅ <strong>MÃ GIẢM GIÁ HỢP LỆ!</strong><br>Bạn được giảm <strong>${d.discount}%</strong> khi mua Key.`, 'bot');
-    } else {
-      addMessage(`❌ Lỗi: ${d.error}`, 'bot');
-      currentDiscount = 0;
-    }
-  } catch(e) {
-    addMessage('❌ Lỗi kết nối Server!', 'bot');
-  }
+// HÀM ĐĂNG XUẤT
+function logoutApp() {
+  if(!confirm('Bạn có chắc muốn đăng xuất và thoát App?')) return;
+  currentUser = null;
+  isLoggedIn = false;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('lockScreen').classList.remove('hidden');
+  document.getElementById('keyInput').value = '';
+  document.getElementById('keyMsg').textContent = '';
+  document.getElementById('unlockBtn').disabled = false;
+  document.getElementById('userInfo').style.display = 'none';
+  document.getElementById('verifySection').classList.remove('show');
 }
 
-// KIỂM TRA THÔNG BÁO TỪ ADMIN (CHẠY NGẦM)
+// KIỂM TRA THÔNG BÁO TỪ ADMIN
 async function checkNotifications() {
   try {
     const r = await fetch(SERVER_URL + '/api/shop/notifications');
@@ -537,12 +461,9 @@ async function checkNotifications() {
       if(lastNotificationId !== latest.id) {
         lastNotificationId = latest.id;
         document.getElementById('chatBadge').style.display = 'flex';
-        
         let message = latest.message;
         if(message.includes('sản phẩm')) {
-          message = `📢 <strong>SAMM ĐÃ TẠO KEY MỚI!</strong><br>AE NÀO CẦN LIÊN HỆ SAMM 0355757211 ZALO NHA MỌI NGƯỜI.<br>Giá Key: 20k/ngày, 50k/tuần, 80k/tháng, 200k/vĩnh viễn. Mỗi key chỉ dùng trên 1 thiết bị.`;
-        } else if(message.includes('MÃ GIẢM GIÁ')) {
-          message = `📢 <strong>SAMM ĐÃ TẠO RA MÃ GIẢM GIÁ!</strong><br>${message}`;
+          message = `📢 <strong>SAMM ĐÃ TẠO KEY MỚI!</strong><br>AE NÀO CẦN LIÊN HỆ SAMM 0355757211 ZALO NHA.`;
         }
         addMessage(message, 'bot');
       }
@@ -561,11 +482,7 @@ function toggleChat() {
     document.getElementById('chatBody').scrollTop = document.getElementById('chatBody').scrollHeight;
   }
 }
-
-function handleChatEnter(e) {
-  if(e.key === 'Enter') sendChat();
-}
-
+function handleChatEnter(e) { if(e.key === 'Enter') sendChat(); }
 function addMessage(text, sender = 'bot') {
   const chatBody = document.getElementById('chatBody');
   const div = document.createElement('div');
@@ -579,16 +496,58 @@ async function sendChat() {
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
   if(!text) return;
-  
   addMessage(text, 'user');
   input.value = '';
 
   const lowerText = text.toLowerCase();
 
-  // LỆNH NHẬP MÃ GIẢM GIÁ TRỰC TIẾP QUA CHAT
-  // Nếu người dùng gõ mã giảm giá (VD: "sammvip"), không có dấu cách
+  // NẾU ĐANG CHỜ NHẬP SỐ LƯỢNG KEY
+  if (pendingBuyType) {
+    const num = parseInt(text);
+    if(!isNaN(num) && num > 0 && num <= 100) {
+      addMessage(`Đang tiến hành mua ${num} Key...`, 'bot');
+      try {
+        const r = await fetch(SERVER_URL + '/api/bot/buy-multiple', {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ username: currentUser.username, type: pendingBuyType.type, count: num, discount: currentDiscount })
+        });
+        const d = await r.json();
+        if(d.ok) {
+          currentUser.balance = d.newBalance;
+          let keyListHtml = d.keys.map(k => `<div style="color:#00ff88; font-family:monospace; font-size:1rem; font-weight:bold; margin-top:5px;">${k}</div>`).join('');
+          addMessage(`
+            Mua thành công <strong>${num} Key ${pendingBuyType.name}</strong>!<br>
+            Tổng tiền: <strong>${d.totalPrice.toLocaleString('vi-VN')}đ</strong><br>
+            Mã Key của bạn:<br>${keyListHtml}<br>
+            <i>(Hãy copy các mã này để nhập vào App)</i>
+          `, 'bot');
+        } else {
+          addMessage(`Lỗi: ${d.error}`, 'bot');
+        }
+      } catch(e) { addMessage('Lỗi kết nối Server!', 'bot'); }
+      pendingBuyType = null;
+    } else {
+      addMessage('Số lượng không hợp lệ. Vui lòng nhập số từ 1 đến 100.', 'bot');
+    }
+    return;
+  }
+
+  // LỆNH NHẬP MÃ GIẢM GIÁ
   if(lowerText === 'sammvip' || lowerText === 'giamgia' || lowerText === 'vip') {
-    applyCoupon(lowerText.toUpperCase());
+    try {
+      const r = await fetch(SERVER_URL + '/api/shop/check-coupon', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ code: text.toUpperCase() })
+      });
+      const d = await r.json();
+      if(d.ok) {
+        currentDiscount = d.discount;
+        addMessage(`✅ <strong>MÃ GIẢM GIÁ HỢP LỆ!</strong><br>Bạn được giảm <strong>${d.discount}%</strong> khi mua Key.`, 'bot');
+      } else {
+        addMessage(`❌ Lỗi: ${d.error}`, 'bot');
+        currentDiscount = 0;
+      }
+    } catch(e) { addMessage('❌ Lỗi kết nối Server!', 'bot'); }
     return;
   }
 
@@ -613,7 +572,6 @@ async function sendChat() {
     const parts = text.split(' ');
     if(parts.length < 3) return addMessage('Sai cú pháp. Vui lòng nhập: dk [tên] [mật khẩu]', 'bot');
     const u = parts[1]; const p = parts[2];
-    
     addMessage('Đang xử lý đăng ký...', 'bot');
     try {
       const r = await fetch(SERVER_URL + '/api/shop/register', {
@@ -632,7 +590,6 @@ async function sendChat() {
     const parts = text.split(' ');
     if(parts.length < 3) return addMessage('Sai cú pháp. Vui lòng nhập: dn [tên] [mật khẩu]', 'bot');
     const u = parts[1]; const p = parts[2];
-
     addMessage('Đang xử lý đăng nhập...', 'bot');
     try {
       const r = await fetch(SERVER_URL + '/api/shop/login', {
@@ -643,7 +600,7 @@ async function sendChat() {
       if(d.ok) {
         currentUser = d.user;
         isLoggedIn = true;
-        addMessage(`Đăng nhập thành công! Chào mừng <strong>${currentUser.username}</strong>. Bạn có thể gõ "tài khoản" để xem số dư.`, 'bot');
+        addMessage(`Đăng nhập thành công! Chào mừng <strong>${currentUser.username}</strong>. Số dư: <strong>${currentUser.balance.toLocaleString('vi-VN')}đ</strong>.`, 'bot');
       } else {
         addMessage(`Lỗi: ${d.error}`, 'bot');
       }
@@ -652,6 +609,28 @@ async function sendChat() {
   else if(lowerText.includes('tài khoản') || lowerText.includes('số dư')) {
     if(!isLoggedIn) return addMessage('Bạn chưa đăng nhập. Hãy gõ "đăng nhập" trước.', 'bot');
     addMessage(`Tài khoản: <strong>${currentUser.username}</strong><br>Số dư: <strong>${currentUser.balance.toLocaleString('vi-VN')}đ</strong>`, 'bot');
+  }
+  else if(lowerText.includes('key của tôi') || lowerText.includes('lịch sử key')) {
+    if(!isLoggedIn) return addMessage('Bạn chưa đăng nhập.', 'bot');
+    addMessage(`<strong>DANH SÁCH KEY CỦA BẠN:</strong><br><i>(Đang tải dữ liệu...)</em>`, 'bot');
+    try {
+      const r = await fetch(SERVER_URL + '/api/bot/my-keys?username=' + currentUser.username);
+      const d = await r.json();
+      if(d.ok && d.keys.length > 0) {
+        let html = '';
+        d.keys.forEach(k => {
+          const exp = k.expires_at ? new Date(k.expires_at).toLocaleString('vi-VN') : 'Vĩnh viễn';
+          const status = k.expires_at && Date.now() > k.expires_at ? '<span style="color:#ff3366">(Hết hạn)</span>' : '<span style="color:#00ff88">(Còn hạn)</span>';
+          html += `<div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:5px; margin-top:5px;">
+            <div style="font-family:monospace; font-size:1rem; color:#fff;">${k.key}</div>
+            <div style="font-size:0.7rem; color:#aaa;">Hạn: ${exp} ${status}</div>
+          </div>`;
+        });
+        addMessage(html, 'bot');
+      } else {
+        addMessage(`Bạn chưa có Key nào.`, 'bot');
+      }
+    } catch(e) { addMessage('Lỗi lấy dữ liệu!', 'bot'); }
   }
   else if(lowerText.includes('key')) {
     if(!isLoggedIn) return addMessage('Bạn chưa đăng nhập. Hãy gõ "đăng nhập" trước.', 'bot');
@@ -665,37 +644,19 @@ async function sendChat() {
 
     if(!type) return addMessage('Bạn muốn mua Key gì? (Gõ "Key 1 ngày", "Key 1 tuần", "Key 1 tháng", "Key vĩnh viễn").', 'bot');
 
-    addMessage(`Đang tiến hành mua Key ${typeName}...`, 'bot');
-    try {
-      const r = await fetch(SERVER_URL + '/api/bot/buy', {
-        method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ username: currentUser.username, type, discount: currentDiscount })
-      });
-      const d = await r.json();
-      if(d.ok) {
-        currentUser.balance -= d.price;
-        addMessage(`
-          Mua thành công Key <strong>${typeName}</strong>!<br>
-          Giá đã giảm: <strong>${d.price.toLocaleString('vi-VN')}đ</strong><br>
-          Mã Key của bạn là: <br>
-          <span style="color:#00ff88; font-size:1.1rem; font-family:monospace; font-weight:bold;">${d.key}</span><br>
-          <i>(Hãy copy mã này để nhập vào App)</i>
-        `, 'bot');
-      } else {
-        addMessage(`Lỗi: ${d.error}`, 'bot');
-      }
-    } catch(e) { addMessage('Lỗi kết nối Server!', 'bot'); }
+    pendingBuyType = { type: type, name: typeName };
+    addMessage(`Bạn muốn mua bao nhiêu Key <strong>${typeName}</strong>? Vui lòng nhập số lượng (1-100).`, 'bot');
   }
   else if(lowerText.includes('nạp')) {
     addMessage(`
       Bạn muốn nạp bao nhiêu? Vui lòng chọn mệnh giá bên dưới:<br>
       <div style="display:flex; gap:5px; flex-wrap:wrap; margin-top:8px;">
-        <button onclick="selectTopup(10000)" style="padding:5px 10px; background:#331111; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">10.000đ</button>
-        <button onclick="selectTopup(20000)" style="padding:5px 10px; background:#331111; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">20.000đ</button>
-        <button onclick="selectTopup(50000)" style="padding:5px 10px; background:#331111; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">50.000đ</button>
-        <button onclick="selectTopup(100000)" style="padding:5px 10px; background:#331111; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">100.000đ</button>
-        <button onclick="selectTopup(200000)" style="padding:5px 10px; background:#331111; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">200.000đ</button>
-        <button onclick="selectTopup(500000)" style="padding:5px 10px; background:#331111; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">500.000đ</button>
+        <button onclick="selectTopup(10000)" style="padding:5px 10px; background:#222; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">10.000đ</button>
+        <button onclick="selectTopup(20000)" style="padding:5px 10px; background:#222; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">20.000đ</button>
+        <button onclick="selectTopup(50000)" style="padding:5px 10px; background:#222; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">50.000đ</button>
+        <button onclick="selectTopup(100000)" style="padding:5px 10px; background:#222; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">100.000đ</button>
+        <button onclick="selectTopup(200000)" style="padding:5px 10px; background:#222; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">200.000đ</button>
+        <button onclick="selectTopup(500000)" style="padding:5px 10px; background:#222; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">500.000đ</button>
       </div>
     `, 'bot');
   }
@@ -704,53 +665,45 @@ async function sendChat() {
   }
 }
 
-// HÀM XỬ LÝ KHI CHỌN MỆNH GIÁ NẠP VÀ TẠO QR ĐỘNG
+// HÀM NẠP TIỀN
 async function selectTopup(amount) {
   if(!isLoggedIn) return addMessage('Bạn chưa đăng nhập. Hãy gõ "đăng nhập" trước.', 'bot');
-  
   addMessage(`Bạn đã chọn nạp <strong>${amount.toLocaleString('vi-VN')}đ</strong>.`, 'user');
   
   const qrUrl = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-compact2.png?amount=${amount}&addInfo=Nap%20App%20${currentUser.username}&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
 
   addMessage(`
     Vui lòng quét mã QR bên dưới để thanh toán.<br>
-    <strong>Lưu ý:</strong> Hệ thống đã tự động điền đúng số tiền <strong>${amount.toLocaleString('vi-VN')}đ</strong> vào mã QR.<br>
+    <strong>Lưu ý:</strong> Hệ thống đã điền đúng số tiền <strong>${amount.toLocaleString('vi-VN')}đ</strong>.<br>
     <img src="${qrUrl}" class="qr-img">
   `, 'bot');
 
   addMessage('Đang chờ xác thực...', 'bot');
-  
   try {
     const r = await fetch(SERVER_URL + '/api/shop/topup', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ username: currentUser.username, amount: amount })
     });
     const d = await r.json();
-    
     if(d.ok) {
       if(checkStatusInterval) clearInterval(checkStatusInterval);
       checkStatusInterval = setInterval(async () => {
         try {
           const checkRes = await fetch(SERVER_URL + '/api/shop/check-topup-status?username=' + currentUser.username);
           const checkData = await checkRes.json();
-          
           if (checkData.ok && checkData.status === 'success') {
             clearInterval(checkStatusInterval);
             checkStatusInterval = null;
             currentUser.balance = checkData.newBalance;
-            addMessage(`✅ <strong>ĐÃ NẠP THÀNH CÔNG ${amount.toLocaleString('vi-VN')}đ</strong><br>Số dư mới của bạn là: <strong>${currentUser.balance.toLocaleString('vi-VN')}đ</strong>`, 'bot');
+            addMessage(`✅ <strong>ĐÃ NẠP THÀNH CÔNG ${amount.toLocaleString('vi-VN')}đ</strong><br>Số dư mới: <strong>${currentUser.balance.toLocaleString('vi-VN')}đ</strong>`, 'bot');
           }
-        } catch (err) { console.log('Đang chờ duyệt...'); }
+        } catch (err) {}
       }, 3000);
-    } else {
-      addMessage(`Lỗi: ${d.error}`, 'bot');
-    }
-  } catch(e) {
-    addMessage('Lỗi kết nối Server!', 'bot');
-  }
+    } else { addMessage(`Lỗi: ${d.error}`, 'bot'); }
+  } catch(e) { addMessage('Lỗi kết nối Server!', 'bot'); }
 }
 
-// XỬ LÝ MỞ KHÓA APP
+// XỬ LÝ XÁC THỰC KEY VÀ CHẠY % THIẾT BỊ
 document.getElementById('unlockBtn').addEventListener('click', async ()=>{
   const key = document.getElementById('keyInput').value.trim().toUpperCase();
   const msg = document.getElementById('keyMsg');
@@ -772,14 +725,39 @@ document.getElementById('unlockBtn').addEventListener('click', async ()=>{
     const d = await r.json();
 
     if(d.ok) {
-      msg.textContent = '✓ Thành công! Đang vào app...'; msg.className = 'key-msg ok';
-      setTimeout(()=>{
-        document.getElementById('lockScreen').classList.add('hidden');
-        document.getElementById('app').style.display = 'flex';
-        document.getElementById('userInfo').style.display = 'flex';
-        document.getElementById('uiDevice').textContent = 'WEB-' + Math.random().toString(36).slice(2,6).toUpperCase();
-        document.getElementById('uiExpiry').textContent = d.isForever ? 'Vĩnh viễn' : Math.floor(d.remainingMs/86400000) + ' ngày';
-      }, 1000);
+      msg.textContent = '✓ Key hợp lệ! Đang xác thực thiết bị...'; msg.className = 'key-msg ok';
+      
+      // HIỆN THANH XÁC THỰC THIẾT BỊ
+      document.getElementById('verifySection').classList.add('show');
+      
+      let progress = 0;
+      const progressFill = document.getElementById('progressFill');
+      const progressPercent = document.getElementById('progressPercent');
+      const verifyStatus = document.getElementById('verifyStatus');
+      
+      const interval = setInterval(() => {
+        progress += Math.floor(Math.random() * 15) + 5;
+        if(progress > 100) progress = 100;
+        progressFill.style.width = progress + '%';
+        progressPercent.textContent = progress + '%';
+        
+        if(progress < 30) verifyStatus.textContent = 'Đang khởi tạo môi trường...';
+        else if(progress < 60) verifyStatus.textContent = 'Đọc thông tin phần cứng...';
+        else if(progress < 90) verifyStatus.textContent = 'Mã hóa kết nối...';
+        else verifyStatus.textContent = 'Xác thực hoàn tất!';
+
+        if(progress >= 100) {
+          clearInterval(interval);
+          setTimeout(()=>{
+            document.getElementById('lockScreen').classList.add('hidden');
+            document.getElementById('app').style.display = 'flex';
+            document.getElementById('userInfo').style.display = 'flex';
+            document.getElementById('uiDevice').textContent = 'WEB-' + Math.random().toString(36).slice(2,6).toUpperCase();
+            document.getElementById('uiExpiry').textContent = d.isForever ? 'Vĩnh viễn' : Math.floor(d.remainingMs/86400000) + ' ngày';
+          }, 500);
+        }
+      }, 150);
+      
     } else {
       msg.textContent = '✗ ' + d.error; msg.className = 'key-msg err'; document.getElementById('unlockBtn').disabled = false;
     }
@@ -798,15 +776,12 @@ document.querySelectorAll('.tab').forEach(tab => {
   });
 });
 
-// HIỆU ỨNG TOGGLE KHI GẠT CÔNG TẮC
+// GẠT CÔNG TẮC
 document.querySelectorAll('.cheat-item').forEach(item => {
   item.addEventListener('click', (e) => {
     if(e.target.closest('.switch')) return;
     const toggle = item.querySelector('.cheat-toggle');
-    if(toggle) {
-      toggle.checked = !toggle.checked;
-      toggle.dispatchEvent(new Event('change'));
-    }
+    if(toggle) { toggle.checked = !toggle.checked; toggle.dispatchEvent(new Event('change')); }
   });
 });
 
@@ -815,58 +790,39 @@ document.querySelectorAll('.cheat-toggle').forEach(toggle => {
     const item = this.closest('.cheat-item');
     const name = this.getAttribute('data-name') || 'Chức năng';
     
-    // LOGIC CHỈ CHỌN 1 MOD SKIN
     if (name.includes('MOD SKIN')) {
       if (this.checked) {
-        // Tắt tất cả các MOD SKIN khác
         document.querySelectorAll('.cheat-toggle').forEach(t => {
           if (t !== this && t.getAttribute('data-name') && t.getAttribute('data-name').includes('MOD SKIN')) {
-            t.checked = false;
-            t.closest('.cheat-item').classList.remove('active');
+            t.checked = false; t.closest('.cheat-item').classList.remove('active');
           }
         });
         selectedSkin = name;
         showToast(`ĐÃ CHỌN: ${name}`);
-        addMessage(`🤖 <strong>THÔNG BÁO TỪ BOT:</strong><br>${name} ALOK ĐÃ KÍCH HOẠT THÀNH CÔNG!`, 'bot');
       } else {
-        selectedSkin = null;
-        showToast(`ĐÃ TẮT: ${name}`, true);
+        selectedSkin = null; showToast(`ĐÃ TẮT: ${name}`, true);
       }
     } else {
-      // Các chức năng khác
-      if(this.checked) {
-        item.classList.add('active');
-        showToast(`ĐÃ BẬT: ${name}`);
-      } else {
-        item.classList.remove('active');
-        showToast(`ĐÃ TẮT: ${name}`, true);
-      }
+      if(this.checked) { item.classList.add('active'); showToast(`ĐÃ BẬT: ${name}`); } 
+      else { item.classList.remove('active'); showToast(`ĐÃ TẮT: ${name}`, true); }
     }
   });
 });
 
-// XỬ LÝ NÚT KÍCH HOẠT (TỰ ĐỘNG VÀO GAME)
+// KÍCH HOẠT
 document.getElementById('btnActivate').addEventListener('click', () => {
   const activeModules = document.querySelectorAll('.cheat-toggle:checked');
   if (activeModules.length === 0) return alert('Vui lòng bật ít nhất 1 chức năng trước khi kích hoạt!');
-  
-  // Bắt buộc phải chọn Mod Skin
-  if (!selectedSkin) {
-    return alert('Vui lòng chọn 1 MOD SKIN (V1, V2 hoặc V3) trước khi Kích Hoạt!');
-  }
+  if (!selectedSkin) return alert('Vui lòng chọn 1 MOD SKIN trước khi Kích Hoạt!');
 
   const overlay = document.getElementById('loadingOverlay');
   overlay.classList.add('show');
-  
-  // Đổi text loading
   overlay.querySelector('.loading-text').innerHTML = `ĐANG VÀO ${selectedGame.toUpperCase()}...`;
 
   setTimeout(() => {
     overlay.classList.remove('show');
-    alert(`✅ KÍCH HOẠT THÀNH CÔNG!\nĐang tự động vào game ${selectedGame} với ${selectedSkin}.\nToàn bộ chức năng đã được áp dụng!`);
-    // Xóa overlay
-    document.getElementById('loadingOverlay').classList.remove('show');
-  }, 3000); // Chờ 3 giây để giả lập load game
+    alert(`✅ KÍCH HOẠT THÀNH CÔNG!\nĐang tự động vào game ${selectedGame} với ${selectedSkin}.`);
+  }, 3000);
 });
 </script>
 </body>
