@@ -145,10 +145,16 @@
   }
   .chatbot-btn:hover { transform: scale(1.1); }
   @keyframes floatBot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  .chatbot-badge {
+    position: absolute; top: -5px; right: -5px; background: #ff3366;
+    color: #fff; font-size: 0.7rem; font-weight: bold; width: 20px; height: 20px;
+    border-radius: 50%; display: none; align-items: center; justify-content: center;
+    border: 2px solid #000; box-shadow: 0 0 10px #ff3366;
+  }
 
   .chat-window {
     position: fixed; bottom: 90px; right: 20px; z-index: 600;
-    width: calc(100% - 40px); max-width: 350px; height: 450px;
+    width: calc(100% - 40px); max-width: 350px; height: 480px;
     background: rgba(10, 14, 22, 0.95); border: 1px solid var(--neon);
     border-radius: 20px; display: none; flex-direction: column;
     box-shadow: 0 10px 40px rgba(0,0,0,0.8);
@@ -163,7 +169,7 @@
   .chat-close { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
 
   .chat-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-  .chat-msg { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 0.8rem; line-height: 1.4; }
+  .chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 0.8rem; line-height: 1.4; word-wrap: break-word;}
   .msg-bot { background: rgba(0,240,255,0.15); color: #cfefff; align-self: flex-start; border-bottom-left-radius: 2px; }
   .msg-user { background: var(--neon); color: #000; align-self: flex-end; border-bottom-right-radius: 2px; font-weight: 600; }
 
@@ -172,6 +178,8 @@
   .chat-input:focus { border-color: var(--neon); }
   .chat-send { padding: 10px 15px; border-radius: 20px; border: none; background: var(--neon); color: #000; font-weight: 900; cursor: pointer; }
   .chat-send:hover { background: #fff; }
+
+  .qr-img { width: 100%; max-width: 200px; border-radius: 10px; margin-top: 10px; border: 2px solid var(--neon); display: block; margin-left: auto; margin-right: auto;}
 </style>
 </head>
 <body>
@@ -368,7 +376,9 @@
 </div>
 
 <!-- ====== CHATBOT UI ====== -->
-<div class="chatbot-btn" onclick="toggleChat()">🤖</div>
+<div class="chatbot-btn" onclick="toggleChat()">🤖
+  <div class="chatbot-badge" id="chatBadge">1</div>
+</div>
 
 <div class="chat-window" id="chatWindow">
   <div class="chat-header">
@@ -376,7 +386,7 @@
     <button class="chat-close" onclick="toggleChat()">✕</button>
   </div>
   <div class="chat-body" id="chatBody">
-    <div class="chat-msg msg-bot">Xin chào! Tôi là Innova Bot. Bạn cần mua Key hay kiểm tra tài khoản?</div>
+    <div class="chat-msg msg-bot">Xin chào! Tôi là Innova Bot. Bạn cần mua Key hay nạp tiền? Gõ "help" để xem hướng dẫn.</div>
   </div>
   <div class="chat-input-area">
     <input type="text" class="chat-input" id="chatInput" placeholder="Nhập tin nhắn..." onkeypress="handleChatEnter(event)">
@@ -386,8 +396,12 @@
 
 <script>
 const SERVER_URL = 'https://innova-key.onrender.com';
+const QR_IMAGE_URL = 'https://files.catbox.moe/4ot0fd.jpeg';
+
 let currentUser = null;
 let isLoggedIn = false;
+let checkStatusInterval = null;
+let lastNotificationId = null; // Dùng để kiểm tra thông báo mới
 
 // KHỞI TẠO PARTICLES
 const pWrap = document.getElementById('particles');
@@ -401,9 +415,46 @@ for(let i=0;i<50;i++){
   pWrap.appendChild(s);
 }
 
-// CHATBOT LOGIC
+// KIỂM TRA THÔNG BÁO TỪ ADMIN (CHẠY NGẦM)
+async function checkNotifications() {
+  try {
+    const r = await fetch(SERVER_URL + '/api/shop/notifications');
+    const d = await r.json();
+    if(d.ok && d.notifications.length > 0) {
+      const latest = d.notifications[0];
+      // Nếu có thông báo mới và khác với thông báo cũ
+      if(lastNotificationId !== latest.id) {
+        lastNotificationId = latest.id;
+        
+        // Hiện chấm đỏ trên icon chat
+        document.getElementById('chatBadge').style.display = 'flex';
+        
+        // Tự động gửi tin nhắn vào khung chat nếu đang mở
+        let message = latest.message;
+        
+        // Tùy chỉnh câu chữ nếu là thông báo tạo Key
+        if(message.includes('sản phẩm')) {
+          message = `📢 <strong>SAMM ĐÃ TẠO KEY MỚI!</strong><br>AE NÀO CẦN LIÊN HỆ SAMM 0355757211 ZALO NHA MỌI NGƯỜI.<br>Giá Key: 20k/ngày, 50k/tuần, 80k/tháng, 200k/vĩnh viễn. Mỗi key chỉ dùng trên 1 thiết bị.`;
+        } else if(message.includes('MÃ GIẢM GIÁ')) {
+          message = `📢 <strong>SAMM ĐÃ TẠO RA MÃ GIẢM GIÁ!</strong><br>${message}`;
+        }
+        
+        addMessage(message, 'bot');
+      }
+    }
+  } catch(e) {}
+}
+setInterval(checkNotifications, 10000); // Kiểm tra mỗi 10 giây
+checkNotifications();
+
+// ====== CHATBOT LOGIC ======
 function toggleChat() {
-  document.getElementById('chatWindow').classList.toggle('show');
+  const chatWin = document.getElementById('chatWindow');
+  chatWin.classList.toggle('show');
+  if(chatWin.classList.contains('show')) {
+    document.getElementById('chatBadge').style.display = 'none';
+    document.getElementById('chatBody').scrollTop = document.getElementById('chatBody').scrollHeight;
+  }
 }
 
 function handleChatEnter(e) {
@@ -439,7 +490,8 @@ async function sendChat() {
       - Gõ "đăng ký" để tạo tài khoản.<br>
       - Gõ "đăng nhập" để vào tài khoản.<br>
       - Gõ "tài khoản" để xem số dư.<br>
-      - Gõ "Key 1 ngày", "Key 1 tuần", "Key 1 tháng" để mua Key.
+      - Gõ "Key 1 ngày", "Key 1 tuần", "Key 1 tháng" để mua Key.<br>
+      - Gõ "nạp" để nạp tiền vào tài khoản.
     `), 500);
   }
   else if(lowerText.includes('đăng ký') || lowerText.includes('register')) {
@@ -521,8 +573,66 @@ async function sendChat() {
       }
     } catch(e) { addMessage('Lỗi kết nối Server!', 'bot'); }
   }
+  else if(lowerText.includes('nạp')) {
+    addMessage(`
+      Bạn muốn nạp bao nhiêu? Vui lòng chọn mệnh giá bên dưới:<br>
+      <div style="display:flex; gap:5px; flex-wrap:wrap; margin-top:8px;">
+        <button onclick="selectTopup(10000)" style="padding:5px 10px; background:#334; border:1px solid #00f0ff; color:#fff; border-radius:5px; cursor:pointer;">10.000đ</button>
+        <button onclick="selectTopup(20000)" style="padding:5px 10px; background:#334; border:1px solid #00f0ff; color:#fff; border-radius:5px; cursor:pointer;">20.000đ</button>
+        <button onclick="selectTopup(50000)" style="padding:5px 10px; background:#334; border:1px solid #00f0ff; color:#fff; border-radius:5px; cursor:pointer;">50.000đ</button>
+        <button onclick="selectTopup(100000)" style="padding:5px 10px; background:#334; border:1px solid #00f0ff; color:#fff; border-radius:5px; cursor:pointer;">100.000đ</button>
+        <button onclick="selectTopup(200000)" style="padding:5px 10px; background:#334; border:1px solid #00f0ff; color:#fff; border-radius:5px; cursor:pointer;">200.000đ</button>
+        <button onclick="selectTopup(500000)" style="padding:5px 10px; background:#334; border:1px solid #00f0ff; color:#fff; border-radius:5px; cursor:pointer;">500.000đ</button>
+      </div>
+    `, 'bot');
+  }
   else {
     setTimeout(() => addMessage('Tôi không hiểu ý bạn. Gõ "help" để xem danh sách lệnh.', 'bot'), 500);
+  }
+}
+
+// HÀM XỬ LÝ KHI CHỌN MỆNH GIÁ NẠP
+async function selectTopup(amount) {
+  if(!isLoggedIn) return addMessage('Bạn chưa đăng nhập. Hãy gõ "đăng nhập" trước.', 'bot');
+  
+  addMessage(`Bạn đã chọn nạp <strong>${amount.toLocaleString('vi-VN')}đ</strong>.`, 'user');
+  addMessage(`
+    Vui lòng quét mã QR bên dưới để thanh toán.<br>
+    <strong>Lưu ý:</strong> Chuyển ĐÚNG SỐ TIỀN là <strong>${amount.toLocaleString('vi-VN')}đ</strong>.<br>
+    <img src="${QR_IMAGE_URL}" class="qr-img">
+  `, 'bot');
+
+  addMessage('Đang gửi yêu cầu đến Admin...', 'bot');
+  
+  try {
+    const r = await fetch(SERVER_URL + '/api/shop/topup', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ username: currentUser.username, amount: amount })
+    });
+    const d = await r.json();
+    
+    if(d.ok) {
+      addMessage('Yêu cầu nạp tiền đã được gửi. Vui lòng chờ Admin duyệt (khoảng 1-2 phút).', 'bot');
+
+      if(checkStatusInterval) clearInterval(checkStatusInterval);
+      checkStatusInterval = setInterval(async () => {
+        try {
+          const checkRes = await fetch(SERVER_URL + '/api/shop/check-topup-status?username=' + currentUser.username);
+          const checkData = await checkRes.json();
+          
+          if (checkData.ok && checkData.status === 'success') {
+            clearInterval(checkStatusInterval);
+            checkStatusInterval = null;
+            currentUser.balance = checkData.newBalance;
+            addMessage(`✅ <strong>NẠP THÀNH CÔNG!</strong><br>Số dư mới của bạn là: <strong>${currentUser.balance.toLocaleString('vi-VN')}đ</strong>`, 'bot');
+          }
+        } catch (err) { console.log('Đang chờ duyệt...'); }
+      }, 3000);
+    } else {
+      addMessage(`Lỗi: ${d.error}`, 'bot');
+    }
+  } catch(e) {
+    addMessage('Lỗi kết nối Server!', 'bot');
   }
 }
 
