@@ -72,7 +72,6 @@ app.post('/api/shop/buy', async (req, res) => {
   res.json({ ok: true, message: 'Mua thành công!' });
 });
 
-// API NẠP TIỀN: Chỉ lưu trạng thái 'pending' (Chờ duyệt)
 app.post('/api/shop/topup', async (req, res) => {
   const { username, amount } = req.body;
   const { error } = await supabase.from('topups').insert([{ 
@@ -92,19 +91,42 @@ app.get('/api/shop/history', async (req, res) => {
 });
 
 // ================= ADMIN API =================
+
+// THÊM KEY VÀO SHOP: CHỈ CẦN TYPE VÀ COUNT
 app.post('/api/admin/add-shop-key', async (req, res) => {
   const pass = req.headers['x-admin-pass'];
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
 
-  const { name, image, price, type } = req.body;
-  const item = {
-    key: generateKey(), type, created_at: Date.now(), expires_at: calcExpiry(type),
-    note: 'Shop Item', device_id: null, name, image, price: parseInt(price)
-  };
+  const { type, count } = req.body;
+  const n = Math.min(Math.max(parseInt(count) || 1, 1), 100);
+  const created = [];
+
+  // Bảng giá tự động
+  let price = 0;
+  let name = '';
+  if(type === 'day') { price = 20000; name = 'Key 1 Ngày'; }
+  else if(type === 'week') { price = 50000; name = 'Key 1 Tuần'; }
+  else if(type === 'month') { price = 80000; name = 'Key 1 Tháng'; }
+  else if(type === 'forever') { price = 200000; name = 'Key Vĩnh Viễn'; }
+  else return res.json({ ok: false, error: 'Loại Key không hợp lệ' });
+
+  for (let i = 0; i < n; i++) {
+    const item = {
+      key: generateKey(), 
+      type, 
+      created_at: Date.now(), 
+      expires_at: calcExpiry(type),
+      note: 'Shop Item', 
+      device_id: null, 
+      name: name, 
+      image: '', 
+      price: price
+    };
+    const { error } = await supabase.from('keys').insert([item]);
+    if(!error) created.push(item);
+  }
   
-  const { error } = await supabase.from('keys').insert([item]);
-  if(error) return res.json({ ok: false, error: error.message });
-  res.json({ ok: true, item });
+  res.json({ ok: true, count: created.length });
 });
 
 app.get('/api/admin/users', async (req, res) => {
@@ -114,7 +136,6 @@ app.get('/api/admin/users', async (req, res) => {
   res.json({ ok: true, users: data || [] });
 });
 
-// Admin lấy danh sách chờ duyệt
 app.get('/api/admin/topups', async (req, res) => {
   const pass = req.query.pass;
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
@@ -122,17 +143,12 @@ app.get('/api/admin/topups', async (req, res) => {
   res.json({ ok: true, topups: data || [] });
 });
 
-// Admin duyệt nạp tiền
 app.post('/api/admin/approve-topup', async (req, res) => {
   const pass = req.headers['x-admin-pass'];
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
 
   const { id, username, amount } = req.body;
-  
-  // 1. Cập nhật trạng thái topup thành 'success'
   await supabase.from('topups').update({ status: 'success' }).eq('id', id);
-  
-  // 2. Cộng tiền cho user
   const { data: user } = await supabase.from('users').select('*').eq('username', username).single();
   if(user) {
     await supabase.from('users').update({ balance: user.balance + amount }).eq('username', username);
@@ -140,7 +156,6 @@ app.post('/api/admin/approve-topup', async (req, res) => {
   res.json({ ok: true });
 });
 
-// Các API cũ giữ nguyên
 app.post('/api/create', async (req, res) => {
   const pass = req.headers['x-admin-pass'];
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu Admin' });
@@ -202,7 +217,7 @@ app.get('/admin', (req, res) => {
   th,td { padding: 10px; border-bottom: 1px solid #1a2a3d; text-align: left; white-space: nowrap; }
   .key { color: #00ff88; font-family: monospace; font-weight: bold; }
   #msg { color: #00ff88; margin-top: 10px; font-weight: bold; }
-  .tabs { display:flex; gap:10px; margin-bottom:20px; }
+  .tabs { display:flex; flex-wrap: wrap; gap:10px; margin-bottom:20px; }
   .tab { padding:10px 20px; background:#1a2a3d; border-radius:8px; cursor:pointer; font-weight:bold;}
   .tab.active { background:#00f0ff; color:#000; }
   .panel { display:none; }
@@ -237,12 +252,13 @@ app.get('/admin', (req, res) => {
   <div class="box">
     <h3 style="margin-bottom:10px; color:#00ff88">Thêm Key Bán Trong Shop</h3>
     <div class="row">
-      <input id="s_name" type="text" placeholder="Tên gói (VD: Gói VIP 1 Tháng)" style="flex:1">
-      <input id="s_price" type="number" placeholder="Giá tiền (VNĐ)" style="width:150px">
-    </div>
-    <div class="row">
-      <input id="s_img" type="text" placeholder="Link ảnh (VD: https://...)" style="flex:1">
-      <select id="s_type"><option value="day">1 Ngày</option><option value="week">1 Tuần</option><option value="month">1 Tháng</option><option value="forever">Vĩnh viễn</option></select>
+      <select id="s_type" style="flex:1">
+        <option value="day">Key 1 Ngày (20.000đ)</option>
+        <option value="week">Key 1 Tuần (50.000đ)</option>
+        <option value="month">Key 1 Tháng (80.000đ)</option>
+        <option value="forever">Key Vĩnh Viễn (200.000đ)</option>
+      </select>
+      <input id="s_count" type="number" value="1" min="1" max="100" style="width:100px" placeholder="Số lượng">
       <button onclick="addShopKey()">THÊM VÀO SHOP</button>
     </div>
   </div>
@@ -283,9 +299,16 @@ async function createKey(){
 
 async function addShopKey(){
   if(!getPass()) return alert('Nhập pass!');
-  const r = await fetch('/api/admin/add-shop-key',{method:'POST',headers:{'Content-Type':'application/json','x-admin-pass':getPass()},body:JSON.stringify({name:document.getElementById('s_name').value, image:document.getElementById('s_img').value, price:document.getElementById('s_price').value, type:document.getElementById('s_type').value})});
+  const r = await fetch('/api/admin/add-shop-key',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-admin-pass':getPass()},
+    body:JSON.stringify({
+      type: document.getElementById('s_type').value,
+      count: document.getElementById('s_count').value
+    })
+  });
   const d = await r.json();
-  alert(d.ok ? 'Đã thêm Key vào Shop!' : 'Lỗi: '+d.error);
+  alert(d.ok ? 'Đã thêm '+d.count+' Key vào Shop!' : 'Lỗi: '+d.error);
 }
 
 async function loadList(){
@@ -337,7 +360,7 @@ async function approveTopup(id, username, amount){
   const d = await r.json();
   if(d.ok) {
     alert('Đã duyệt thành công!');
-    loadTopups(); // Tải lại danh sách
+    loadTopups();
   } else {
     alert('Lỗi: ' + d.error);
   }
