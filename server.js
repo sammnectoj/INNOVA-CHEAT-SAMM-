@@ -7,7 +7,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'innova-admin-2024';
 
-// ✅ THÔNG TIN SUPABASE CỦA BẠN
 const SUPABASE_URL = 'https://llvlcqfievwtvylsqslm.supabase.co'; 
 const SUPABASE_KEY = 'sb_publishable_37lYwmdntFwHgspQ7b3vgA_Jna_S5r1'; 
 
@@ -72,7 +71,7 @@ app.post('/api/bot/buy-multiple', async (req, res) => {
   if (discount && discount > 0) finalPricePerKey = basePrice - (basePrice * discount / 100);
   const totalPrice = finalPricePerKey * count;
 
-  if(user.balance < totalPrice) return res.json({ ok: false, error: `Số dư không đủ. Cần thêm ${(totalPrice - user.balance).toLocaleString('vi-VN')}đ.` });
+  if(user.balance < totalPrice) return res.json({ ok: false, error: `Số dư không đủ.` });
 
   const { data: keyDatas } = await supabase.from('keys').select('*').eq('type', type).is('device_id', null).limit(count);
   if(!keyDatas || keyDatas.length < count) return res.json({ ok: false, error: `Kho chỉ còn ${keyDatas ? keyDatas.length : 0} Key.` });
@@ -258,274 +257,252 @@ app.delete('/api/delete/:key', async (req, res) => {
   res.json({ ok: true });
 });
 
-// ================= GIAO DIỆN ADMIN =================
-app.get('/admin', (req, res) => {
-  res.send(`<!DOCTYPE html>
-<html lang="vi"><head><meta charset="utf-8"><title>Admin - Headlock</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<style>
-  * { box-sizing: border-box; font-family: system-ui, sans-serif; }
-  body { background: #0a0f17; color: #cfefff; padding: 20px; max-width: 1000px; margin: auto; }
-  h1 { color: #ff0033; text-align: center; text-shadow: 0 0 10px #ff003380; }
-  .box { background: #101a24; padding: 20px; border-radius: 12px; border: 1px solid #1a2a3d; margin-bottom: 20px; }
-  input,select,button { padding: 10px; border-radius: 8px; border: 1px solid #2a3a4d; background: #0a0f17; color: #cfefff; font-size: 14px; outline: none; margin-bottom: 5px;}
-  button { background: linear-gradient(135deg, #ff0033, #990011); color: #fff; font-weight: 800; cursor: pointer; border: none; transition: 0.2s;}
-  button:hover { transform: scale(1.02); }
-  .btn-gray { background: #2a3a4d; color: #fff; }
-  .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items: flex-start; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; overflow-x: auto; display: block; margin-top: 10px;}
-  th,td { padding: 10px; border-bottom: 1px solid #1a2a3d; text-align: left; white-space: nowrap; }
-  .key { color: #00ff88; font-family: monospace; font-weight: bold; }
-  .tabs { display:flex; flex-wrap: wrap; gap:10px; margin-bottom:20px; padding-bottom: 5px;}
-  .tab { padding:10px 20px; background:#1a2a3d; border-radius:8px; cursor:pointer; font-weight:bold; white-space: nowrap; font-size: 13px;}
-  .tab.active { background:#ff0033; color:#fff; }
-  .panel { display:none; }
-  .panel.active { display:block; }
-  .status-pending { color: #ffaa00; font-weight: bold; }
-  .status-success { color: #00ff88; font-weight: bold; }
-  .status-cancel { color: #ff3366; font-weight: bold; }
-  .modal-edit { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 100; }
-  .modal-box { background: #101a24; padding: 20px; border-radius: 12px; border: 1px solid #ff0033; width: 100%; max-width: 400px; }
-</style></head><body>
-<h1>⚡ HEADLOCK ADMIN ⚡</h1>
-<div class="row"><input id="pass" type="password" placeholder="Mật khẩu Admin..." style="flex:1; max-width: 300px;"></div>
+// ================= GIAO DIỆN ADMIN (DÙNG CHUỖI NỐI ĐỂ TRÁNH LỖI BACKTICK) =================
+const adminHtml = '<!DOCTYPE html>' +
+'<html lang="vi"><head><meta charset="utf-8"><title>Admin - Headlock</title>' +
+'<meta name="viewport" content="width=device-width,initial-scale=1">' +
+'<style>' +
+'  * { box-sizing: border-box; font-family: system-ui, sans-serif; }' +
+'  body { background: #0a0f17; color: #cfefff; padding: 20px; max-width: 1000px; margin: auto; }' +
+'  h1 { color: #ff0033; text-align: center; text-shadow: 0 0 10px #ff003380; }' +
+'  .box { background: #101a24; padding: 20px; border-radius: 12px; border: 1px solid #1a2a3d; margin-bottom: 20px; }' +
+'  input,select,button { padding: 10px; border-radius: 8px; border: 1px solid #2a3a4d; background: #0a0f17; color: #cfefff; font-size: 14px; outline: none; margin-bottom: 5px;}' +
+'  button { background: linear-gradient(135deg, #ff0033, #990011); color: #fff; font-weight: 800; cursor: pointer; border: none; transition: 0.2s;}' +
+'  button:hover { transform: scale(1.02); }' +
+'  .btn-gray { background: #2a3a4d; color: #fff; }' +
+'  .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items: flex-start; }' +
+'  table { width: 100%; border-collapse: collapse; font-size: 13px; overflow-x: auto; display: block; margin-top: 10px;}' +
+'  th,td { padding: 10px; border-bottom: 1px solid #1a2a3d; text-align: left; white-space: nowrap; }' +
+'  .key { color: #00ff88; font-family: monospace; font-weight: bold; }' +
+'  .tabs { display:flex; flex-wrap: wrap; gap:10px; margin-bottom:20px; padding-bottom: 5px;}' +
+'  .tab { padding:10px 20px; background:#1a2a3d; border-radius:8px; cursor:pointer; font-weight:bold; white-space: nowrap; font-size: 13px;}' +
+'  .tab.active { background:#ff0033; color:#fff; }' +
+'  .panel { display:none; }' +
+'  .panel.active { display:block; }' +
+'  .status-pending { color: #ffaa00; font-weight: bold; }' +
+'  .status-success { color: #00ff88; font-weight: bold; }' +
+'  .status-cancel { color: #ff3366; font-weight: bold; }' +
+'  .modal-edit { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 100; }' +
+'  .modal-box { background: #101a24; padding: 20px; border-radius: 12px; border: 1px solid #ff0033; width: 100%; max-width: 400px; }' +
+'</style></head><body>' +
+'<h1>⚡ HEADLOCK ADMIN ⚡</h1>' +
+'<div class="row"><input id="pass" type="password" placeholder="Mật khẩu Admin..." style="flex:1; max-width: 300px;"></div>' +
+'<div class="tabs">' +
+'  <div class="tab active" onclick="switchTab(event, \'tab-key\')">Quản Lý Key</div>' +
+'  <div class="tab" onclick="switchTab(event, \'tab-shop\')">Thêm Key Shop</div>' +
+'  <div class="tab" onclick="switchTab(event, \'tab-user\')">Khách Hàng</div>' +
+'  <div class="tab" onclick="switchTab(event, \'tab-topup\')">Duyệt Nạp Tiền</div>' +
+'  <div class="tab" onclick="switchTab(event, \'tab-coupon\')">Mã Giảm Giá</div>' +
+'</div>' +
+'<div class="modal-edit" id="editModal">' +
+'  <div class="modal-box">' +
+'    <h3 style="color:#ff0033; margin-bottom: 15px;">SỬA ĐƠN NẠP</h3>' +
+'    <input type="hidden" id="edit-id">' +
+'    <input type="hidden" id="edit-username">' +
+'    <div style="margin-bottom:10px;">' +
+'      <label style="font-size:12px;color:#8ba0b8">Số tiền (VNĐ)</label>' +
+'      <input type="number" id="edit-amount" class="form-input" style="width:100%">' +
+'    </div>' +
+'    <div style="margin-bottom:20px;">' +
+'      <label style="font-size:12px;color:#8ba0b8">Trạng thái</label>' +
+'      <select id="edit-status" class="form-input" style="width:100%">' +
+'        <option value="pending">Chờ duyệt</option>' +
+'        <option value="success">Thành công</option>' +
+'        <option value="cancel">Đã hủy</option>' +
+'      </select>' +
+'    </div>' +
+'    <div class="row" style="margin-bottom:0;">' +
+'      <button onclick="saveEditTopup()" style="flex:1; background:#00ff88; color:#000;">LƯU THAY ĐỔI</button>' +
+'      <button onclick="document.getElementById(\'editModal\').style.display=\'none\'" style="flex:1; background:#ff3366;">HỦY</button>' +
+'    </div>' +
+'  </div>' +
+'</div>' +
+'<div id="tab-key" class="panel active">' +
+'  <div class="box">' +
+'    <div class="row">' +
+'      <select id="type"><option value="hour">1 Giờ</option><option value="day" selected>1 Ngày</option><option value="week">1 Tuần</option><option value="month">1 Tháng</option><option value="forever">Vĩnh viễn</option></select>' +
+'      <input id="count" type="number" value="1" min="1" max="100" style="width:80px">' +
+'      <input id="note" type="text" placeholder="Ghi chú" style="flex:1">' +
+'      <button onclick="createKey()">TẠO KEY</button>' +
+'      <button class="btn-gray" onclick="loadList()">LOAD DS</button>' +
+'    </div>' +
+'    <table id="tbl"><thead><tr><th>Key</th><th>Hạn</th><th>Thiết bị</th><th>Ghi chú</th><th>Xóa</th></tr></thead><tbody></tbody></table>' +
+'  </div>' +
+'</div>' +
+'<div id="tab-shop" class="panel">' +
+'  <div class="box">' +
+'    <h3 style="margin-bottom:10px; color:#00ff88">Thêm Key Bán Trong Shop</h3>' +
+'    <div class="row">' +
+'      <input id="s_name" type="text" placeholder="Tên gói (VD: Gói VIP 1 Tháng)" style="flex:1">' +
+'      <input id="s_price" type="number" placeholder="Giá tiền (VNĐ)" style="width:150px">' +
+'    </div>' +
+'    <div class="row">' +
+'      <input id="s_img" type="text" placeholder="Link ảnh (VD: https://...)" style="flex:1">' +
+'      <select id="s_type"><option value="day">1 Ngày</option><option value="week">1 Tuần</option><option value="month">1 Tháng</option><option value="forever">Vĩnh viễn</option></select>' +
+'      <input id="s_count" type="number" value="1" min="1" max="100" style="width:80px" title="Số lượng muốn thêm">' +
+'      <button onclick="addShopKeyMultiple()">THÊM VÀO SHOP</button>' +
+'    </div>' +
+'  </div>' +
+'</div>' +
+'<div id="tab-user" class="panel">' +
+'  <div class="box">' +
+'    <h3 style="margin-bottom:10px; color:#00ff88">Danh Sách Khách Hàng</h3>' +
+'    <button class="btn-gray" onclick="loadUsers()">Tải Danh Sách</button>' +
+'    <table id="tbl-users"><thead><tr><th>Tài khoản</th><th>Số dư</th></tr></thead><tbody></tbody></table>' +
+'  </div>' +
+'</div>' +
+'<div id="tab-topup" class="panel">' +
+'  <div class="box">' +
+'    <h3 style="margin-bottom:10px; color:#ffaa00">Lịch Sử Nạp Tiền</h3>' +
+'    <button class="btn-gray" onclick="loadTopups()">Tải Lịch Sử</button>' +
+'    <table id="tbl-topups"><thead><tr><th>Tài khoản</th><th>Số tiền</th><th>Thời gian</th><th>Trạng thái</th><th>Hành động</th></tr></thead><tbody></tbody></table>' +
+'  </div>' +
+'</div>' +
+'<div id="tab-coupon" class="panel">' +
+'  <div class="box">' +
+'    <h3 style="margin-bottom:10px; color:#ff00e5">Quản Lý Mã Giảm Giá</h3>' +
+'    <div class="row">' +
+'      <input id="c_code" type="text" placeholder="Mã (VD: GIAM20)" style="flex:1">' +
+'      <input id="c_discount" type="number" placeholder="Giảm (%)" style="width:100px">' +
+'      <input id="c_max" type="number" placeholder="Lượt dùng tối đa" style="width:150px">' +
+'      <button onclick="addCoupon()" style="background:linear-gradient(135deg, #ff00e5, #7000ff);">TẠO MÃ</button>' +
+'      <button class="btn-gray" onclick="loadCoupons()">LOAD DS</button>' +
+'    </div>' +
+'    <table id="tbl-coupons"><thead><tr><th>Mã</th><th>Giảm giá</th><th>Đã dùng</th><th>Tối đa</th><th>Trạng thái</th><th>Xóa</th></tr></thead><tbody></tbody></table>' +
+'  </div>' +
+'</div>' +
+'<script>' +
+'function switchTab(e, id){' +
+'  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));' +
+'  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));' +
+'  e.target.classList.add("active");' +
+'  document.getElementById(id).classList.add("active");' +
+'}' +
+'function getPass(){ return document.getElementById("pass").value; }' +
+'async function createKey(){' +
+'  if(!getPass()) return alert("Nhập pass!");' +
+'  const r = await fetch("/api/create",{method:"POST",headers:{"Content-Type":"application/json","x-admin-pass":getPass()},body:JSON.stringify({type:document.getElementById("type").value,count:+document.getElementById("count").value,note:document.getElementById("note").value})});' +
+'  const d = await r.json();' +
+'  alert(d.ok ? "Tạo thành công!" : "Lỗi: "+d.error);' +
+'  if(d.ok) loadList();' +
+'}' +
+'async function addShopKeyMultiple(){' +
+'  if(!getPass()) return alert("Nhập pass!");' +
+'  const r = await fetch("/api/admin/add-shop-key-multiple",{method:"POST",headers:{"Content-Type":"application/json","x-admin-pass":getPass()},body:JSON.stringify({' +
+'    name:document.getElementById("s_name").value, ' +
+'    image:document.getElementById("s_img").value, ' +
+'    price:document.getElementById("s_price").value, ' +
+'    type:document.getElementById("s_type").value,' +
+'    count:document.getElementById("s_count").value' +
+'  })});' +
+'  const d = await r.json();' +
+'  alert(d.ok ? "Đã thêm "+d.count+" Key vào Shop!" : "Lỗi: "+d.error);' +
+'}' +
+'async function loadList(){' +
+'  if(!getPass()) return alert("Nhập pass!");' +
+'  const r = await fetch("/api/list?pass="+getPass());' +
+'  const d = await r.json();' +
+'  const tb=document.querySelector("#tbl tbody"); tb.innerHTML="";' +
+'  if(d.ok) d.keys.forEach(k=>{' +
+'    const tr=document.createElement("tr");' +
+'    const exp = k.expires_at ? new Date(k.expires_at).toLocaleString("vi-VN") : "∞";' +
+'    const dev = k.device_id ? k.device_id.slice(0,15) : "<span style=\'color:#00ff88\'>Trống</span>";' +
+'    tr.innerHTML="<td class=\'key\'>"+k.key+"</td><td>"+exp+"</td><td>"+dev+"</td><td>"+(k.note||"—")+"</td><td><button style=\'background:#ff3366;padding:4px 8px;color:#fff\' onclick=\'delKey(\""+k.key+"\")\'>X</button></td>";' +
+'    tb.appendChild(tr);' +
+'  });' +
+'}' +
+'async function delKey(key){' +
+'  await fetch("/api/delete/"+key+"?pass="+getPass(),{method:"DELETE"});' +
+'  loadList();' +
+'}' +
+'async function loadUsers(){' +
+'  if(!getPass()) return alert("Nhập pass!");' +
+'  const r = await fetch("/api/admin/users?pass="+getPass());' +
+'  const d = await r.json();' +
+'  const tb=document.querySelector("#tbl-users tbody"); tb.innerHTML="";' +
+'  if(d.ok) d.users.forEach(u=>{ tb.innerHTML += "<tr><td>"+u.username+"</td><td style=\'color:#00ff88\'>"+u.balance.toLocaleString("vi-VN")+"đ</td></tr>"; });' +
+'}' +
+'async function loadTopups(){' +
+'  if(!getPass()) return alert("Nhập pass!");' +
+'  const r = await fetch("/api/admin/topups?pass="+getPass());' +
+'  const d = await r.json();' +
+'  const tb=document.querySelector("#tbl-topups tbody"); tb.innerHTML="";' +
+'  if(d.ok) d.topups.forEach(t=>{ ' +
+'    let statusHtml = "";' +
+'    if(t.status === "success") statusHtml = "<span class=\'status-success\'>Đã duyệt</span>";' +
+'    else if(t.status === "cancel") statusHtml = "<span class=\'status-cancel\'>Đã hủy</span>";' +
+'    else statusHtml = "<span class=\'status-pending\'>Chờ duyệt</span>";' +
+'    ' +
+'    let actionHtml = "";' +
+'    if(t.status === "pending") {' +
+'      actionHtml = "<button style=\'background:#00ff88;padding:4px 8px;color:#000;margin-right:5px;\' onclick=\'approveTopup("+t.id+", \""+t.username+"\", "+t.amount+")\'>DUYỆT</button>";' +
+'    }' +
+'    actionHtml += "<button style=\'background:#ffaa00;padding:4px 8px;color:#000;\' onclick=\'openEditModal("+t.id+", \""+t.username+"\", "+t.amount+", \""+t.status+"\")\'>SỬA</button>";' +
+'    ' +
+'    tb.innerHTML += "<tr><td>"+t.username+"</td><td style=\'color:#ffaa00\'>+"+t.amount.toLocaleString("vi-VN")+"đ</td><td>"+new Date(t.created_at).toLocaleString("vi-VN")+"</td><td>"+statusHtml+"</td><td>"+actionHtml+"</td></tr>"; ' +
+'  });' +
+'}' +
+'async function approveTopup(id, username, amount){' +
+'  if(!confirm("Xác nhận đã nhận được " + amount.toLocaleString("vi-VN") + " đ từ " + username + "?")) return;' +
+'  const r = await fetch("/api/admin/approve-topup", {' +
+'    method: "POST", headers: {"Content-Type": "application/json", "x-admin-pass": getPass()},' +
+'    body: JSON.stringify({ id, username, amount })' +
+'  });' +
+'  const d = await r.json();' +
+'  if(d.ok) { alert("Đã duyệt thành công!"); loadTopups(); } ' +
+'  else alert("Lỗi: " + d.error);' +
+'}' +
+'function openEditModal(id, username, amount, status) {' +
+'  document.getElementById("edit-id").value = id;' +
+'  document.getElementById("edit-username").value = username;' +
+'  document.getElementById("edit-amount").value = amount;' +
+'  document.getElementById("edit-status").value = status;' +
+'  document.getElementById("editModal").style.display = "flex";' +
+'}' +
+'async function saveEditTopup() {' +
+'  const id = document.getElementById("edit-id").value;' +
+'  const username = document.getElementById("edit-username").value;' +
+'  const amount = document.getElementById("edit-amount").value;' +
+'  const status = document.getElementById("edit-status").value;' +
+'  const r = await fetch("/api/admin/edit-topup", {' +
+'    method: "POST", headers: {"Content-Type": "application/json", "x-admin-pass": getPass()},' +
+'    body: JSON.stringify({ id, username, amount, status })' +
+'  });' +
+'  const d = await r.json();' +
+'  if(d.ok) {' +
+'    alert("Đã cập nhật đơn hàng!");' +
+'    document.getElementById("editModal").style.display = "none";' +
+'    loadTopups();' +
+'  } else {' +
+'    alert("Lỗi: " + d.error);' +
+'  }' +
+'}' +
+'async function addCoupon() {' +
+'  if(!getPass()) return alert("Nhập pass!");' +
+'  const r = await fetch("/api/admin/add-coupon", {' +
+'    method: "POST", headers: {"Content-Type": "application/json", "x-admin-pass": getPass()},' +
+'    body: JSON.stringify({ code: document.getElementById("c_code").value, discount: document.getElementById("c_discount").value, max_uses: document.getElementById("c_max").value })' +
+'  });' +
+'  const d = await r.json();' +
+'  alert(d.ok ? "Đã tạo mã giảm giá!" : "Lỗi: "+d.error);' +
+'  if(d.ok) loadCoupons();' +
+'}' +
+'async function loadCoupons() {' +
+'  if(!getPass()) return alert("Nhập pass!");' +
+'  const r = await fetch("/api/admin/coupons?pass="+getPass());' +
+'  const d = await r.json();' +
+'  const tb=document.querySelector("#tbl-coupons tbody"); tb.innerHTML="";' +
+'  if(d.ok) d.coupons.forEach(c=>{ ' +
+'    tb.innerHTML += "<tr><td style=\'color:#ff00e5;font-weight:bold\'>"+c.code+"</td><td>"+c.discount+"%</td><td>"+c.used_count+"</td><td>"+c.max_uses+"</td><td>"+c.status+"</td><td><button style=\'background:#ff3366;padding:4px 8px;color:#fff\' onclick=\'delCoupon("+c.id+")\'>X</button></td></tr>"; ' +
+'  });' +
+'}' +
+'async function delCoupon(id) {' +
+'  if(!confirm("Xóa mã giảm giá này?")) return;' +
+'  await fetch("/api/admin/delete-coupon/"+id+"?pass="+getPass(),{method:"DELETE"});' +
+'  loadCoupons();' +
+'}' +
+'</script></body></html>';
 
-<div class="tabs">
-  <div class="tab active" onclick="switchTab('tab-key')">Quản Lý Key</div>
-  <div class="tab" onclick="switchTab('tab-shop')">Thêm Key Shop</div>
-  <div class="tab" onclick="switchTab('tab-user')">Khách Hàng</div>
-  <div class="tab" onclick="switchTab('tab-topup')">Duyệt Nạp Tiền</div>
-  <div class="tab" onclick="switchTab('tab-coupon')">Mã Giảm Giá</div>
-</div>
-
-<div class="modal-edit" id="editModal">
-  <div class="modal-box">
-    <h3 style="color:#ff0033; margin-bottom: 15px;">SỬA ĐƠN NẠP</h3>
-    <input type="hidden" id="edit-id">
-    <input type="hidden" id="edit-username">
-    <div style="margin-bottom:10px;">
-      <label style="font-size:12px;color:#8ba0b8">Số tiền (VNĐ)</label>
-      <input type="number" id="edit-amount" class="form-input" style="width:100%">
-    </div>
-    <div style="margin-bottom:20px;">
-      <label style="font-size:12px;color:#8ba0b8">Trạng thái</label>
-      <select id="edit-status" class="form-input" style="width:100%">
-        <option value="pending">Chờ duyệt</option>
-        <option value="success">Thành công</option>
-        <option value="cancel">Đã hủy</option>
-      </select>
-    </div>
-    <div class="row" style="margin-bottom:0;">
-      <button onclick="saveEditTopup()" style="flex:1; background:#00ff88; color:#000;">LƯU THAY ĐỔI</button>
-      <button onclick="document.getElementById('editModal').style.display='none'" style="flex:1; background:#ff3366;">HỦY</button>
-    </div>
-  </div>
-</div>
-
-<div id="tab-key" class="panel active">
-  <div class="box">
-    <div class="row">
-      <select id="type"><option value="hour">1 Giờ</option><option value="day" selected>1 Ngày</option><option value="week">1 Tuần</option><option value="month">1 Tháng</option><option value="forever">Vĩnh viễn</option></select>
-      <input id="count" type="number" value="1" min="1" max="100" style="width:80px">
-      <input id="note" type="text" placeholder="Ghi chú" style="flex:1">
-      <button onclick="createKey()">TẠO KEY</button>
-      <button class="btn-gray" onclick="loadList()">LOAD DS</button>
-    </div>
-    <table id="tbl"><thead><tr><th>Key</th><th>Hạn</th><th>Thiết bị</th><th>Ghi chú</th><th>Xóa</th></tr></thead><tbody></tbody></table>
-  </div>
-</div>
-
-<div id="tab-shop" class="panel">
-  <div class="box">
-    <h3 style="margin-bottom:10px; color:#00ff88">Thêm Key Bán Trong Shop</h3>
-    <div class="row">
-      <input id="s_name" type="text" placeholder="Tên gói (VD: Gói VIP 1 Tháng)" style="flex:1">
-      <input id="s_price" type="number" placeholder="Giá tiền (VNĐ)" style="width:150px">
-    </div>
-    <div class="row">
-      <input id="s_img" type="text" placeholder="Link ảnh (VD: https://...)" style="flex:1">
-      <select id="s_type"><option value="day">1 Ngày</option><option value="week">1 Tuần</option><option value="month">1 Tháng</option><option value="forever">Vĩnh viễn</option></select>
-      <input id="s_count" type="number" value="1" min="1" max="100" style="width:80px" title="Số lượng muốn thêm">
-      <button onclick="addShopKeyMultiple()">THÊM VÀO SHOP</button>
-    </div>
-  </div>
-</div>
-
-<div id="tab-user" class="panel">
-  <div class="box">
-    <h3 style="margin-bottom:10px; color:#00ff88">Danh Sách Khách Hàng</h3>
-    <button class="btn-gray" onclick="loadUsers()">Tải Danh Sách</button>
-    <table id="tbl-users"><thead><tr><th>Tài khoản</th><th>Số dư</th></tr></thead><tbody></tbody></table>
-  </div>
-</div>
-
-<div id="tab-topup" class="panel">
-  <div class="box">
-    <h3 style="margin-bottom:10px; color:#ffaa00">Lịch Sử Nạp Tiền</h3>
-    <button class="btn-gray" onclick="loadTopups()">Tải Lịch Sử</button>
-    <table id="tbl-topups"><thead><tr><th>Tài khoản</th><th>Số tiền</th><th>Thời gian</th><th>Trạng thái</th><th>Hành động</th></tr></thead><tbody></tbody></table>
-  </div>
-</div>
-
-<div id="tab-coupon" class="panel">
-  <div class="box">
-    <h3 style="margin-bottom:10px; color:#ff00e5">Quản Lý Mã Giảm Giá</h3>
-    <div class="row">
-      <input id="c_code" type="text" placeholder="Mã (VD: GIAM20)" style="flex:1">
-      <input id="c_discount" type="number" placeholder="Giảm (%)" style="width:100px">
-      <input id="c_max" type="number" placeholder="Lượt dùng tối đa" style="width:150px">
-      <button onclick="addCoupon()" style="background:linear-gradient(135deg, #ff00e5, #7000ff);">TẠO MÃ</button>
-      <button class="btn-gray" onclick="loadCoupons()">LOAD DS</button>
-    </div>
-    <table id="tbl-coupons"><thead><tr><th>Mã</th><th>Giảm giá</th><th>Đã dùng</th><th>Tối đa</th><th>Trạng thái</th><th>Xóa</th></tr></thead><tbody></tbody></table>
-  </div>
-</div>
-
-<script>
-function switchTab(id){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById(id).classList.add('active');
-}
-function getPass(){ return document.getElementById('pass').value; }
-
-async function createKey(){
-  if(!getPass()) return alert('Nhập pass!');
-  const r = await fetch('/api/create',{method:'POST',headers:{'Content-Type':'application/json','x-admin-pass':getPass()},body:JSON.stringify({type:document.getElementById('type').value,count:+document.getElementById('count').value,note:document.getElementById('note').value})});
-  const d = await r.json();
-  alert(d.ok ? 'Tạo thành công!' : 'Lỗi: '+d.error);
-  if(d.ok) loadList();
-}
-
-async function addShopKeyMultiple(){
-  if(!getPass()) return alert('Nhập pass!');
-  const r = await fetch('/api/admin/add-shop-key-multiple',{method:'POST',headers:{'Content-Type':'application/json','x-admin-pass':getPass()},body:JSON.stringify({
-    name:document.getElementById('s_name').value, 
-    image:document.getElementById('s_img').value, 
-    price:document.getElementById('s_price').value, 
-    type:document.getElementById('s_type').value,
-    count:document.getElementById('s_count').value
-  })});
-  const d = await r.json();
-  alert(d.ok ? `Đã thêm ${d.count} Key vào Shop!` : 'Lỗi: '+d.error);
-}
-
-async function loadList(){
-  if(!getPass()) return alert('Nhập pass!');
-  const r = await fetch('/api/list?pass='+getPass());
-  const d = await r.json();
-  const tb=document.querySelector('#tbl tbody'); tb.innerHTML='';
-  if(d.ok) d.keys.forEach(k=>{
-    const tr=document.createElement('tr');
-    const exp = k.expires_at ? new Date(k.expires_at).toLocaleString('vi-VN') : '∞';
-    const dev = k.device_id ? k.device_id.slice(0,15) : '<span style="color:#00ff88">Trống</span>';
-    tr.innerHTML='<td class="key">'+k.key+'</td><td>'+exp+'</td><td>'+dev+'</td><td>'+(k.note||'—')+'</td><td><button style="background:#ff3366;padding:4px 8px;color:#fff" onclick="delKey(\\''+k.key+'\\')">X</button></td>';
-    tb.appendChild(tr);
-  });
-}
-
-async function delKey(key){
-  await fetch('/api/delete/'+key+'?pass='+getPass(),{method:'DELETE'});
-  loadList();
-}
-
-async function loadUsers(){
-  if(!getPass()) return alert('Nhập pass!');
-  const r = await fetch('/api/admin/users?pass='+getPass());
-  const d = await r.json();
-  const tb=document.querySelector('#tbl-users tbody'); tb.innerHTML='';
-  if(d.ok) d.users.forEach(u=>{ tb.innerHTML += '<tr><td>'+u.username+'</td><td style="color:#00ff88">'+u.balance.toLocaleString('vi-VN')+'đ</td></tr>'; });
-}
-
-async function loadTopups(){
-  if(!getPass()) return alert('Nhập pass!');
-  const r = await fetch('/api/admin/topups?pass='+getPass());
-  const d = await r.json();
-  const tb=document.querySelector('#tbl-topups tbody'); tb.innerHTML='';
-  if(d.ok) d.topups.forEach(t=>{ 
-    let statusHtml = '';
-    if(t.status === 'success') statusHtml = '<span class="status-success">Đã duyệt</span>';
-    else if(t.status === 'cancel') statusHtml = '<span class="status-cancel">Đã hủy</span>';
-    else statusHtml = '<span class="status-pending">Chờ duyệt</span>';
-    
-    let actionHtml = '';
-    if(t.status === 'pending') {
-      actionHtml = '<button style="background:#00ff88;padding:4px 8px;color:#000;margin-right:5px;" onclick="approveTopup('+t.id+', \\''+t.username+'\\', '+t.amount+')">DUYỆT</button>';
-    }
-    actionHtml += '<button style="background:#ffaa00;padding:4px 8px;color:#000;" onclick="openEditModal('+t.id+', \\''+t.username+'\\', '+t.amount+', \\''+t.status+'\\')">SỬA</button>';
-    
-    tb.innerHTML += '<tr><td>'+t.username+'</td><td style="color:#ffaa00">+'+t.amount.toLocaleString('vi-VN')+'đ</td><td>'+new Date(t.created_at).toLocaleString('vi-VN')+'</td><td>'+statusHtml+'</td><td>'+actionHtml+'</td></tr>'; 
-  });
-}
-
-async function approveTopup(id, username, amount){
-  if(!confirm('Xác nhận đã nhận được ' + amount.toLocaleString('vi-VN') + ' đ từ ' + username + '?')) return;
-  const r = await fetch('/api/admin/approve-topup', {
-    method: 'POST', headers: {'Content-Type': 'application/json', 'x-admin-pass': getPass()},
-    body: JSON.stringify({ id, username, amount })
-  });
-  const d = await r.json();
-  if(d.ok) { alert('Đã duyệt thành công!'); loadTopups(); } 
-  else alert('Lỗi: ' + d.error);
-}
-
-function openEditModal(id, username, amount, status) {
-  document.getElementById('edit-id').value = id;
-  document.getElementById('edit-username').value = username;
-  document.getElementById('edit-amount').value = amount;
-  document.getElementById('edit-status').value = status;
-  document.getElementById('editModal').style.display = 'flex';
-}
-
-async function saveEditTopup() {
-  const id = document.getElementById('edit-id').value;
-  const username = document.getElementById('edit-username').value;
-  const amount = document.getElementById('edit-amount').value;
-  const status = document.getElementById('edit-status').value;
-
-  const r = await fetch('/api/admin/edit-topup', {
-    method: 'POST', headers: {'Content-Type': 'application/json', 'x-admin-pass': getPass()},
-    body: JSON.stringify({ id, username, amount, status })
-  });
-  const d = await r.json();
-  if(d.ok) {
-    alert('Đã cập nhật đơn hàng!');
-    document.getElementById('editModal').style.display = 'none';
-    loadTopups();
-  } else {
-    alert('Lỗi: ' + d.error);
-  }
-}
-
-async function addCoupon() {
-  if(!getPass()) return alert('Nhập pass!');
-  const r = await fetch('/api/admin/add-coupon', {
-    method: 'POST', headers: {'Content-Type': 'application/json', 'x-admin-pass': getPass()},
-    body: JSON.stringify({ code: document.getElementById('c_code').value, discount: document.getElementById('c_discount').value, max_uses: document.getElementById('c_max').value })
-  });
-  const d = await r.json();
-  alert(d.ok ? 'Đã tạo mã giảm giá!' : 'Lỗi: '+d.error);
-  if(d.ok) loadCoupons();
-}
-
-async function loadCoupons() {
-  if(!getPass()) return alert('Nhập pass!');
-  const r = await fetch('/api/admin/coupons?pass='+getPass());
-  const d = await r.json();
-  const tb=document.querySelector('#tbl-coupons tbody'); tb.innerHTML='';
-  if(d.ok) d.coupons.forEach(c=>{ 
-    tb.innerHTML += '<tr><td style="color:#ff00e5;font-weight:bold">'+c.code+'</td><td>'+c.discount+'%</td><td>'+c.used_count+'</td><td>'+c.max_uses+'</td><td>'+c.status+'</td><td><button style="background:#ff3366;padding:4px 8px;color:#fff" onclick="delCoupon('+c.id+')">X</button></td></tr>'; 
-  });
-}
-
-async function delCoupon(id) {
-  if(!confirm('Xóa mã giảm giá này?')) return;
-  await fetch('/api/admin/delete-coupon/'+id+'?pass='+getPass(),{method:'DELETE'});
-  loadCoupons();
-}
-</script></body></html>`);
-});
-
+app.get('/admin', (req, res) => { res.send(adminHtml); });
 app.get('/', (req, res) => res.json({ ok: true, status: 'Running' }));
 app.listen(PORT, () => console.log('Server chạy tại cổng ' + PORT));
