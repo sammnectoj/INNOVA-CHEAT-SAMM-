@@ -637,12 +637,6 @@ document.getElementById('unlockBtn').addEventListener('click', async ()=>{
 
   msg.textContent = '🔍 Đang kiểm tra key...'; msg.className = 'key-msg info'; document.getElementById('unlockBtn').disabled = true;
   
-  if(!window.audioEl) {
-    window.audioEl = new Audio('https://files.catbox.moe/ij9uix.mp3');
-    window.audioEl.loop = true;
-    window.audioEl.play().catch(e=>console.log('Autoplay blocked'));
-  }
-
   try {
     const r = await fetch(SERVER_URL + '/api/verify', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
