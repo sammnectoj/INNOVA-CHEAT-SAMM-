@@ -467,6 +467,7 @@ let checkStatusInterval = null;
 let lastNotificationId = null;
 let selectedGame = 'Free Fire'; 
 let selectedSkin = null; 
+let currentDiscount = 0; // Lưu % giảm giá
 
 // KHỞI TẠO PARTICLES
 const pWrap = document.getElementById('particles');
@@ -532,8 +533,10 @@ async function applyCoupon() {
     
     if(d.ok) {
       showToast(`ĐÃ GIẢM ${d.discount}%`, false, true);
+      currentDiscount = d.discount; // Lưu giảm giá
     } else {
       showToast(`LỖI: ${d.error}`, true);
+      currentDiscount = 0;
     }
   } catch(e) {
     showToast('LỖI KẾT NỐI SERVER', true);
@@ -674,13 +677,14 @@ async function sendChat() {
     try {
       const r = await fetch(SERVER_URL + '/api/bot/buy', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ username: currentUser.username, type })
+        body: JSON.stringify({ username: currentUser.username, type, discount: currentDiscount })
       });
       const d = await r.json();
       if(d.ok) {
         currentUser.balance -= d.price;
         addMessage(`
           Mua thành công Key <strong>${typeName}</strong>!<br>
+          Giá đã giảm: <strong>${d.price.toLocaleString('vi-VN')}đ</strong><br>
           Mã Key của bạn là: <br>
           <span style="color:#00ff88; font-size:1.1rem; font-family:monospace; font-weight:bold;">${d.key}</span><br>
           <i>(Hãy copy mã này để nhập vào App)</i>
