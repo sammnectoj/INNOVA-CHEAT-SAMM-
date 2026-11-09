@@ -268,7 +268,7 @@ app.delete('/api/delete/:key', async (req, res) => {
   res.json({ ok: true });
 });
 
-// ================= GIAO DIỆN ADMIN (CHỐNG ĐÓNG BĂNG 100%) =================
+// ================= GIAO DIỆN ADMIN (FULL CHỨC NĂNG) =================
 const adminHtml = '<!DOCTYPE html>' +
 '<html lang="vi"><head><meta charset="utf-8"><title>Admin - Headlock</title>' +
 '<meta name="viewport" content="width=device-width,initial-scale=1">' +
@@ -476,7 +476,6 @@ const adminHtml = '<!DOCTYPE html>' +
 '  });' +
 '}' +
 'async function approveTopup(id, username, amount){' +
-'  // Đã xóa confirm() để tránh treo điện thoại' +
 '  const r = await fetch("/api/admin/approve-topup", {' +
 '    method: "POST", headers: {"Content-Type": "application/json", "x-admin-pass": getPass()},' +
 '    body: JSON.stringify({ id, username, amount })' +
@@ -539,7 +538,6 @@ const adminHtml = '<!DOCTYPE html>' +
 '  });' +
 '}' +
 'async function delCoupon(id) {' +
-'  // Đã xóa confirm() để tránh treo điện thoại' +
 '  await fetch("/api/admin/delete-coupon/"+id+"?pass="+getPass(),{method:"DELETE"});' +
 '  loadCoupons();' +
 '}' +
