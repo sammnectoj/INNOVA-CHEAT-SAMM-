@@ -401,7 +401,7 @@ const QR_IMAGE_URL = 'https://files.catbox.moe/4ot0fd.jpeg';
 let currentUser = null;
 let isLoggedIn = false;
 let checkStatusInterval = null;
-let lastNotificationId = null; // Dùng để kiểm tra thông báo mới
+let lastNotificationId = null;
 
 // KHỞI TẠO PARTICLES
 const pWrap = document.getElementById('particles');
@@ -444,7 +444,7 @@ async function checkNotifications() {
     }
   } catch(e) {}
 }
-setInterval(checkNotifications, 10000); // Kiểm tra mỗi 10 giây
+setInterval(checkNotifications, 10000);
 checkNotifications();
 
 // ====== CHATBOT LOGIC ======
@@ -602,7 +602,7 @@ async function selectTopup(amount) {
     <img src="${QR_IMAGE_URL}" class="qr-img">
   `, 'bot');
 
-  addMessage('Đang gửi yêu cầu đến Admin...', 'bot');
+  addMessage('Đang chờ xác thực...', 'bot');
   
   try {
     const r = await fetch(SERVER_URL + '/api/shop/topup', {
@@ -612,7 +612,7 @@ async function selectTopup(amount) {
     const d = await r.json();
     
     if(d.ok) {
-      addMessage('Yêu cầu nạp tiền đã được gửi. Vui lòng chờ Admin duyệt (khoảng 1-2 phút).', 'bot');
+      addMessage('Yêu cầu nạp tiền đã được gửi. Vui lòng chờ Admin duyệt.', 'bot');
 
       if(checkStatusInterval) clearInterval(checkStatusInterval);
       checkStatusInterval = setInterval(async () => {
@@ -624,7 +624,7 @@ async function selectTopup(amount) {
             clearInterval(checkStatusInterval);
             checkStatusInterval = null;
             currentUser.balance = checkData.newBalance;
-            addMessage(`✅ <strong>NẠP THÀNH CÔNG!</strong><br>Số dư mới của bạn là: <strong>${currentUser.balance.toLocaleString('vi-VN')}đ</strong>`, 'bot');
+            addMessage(`✅ <strong>ĐÃ NẠP THÀNH CÔNG ${amount.toLocaleString('vi-VN')}đ</strong><br>Số dư mới của bạn là: <strong>${currentUser.balance.toLocaleString('vi-VN')}đ</strong>`, 'bot');
           }
         } catch (err) { console.log('Đang chờ duyệt...'); }
       }, 3000);
@@ -674,7 +674,7 @@ document.getElementById('unlockBtn').addEventListener('click', async ()=>{
   }
 });
 
-// CHUYỂN TAB APP (ĐÃ FIX LỖI BỊ VĂNG)
+// CHUYỂN TAB APP
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', ()=>{
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
