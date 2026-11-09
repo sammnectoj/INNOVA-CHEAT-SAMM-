@@ -122,12 +122,6 @@
     box-shadow: 0 0 15px rgba(255,0,51,0.4);
   }
 
-  /* Ô NHẬP MÃ GIẢM GIÁ */
-  .coupon-box { display: flex; gap: 10px; margin-bottom: 15px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 14px; border: 1px dashed rgba(255,170,0,0.4); }
-  .coupon-box input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.6); color: #ffaa00; font-weight: 900; outline: none; text-transform: uppercase; transition: 0.3s; font-family: 'Courier New', monospace; font-size: 0.9rem;}
-  .coupon-box input:focus { border-color: #ffaa00; box-shadow: 0 0 15px rgba(255,170,0,0.2); }
-  .coupon-box button { padding: 12px 20px; background: linear-gradient(135deg, #ffaa00, #ff7700); border: none; color: #000; border-radius: 10px; font-weight: 900; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;}
-
   .tabs{display:flex;gap:8px;padding:8px;background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;overflow-x:auto;scrollbar-width:none; backdrop-filter: blur(10px); box-shadow: 0 5px 20px rgba(0,0,0,0.5);}
   .tab{flex-shrink:0;padding:12px 18px;border:none;border-radius:12px;background:transparent;color:#d0a0a0;font-weight:800;font-size:.75rem;text-transform:uppercase;cursor:pointer; transition: 0.3s; letter-spacing: 0.5px;}
   .tab.active{background:linear-gradient(135deg, rgba(255,0,51,0.2), rgba(255,0,229,0.1));color:#fff;border:1px solid var(--neon); box-shadow: 0 0 20px rgba(255,0,51,0.3); text-shadow: 0 0 8px var(--neon);}
@@ -180,7 +174,7 @@
   .loading-text { color: var(--neon); font-weight: 900; font-size: 1.4rem; letter-spacing: 4px; text-transform: uppercase; animation: pulseText 1.5s infinite; text-shadow: 0 0 20px rgba(255,0,51,0.8);}
   @keyframes pulseText { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.95); } }
 
-  /* ====== CHATBOT UI ====== */
+  /* ====== CHATBOT UI (CHẤT HƠN) ====== */
   .chatbot-btn {
     position: fixed; bottom: 20px; right: 20px; z-index: 600;
     width: 65px; height: 65px; border-radius: 50%;
@@ -318,12 +312,6 @@
   <div class="game-selector">
     <div class="game-btn active" onclick="selectGame(this, 'Free Fire')" id="gameFF">Free Fire</div>
     <div class="game-btn" onclick="selectGame(this, 'Free Fire Max')" id="gameFFMax">Free Fire Max</div>
-  </div>
-
-  <!-- Ô NHẬP MÃ GIẢM GIÁ -->
-  <div class="coupon-box">
-    <input type="text" id="couponInput" placeholder="Nhập mã giảm giá...">
-    <button onclick="applyCoupon()">ÁP DỤNG</button>
   </div>
 
   <div class="tabs" id="tabs">
@@ -467,7 +455,7 @@ let checkStatusInterval = null;
 let lastNotificationId = null;
 let selectedGame = 'Free Fire'; 
 let selectedSkin = null; 
-let currentDiscount = 0; // Lưu % giảm giá
+let currentDiscount = 0; // Biến lưu mã giảm giá
 
 // KHỞI TẠO PARTICLES
 const pWrap = document.getElementById('particles');
@@ -518,12 +506,8 @@ sensRange.addEventListener('input', function() {
   sensValue.textContent = this.value + '%';
 });
 
-// HÀM XỬ LÝ NHẬP MÃ GIẢM GIÁ
-async function applyCoupon() {
-  const code = document.getElementById('couponInput').value.trim().toUpperCase();
-  if(!code) return;
-
-  // Gửi API kiểm tra mã
+// HÀM XỬ LÝ NHẬP MÃ GIẢM GIÁ QUA CHATBOT
+async function applyCoupon(code) {
   try {
     const r = await fetch(SERVER_URL + '/api/shop/check-coupon', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -532,14 +516,14 @@ async function applyCoupon() {
     const d = await r.json();
     
     if(d.ok) {
-      showToast(`ĐÃ GIẢM ${d.discount}%`, false, true);
-      currentDiscount = d.discount; // Lưu giảm giá
+      currentDiscount = d.discount;
+      addMessage(`✅ <strong>MÃ GIẢM GIÁ HỢP LỆ!</strong><br>Bạn được giảm <strong>${d.discount}%</strong> khi mua Key.`, 'bot');
     } else {
-      showToast(`LỖI: ${d.error}`, true);
+      addMessage(`❌ Lỗi: ${d.error}`, 'bot');
       currentDiscount = 0;
     }
   } catch(e) {
-    showToast('LỖI KẾT NỐI SERVER', true);
+    addMessage('❌ Lỗi kết nối Server!', 'bot');
   }
 }
 
@@ -601,6 +585,13 @@ async function sendChat() {
 
   const lowerText = text.toLowerCase();
 
+  // LỆNH NHẬP MÃ GIẢM GIÁ TRỰC TIẾP QUA CHAT
+  // Nếu người dùng gõ mã giảm giá (VD: "sammvip"), không có dấu cách
+  if(lowerText === 'sammvip' || lowerText === 'giamgia' || lowerText === 'vip') {
+    applyCoupon(lowerText.toUpperCase());
+    return;
+  }
+
   if(lowerText.includes('chào') || lowerText.includes('hello') || lowerText.includes('hi')) {
     setTimeout(() => addMessage('Chào bạn! Tôi có thể giúp gì cho bạn? Gõ "help" để xem hướng dẫn.'), 500);
   } 
@@ -611,7 +602,8 @@ async function sendChat() {
       - Gõ "đăng nhập" để vào tài khoản.<br>
       - Gõ "tài khoản" để xem số dư.<br>
       - Gõ "Key 1 ngày", "Key 1 tuần", "Key 1 tháng" để mua Key.<br>
-      - Gõ "nạp" để nạp tiền vào tài khoản.
+      - Gõ "nạp" để nạp tiền vào tài khoản.<br>
+      - Gõ mã giảm giá (VD: sammvip) để nhập mã.
     `), 500);
   }
   else if(lowerText.includes('đăng ký') || lowerText.includes('register')) {
