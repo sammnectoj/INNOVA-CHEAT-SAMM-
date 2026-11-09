@@ -16,11 +16,13 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 app.use(cors());
 app.use(express.json());
 
+// Hàm tạo Key ngẫu nhiên
 function generateKey() {
   const part = () => crypto.randomBytes(2).toString('hex').toUpperCase();
   return `INNOVA-${part()}-${part()}-${part()}`;
 }
 
+// Hàm tính thời gian hết hạn
 function calcExpiry(type) {
   const now = Date.now();
   const HOUR = 3600 * 1000, DAY = 24 * HOUR;
@@ -34,7 +36,7 @@ function calcExpiry(type) {
   }
 }
 
-// ================= SHOP & USER API =================
+// ================= API DÀNH CHO KHÁCH HÀNG (SHOP) =================
 app.post('/api/shop/register', async (req, res) => {
   const { username, password } = req.body;
   if(!username || !password) return res.json({ ok: false, error: 'Thiếu thông tin' });
@@ -54,7 +56,13 @@ app.post('/api/shop/login', async (req, res) => {
   res.json({ ok: true, user: { username: user.username, balance: user.balance } });
 });
 
-// API CHO CHATBOT MUA KEY
+// Lấy thông báo (cho Chatbot)
+app.get('/api/shop/notifications', async (req, res) => {
+  const { data } = await supabase.from('notifications').select('*').order('created_at', { ascending: false }).limit(5);
+  res.json({ ok: true, notifications: data || [] });
+});
+
+// Chatbot mua Key
 app.post('/api/bot/buy', async (req, res) => {
   const { username, type } = req.body;
   
@@ -65,24 +73,86 @@ app.post('/api/bot/buy', async (req, res) => {
   let typeName = '';
   if(type === 'day') { price = 20000; typeName = '1 Ngày'; }
   else if(type === 'week') { price = 50000; typeName = '1 Tuần'; }
-  else if(type === 'month') { price = 100000; typeName = '1 Tháng'; }
-  else if(type === 'forever') { price = 500000; typeName = 'Vĩnh Viễn'; }
+  else if(type === 'month') { price = 80000; typeName = '1 Tháng'; }
+  else if(type === 'forever') { price = 200000; typeName = 'Vĩnh Viễn'; }
   else return res.json({ ok: false, error: 'Loại Key không hợp lệ.' });
 
   if(user.balance < price) {
     return res.json({ ok: false, error: `Số dư không đủ. Bạn cần thêm ${(price - user.balance).toLocaleString('vi-VN')}đ để mua Key ${typeName}.` });
   }
 
+  // Lấy 1 Key trống trong kho
   const { data: keyData } = await supabase.from('keys').select('*').eq('type', type).is('device_id', null).limit(1).single();
   if(!keyData) return res.json({ ok: false, error: 'Rất tiếc, kho đã hết Key loại này. Vui lòng liên hệ Admin.' });
 
+  // Trừ tiền và gán Key cho user
   await supabase.from('users').update({ balance: user.balance - price }).eq('username', username);
   await supabase.from('keys').update({ device_id: 'BOUGHT_' + username }).eq('key', keyData.key);
 
   res.json({ ok: true, key: keyData.key, price, typeName });
 });
 
+// Chatbot nạp tiền
+app.post('/api/shop/topup', async (req, res) => {
+  const { username, amount } = req.body;
+  const { error } = await supabase.from('topups').insert([{ 
+    username, amount: parseInt(amount), created_at: Date.now(), status: 'pending' 
+  }]);
+  if(error) return res.json({ ok: false, error: error.message });
+  res.json({ ok: true, message: 'Đã gửi yêu cầu' });
+});
+
+// Kiểm tra trạng thái nạp (Polling cho Chatbot)
+app.get('/api/shop/check-topup-status', async (req, res) => {
+  const { username } = req.query;
+  const { data: topups } = await supabase.from('topups')
+    .select('*').eq('username', username).order('created_at', { ascending: false }).limit(1);
+
+  if (!topups || topups.length === 0) return res.json({ ok: true, status: 'none' });
+  const latest = topups[0];
+  
+  if (latest.status === 'success') {
+    const { data: user } = await supabase.from('users').select('balance').eq('username', username).single();
+    return res.json({ ok: true, status: 'success', newBalance: user ? user.balance : 0 });
+  }
+  res.json({ ok: true, status: latest.status });
+});
+
+// ================= API XÁC THỰC KEY =================
+app.post('/api/verify', async (req, res) => {
+  const { key, deviceId } = req.body || {};
+  if (!key || !deviceId) return res.status(400).json({ ok: false, error: 'Thiếu key hoặc deviceId' });
+  const { data: found } = await supabase.from('keys').select('*').eq('key', key.toUpperCase().trim()).single();
+  
+  if (!found) return res.json({ ok: false, error: 'Key không tồn tại' });
+  
+  // Nếu là Key mua từ Shop/Chatbot -> Tự động cho qua
+  if (found.device_id && found.device_id.startsWith('BOUGHT_')) {
+    if (found.expires_at && Date.now() > found.expires_at) return res.json({ ok: false, error: 'Key đã hết hạn' });
+    return res.json({ ok: true, type: found.type, isForever: !found.expires_at, remainingMs: found.expires_at ? Math.max(0, found.expires_at - Date.now()) : null });
+  }
+
+  if (found.expires_at && Date.now() > found.expires_at) return res.json({ ok: false, error: 'Key đã hết hạn' });
+  if (found.device_id && found.device_id !== deviceId) return res.json({ ok: false, error: 'Key đã dùng trên thiết bị khác' });
+  if (!found.device_id) await supabase.from('keys').update({ device_id: deviceId }).eq('key', found.key);
+  res.json({ ok: true, type: found.type, isForever: !found.expires_at, remainingMs: found.expires_at ? Math.max(0, found.expires_at - Date.now()) : null });
+});
+
 // ================= ADMIN API =================
+app.post('/api/create', async (req, res) => {
+  const pass = req.headers['x-admin-pass'];
+  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu Admin' });
+  const { type = 'day', count = 1, note = '' } = req.body;
+  const n = Math.min(Math.max(parseInt(count) || 1, 1), 100);
+  const created = [];
+  for (let i = 0; i < n; i++) {
+    const item = { key: generateKey(), type, created_at: Date.now(), expires_at: calcExpiry(type), note: String(note).slice(0, 100), device_id: null };
+    await supabase.from('keys').insert([item]);
+    created.push(item);
+  }
+  res.json({ ok: true, created });
+});
+
 app.post('/api/admin/add-shop-key', async (req, res) => {
   const pass = req.headers['x-admin-pass'];
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
@@ -178,39 +248,6 @@ app.delete('/api/admin/delete-coupon/:id', async (req, res) => {
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
   await supabase.from('coupons').delete().eq('id', req.params.id);
   res.json({ ok: true });
-});
-
-// ================= CÁC API CŨ =================
-app.post('/api/create', async (req, res) => {
-  const pass = req.headers['x-admin-pass'];
-  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu Admin' });
-  const { type = 'day', count = 1, note = '' } = req.body;
-  const n = Math.min(Math.max(parseInt(count) || 1, 1), 100);
-  const created = [];
-  for (let i = 0; i < n; i++) {
-    const item = { key: generateKey(), type, created_at: Date.now(), expires_at: calcExpiry(type), note: String(note).slice(0, 100), device_id: null };
-    await supabase.from('keys').insert([item]);
-    created.push(item);
-  }
-  res.json({ ok: true, created });
-});
-
-app.post('/api/verify', async (req, res) => {
-  const { key, deviceId } = req.body || {};
-  if (!key || !deviceId) return res.status(400).json({ ok: false, error: 'Thiếu key hoặc deviceId' });
-  const { data: found } = await supabase.from('keys').select('*').eq('key', key.toUpperCase().trim()).single();
-  
-  if (!found) return res.json({ ok: false, error: 'Key không tồn tại' });
-  
-  if (found.device_id && found.device_id.startsWith('BOUGHT_')) {
-    if (found.expires_at && Date.now() > found.expires_at) return res.json({ ok: false, error: 'Key đã hết hạn' });
-    return res.json({ ok: true, type: found.type, isForever: !found.expires_at, remainingMs: found.expires_at ? Math.max(0, found.expires_at - Date.now()) : null });
-  }
-
-  if (found.expires_at && Date.now() > found.expires_at) return res.json({ ok: false, error: 'Key đã hết hạn' });
-  if (found.device_id && found.device_id !== deviceId) return res.json({ ok: false, error: 'Key đã dùng trên thiết bị khác' });
-  if (!found.device_id) await supabase.from('keys').update({ device_id: deviceId }).eq('key', found.key);
-  res.json({ ok: true, type: found.type, isForever: !found.expires_at, remainingMs: found.expires_at ? Math.max(0, found.expires_at - Date.now()) : null });
 });
 
 app.get('/api/list', async (req, res) => {
