@@ -8,16 +8,12 @@
   * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
   :root { 
     --neon:#00f0ff; --neon2:#ff00e5; --neon3:#00ff88; --neon4:#ffaa00; 
-    --bg-dark:#05070d; 
-    --glass: rgba(16, 24, 38, 0.85);
+    --bg-dark:#05070d; --glass: rgba(16, 24, 38, 0.85);
     --glass-border: rgba(0, 240, 255, 0.3);
   }
   body { 
-    min-height:100vh; 
-    background: #03050a; 
-    background-image: 
-      radial-gradient(circle at 0% 0%, rgba(0,240,255,0.1) 0%, transparent 40%),
-      radial-gradient(circle at 100% 100%, rgba(255,0,229,0.1) 0%, transparent 40%);
+    min-height:100vh; background: #03050a; 
+    background-image: radial-gradient(circle at 0% 0%, rgba(0,240,255,0.1) 0%, transparent 40%), radial-gradient(circle at 100% 100%, rgba(255,0,229,0.1) 0%, transparent 40%);
     display:flex; justify-content:center; align-items:flex-start; 
     padding:14px 10px 40px; overflow-x:hidden; position:relative; color: #e0eef5;
   }
@@ -26,74 +22,6 @@
   .bg-particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
   .bg-particles span{position:absolute;width:3px;height:3px;border-radius:50%;opacity:.4;animation:floatUp linear infinite}
   @keyframes floatUp{0%{transform:translateY(100vh) scale(.5);opacity:0}10%{opacity:.8}90%{opacity:.3}100%{transform:translateY(-10vh) scale(1.5);opacity:0}}
-
-  /* HÒM THƯ (ĐÃ ĐƯA VÀO TRONG KHUNG) */
-  .mailbox-icon {
-    position: absolute; top: 15px; right: 15px; z-index: 50;
-    background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border);
-    width: 40px; height: 40px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: 0.3s; font-size: 1.1rem;
-    box-shadow: 0 0 15px rgba(0,240,255,0.15); backdrop-filter: blur(10px);
-  }
-  .mailbox-icon:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--neon); border-color: var(--neon); }
-  .mailbox-badge {
-    position: absolute; top: -2px; right: -2px; background: #ff3366;
-    color: #fff; font-size: 0.6rem; font-weight: bold; width: 16px; height: 16px;
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    border: 2px solid #0a1220; box-shadow: 0 0 8px #ff3366;
-  }
-
-  /* MODAL CHUNG */
-  .modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;padding:15px;backdrop-filter:blur(12px);opacity:0;transition:opacity 0.3s}
-  .modal.show{display:flex;opacity:1}
-  .modal-box{
-    width:100%;max-width:440px;background:var(--glass);border:1px solid var(--glass-border);
-    border-radius:24px;padding:24px;box-shadow:0 25px 50px rgba(0,0,0,0.9), inset 0 0 20px rgba(0,240,255,0.05);
-    position:relative;max-height:90vh;overflow-y:auto; backdrop-filter: blur(20px);
-    animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-  @keyframes zoomIn { from{transform: scale(0.9); opacity:0;} to{transform: scale(1); opacity:1;} }
-  .modal-close{position:absolute;top:15px;right:15px;color:#fff;background:rgba(255,255,255,0.1);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-weight:bold; transition: 0.2s; display:flex; align-items:center; justify-content:center;}
-  .modal-close:hover { background: #ff3366; transform: rotate(90deg); }
-  .modal-title{font-size:1.2rem;color:var(--neon);text-align:center;margin-bottom:20px;text-transform:uppercase;letter-spacing:2px; text-shadow: 0 0 10px rgba(0,240,255,0.5); font-weight: 900;}
-  
-  .form-group{margin-bottom:15px}
-  .form-group label{display:block;font-size:0.75rem;color:#8ba0b8;margin-bottom:5px;font-weight:600;text-transform:uppercase; letter-spacing: 1px;}
-  .form-input{width:100%;padding:14px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:var(--neon);font-size:0.9rem;outline:none;transition:0.3s}
-  .form-input:focus{border-color:var(--neon);box-shadow:0 0 15px rgba(0,240,255,0.2)}
-  .btn-full{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--neon),#0099cc);color:#001a22;font-weight:900;font-size:0.9rem;cursor:pointer;margin-top:10px;text-transform:uppercase;letter-spacing:1px;transition:0.3s; box-shadow: 0 5px 15px rgba(0,240,255,0.3);}
-  .btn-full:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,240,255,0.5)}
-  .switch-form{text-align:center;font-size:0.8rem;color:#8ba0b8;margin-top:15px}
-  .switch-form a{color:var(--neon2);text-decoration:none;font-weight:bold;cursor:pointer; text-shadow: 0 0 8px rgba(255,0,229,0.5);}
-  
-  /* SHOP UI */
-  .shop-header{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg, rgba(0,240,255,0.1), rgba(255,0,229,0.05));padding:16px;border-radius:16px;margin-bottom:20px;border:1px solid rgba(0,240,255,0.3); box-shadow: 0 4px 15px rgba(0,0,0,0.3);}
-  .shop-balance{font-size:1.3rem;color:var(--neon3);font-weight:900; text-shadow: 0 0 10px rgba(0,255,136,0.4);}
-  .shop-nav{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:5px; scrollbar-width: none;}
-  .shop-nav button{flex:1;padding:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#8ba0b8;font-weight:800;cursor:pointer;white-space:nowrap;font-size:0.75rem; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;}
-  .shop-nav button.active{background:linear-gradient(135deg, var(--neon), #0099cc);color:#000; border-color: transparent; box-shadow: 0 0 20px rgba(0,240,255,0.4); text-shadow: none;}
-  
-  .coupon-box { display: flex; gap: 10px; margin-bottom: 20px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 14px; border: 1px dashed rgba(255,170,0,0.4); }
-  .coupon-box input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.6); color: #ffaa00; font-weight: 900; outline: none; text-transform: uppercase; transition: 0.3s; font-family: 'Courier New', monospace; font-size: 0.9rem;}
-  .coupon-box input:focus { border-color: #ffaa00; box-shadow: 0 0 15px rgba(255,170,0,0.2); }
-  .coupon-box button { padding: 12px 20px; background: linear-gradient(135deg, #ffaa00, #ff7700); border: none; color: #000; border-radius: 10px; font-weight: 900; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;}
-  .coupon-box button:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,170,0,0.5); }
-
-  .shop-item{
-    position: relative; display: flex; gap: 16px; 
-    background: linear-gradient(145deg, rgba(20,30,48,0.9), rgba(10,15,25,0.95)); 
-    padding: 16px; border-radius: 20px; margin-bottom: 15px; 
-    border: 1px solid rgba(0,240,255,0.2); align-items: center; 
-    transition: 0.3s; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-  }
-  .shop-item:hover { border-color: var(--neon); box-shadow: 0 8px 30px rgba(0,240,255,0.2); transform: translateY(-3px); }
-  .shop-item img{width: 75px; height: 75px; border-radius: 16px; object-fit: cover; border: 2px solid rgba(255,255,255,0.1); box-shadow: 0 0 15px rgba(0,0,0,0.5);}
-  .shop-item-info{flex:1; z-index: 2;}
-  .shop-item-name{font-weight: 900; color:#fff; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(255,255,255,0.3);}
-  .shop-item-price{color:var(--neon4); font-weight: 900; margin: 6px 0; font-size: 1.1rem; text-shadow: 0 0 10px rgba(255,170,0,0.4);}
-  .btn-buy{padding: 10px 18px; background: linear-gradient(135deg, var(--neon), #0099cc); color:#000; border:none; border-radius:12px; font-weight: 900; cursor:pointer; font-size:0.85rem; box-shadow: 0 4px 15px rgba(0,240,255,0.3); transition: 0.3s; text-transform: uppercase;}
-  .btn-buy:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--neon); }
 
   /* MÀN HÌNH CHÍNH */
   .lock-screen{position:fixed;inset:0;z-index:100;background:transparent;display:flex;align-items:center;justify-content:center;padding:15px;transition:opacity .6s,visibility .6s; overflow-y: auto;}
@@ -109,12 +37,9 @@
     background: conic-gradient(transparent, var(--neon), transparent 30%);
     animation: rotateBorder 4s linear infinite; z-index: -1;
   }
-  .lock-box::after {
-    content: ''; position: absolute; inset: 2px; background: #070b14; border-radius: 26px; z-index: -1;
-  }
+  .lock-box::after { content: ''; position: absolute; inset: 2px; background: #070b14; border-radius: 26px; z-index: -1; }
   @keyframes rotateBorder { 100% { transform: rotate(360deg); } }
 
-  /* AVATAR & TÊN */
   .app-profile { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 24px; text-align: center; }
   .app-profile img { width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 2px solid var(--neon); box-shadow: 0 0 20px rgba(0,240,255,0.5); margin-bottom: 10px; background: #000; }
   .app-profile h1 { font-size: 1.6rem; font-weight: 900; letter-spacing: 2px; background: linear-gradient(90deg, #fff, var(--neon), var(--neon2), #fff); background-size: 300% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: gm 4s linear infinite; text-transform: uppercase; filter: drop-shadow(0 0 10px rgba(0,240,255,0.6)); }
@@ -136,7 +61,6 @@
   .key-msg.err{color:#ff4466; text-shadow: 0 0 10px rgba(255,68,102,0.6);} 
   .key-msg.info{color:var(--neon)}
 
-  /* CÁC BƯỚC CÀI ĐẶT */
   .install-steps { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px; margin-top: 20px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);}
   .install-title { font-size: 0.75rem; color: var(--neon4); font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .step-item { display: flex; gap: 12px; margin-bottom: 12px; position: relative; }
@@ -144,13 +68,6 @@
   .step-num { width: 22px; height: 22px; border-radius: 50%; background: rgba(0,240,255,0.1); border: 1px solid var(--neon); color: var(--neon); font-size: 0.7rem; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 10px rgba(0,240,255,0.2);}
   .step-text { font-size: 0.75rem; color: #b0c4d8; line-height: 1.5; }
   .step-text strong { color: #fff; }
-
-  /* NÚT SHOP TO RÕ */
-  .shop-btn-container { margin-top: 25px; display: flex; gap: 10px; }
-  .btn-shop-trigger { flex: 1; padding: 18px; background: linear-gradient(135deg, #ff00e5, #7000ff); color: #fff; font-weight: 900; font-size: 1rem; text-align: center; border-radius: 16px; border: none; cursor: pointer; box-shadow: 0 8px 30px rgba(255,0,229,0.5); text-transform: uppercase; letter-spacing: 1.5px; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; position: relative; overflow: hidden; }
-  .btn-shop-trigger::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); transition: 0.5s; }
-  .btn-shop-trigger:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(255,0,229,0.7); }
-  .btn-shop-trigger:hover::before { left: 200%; }
 
   .extra-section { margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(255,255,255,0.15); text-align: center; }
   .zalo-btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #0068FF, #00C6FF); color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 900; text-decoration: none; font-size: 0.85rem; box-shadow: 0 5px 20px rgba(0, 104, 255, 0.4); margin-bottom: 15px; text-transform: uppercase; transition: 0.3s; }
@@ -181,7 +98,6 @@
   .section-title{display:flex;align-items:center;gap:8px;font-size:.75rem;font-weight:800;text-transform:uppercase;color:#8ba0b8;margin-bottom:16px; letter-spacing: 1px;}
   .section-title::before{content:'';width:4px;height:16px;background:var(--neon);border-radius:4px; box-shadow: 0 0 10px var(--neon);}
 
-  /* CHEAT ITEM */
   .cheat-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
   .cheat-item:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
   .cheat-item.active { border-color: rgba(0,240,255,0.5); background: linear-gradient(90deg, rgba(0,240,255,0.1), rgba(0,0,0,0.2)); box-shadow: 0 0 25px rgba(0,240,255,0.15); transform: translateY(-2px); }
@@ -209,12 +125,6 @@
   .btn-danger{background:rgba(255,51,102,0.1);border:1px solid #ff3366;color:#ff3366;}
   .btn-danger:hover { background: #ff3366; color: #fff; box-shadow: 0 5px 20px rgba(255,51,102,0.4); }
 
-  .lightbox{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(10px);}
-  .lightbox.show{display:flex;}
-  .lightbox img{max-width:100%;max-height:90vh;border-radius:16px;border:2px solid var(--neon); box-shadow: 0 0 50px rgba(0,240,255,0.3);}
-  .lightbox-close{position:absolute;top:20px;right:20px;color:#fff;font-size:24px;cursor:pointer;background:rgba(255,255,255,0.1);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.2); transition: 0.3s;}
-  .lightbox-close:hover { background: #ff3366; transform: rotate(90deg); }
-
   .loading-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 20px; backdrop-filter: blur(10px); }
   .loading-overlay.show { display: flex; }
   .spinner { width: 70px; height: 70px; border: 4px solid rgba(0,240,255,0.1); border-top: 4px solid var(--neon); border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 30px rgba(0,240,255,0.3); }
@@ -222,9 +132,46 @@
   .loading-text { color: var(--neon); font-weight: 900; font-size: 1.3rem; letter-spacing: 3px; text-transform: uppercase; animation: pulseText 1.5s infinite; }
   @keyframes pulseText { 0%, 100% { opacity: 1; text-shadow: 0 0 20px var(--neon); } 50% { opacity: 0.5; text-shadow: none; } }
 
-  .mail-item { padding: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; color: #cfefff; line-height: 1.5; }
-  .mail-item:last-child { border-bottom: none; }
-  .mail-time { font-size: 0.65rem; color: #5e7a94; margin-top: 6px; display: block; }
+  /* ====== CHATBOT UI ====== */
+  .chatbot-btn {
+    position: fixed; bottom: 20px; right: 20px; z-index: 600;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--neon), #0099cc);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; cursor: pointer;
+    box-shadow: 0 5px 25px rgba(0,240,255,0.5);
+    animation: floatBot 3s ease-in-out infinite;
+    transition: 0.3s;
+  }
+  .chatbot-btn:hover { transform: scale(1.1); }
+  @keyframes floatBot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+  .chat-window {
+    position: fixed; bottom: 90px; right: 20px; z-index: 600;
+    width: calc(100% - 40px); max-width: 350px; height: 450px;
+    background: rgba(10, 14, 22, 0.95); border: 1px solid var(--neon);
+    border-radius: 20px; display: none; flex-direction: column;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    backdrop-filter: blur(15px); overflow: hidden;
+    animation: slideUp 0.3s ease;
+  }
+  .chat-window.show { display: flex; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .chat-header { background: rgba(0,240,255,0.1); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .chat-header h3 { font-size: 0.9rem; color: var(--neon); font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+  .chat-close { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
+
+  .chat-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  .chat-msg { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 0.8rem; line-height: 1.4; }
+  .msg-bot { background: rgba(0,240,255,0.15); color: #cfefff; align-self: flex-start; border-bottom-left-radius: 2px; }
+  .msg-user { background: var(--neon); color: #000; align-self: flex-end; border-bottom-right-radius: 2px; font-weight: 600; }
+
+  .chat-input-area { padding: 10px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 8px; }
+  .chat-input { flex: 1; padding: 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: #fff; outline: none; font-size: 0.85rem; }
+  .chat-input:focus { border-color: var(--neon); }
+  .chat-send { padding: 10px 15px; border-radius: 20px; border: none; background: var(--neon); color: #000; font-weight: 900; cursor: pointer; }
+  .chat-send:hover { background: #fff; }
 </style>
 </head>
 <body>
@@ -237,108 +184,9 @@
   <div class="loading-text">ĐANG KÍCH HOẠT...</div>
 </div>
 
-<!-- MODAL HÒM THƯ -->
-<div class="modal" id="mailModal">
-  <div class="modal-box" style="max-width:400px;">
-    <button class="modal-close" onclick="document.getElementById('mailModal').classList.remove('show')">✕</button>
-    <div class="modal-title">HÒM THƯ THÔNG BÁO</div>
-    <div id="mailList" style="max-height: 350px; overflow-y: auto; background: rgba(0,0,0,0.5); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
-      <div style="padding:20px; text-align:center; color:#5e7a94;">Đang tải...</div>
-    </div>
-  </div>
-</div>
-
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox">
-  <div class="lightbox-close" onclick="document.getElementById('lightbox').classList.remove('show')">✕</div>
-  <img id="lightboxImg" src="" alt="Preview">
-</div>
-
-<!-- MODAL AUTH -->
-<div class="modal" id="authModal">
-  <div class="modal-box">
-    <button class="modal-close" onclick="document.getElementById('authModal').classList.remove('show')">✕</button>
-    <div class="modal-title" id="authTitle">ĐĂNG NHẬP SHOP</div>
-    <div class="form-group">
-      <label>Tên tài khoản</label>
-      <input type="text" class="form-input" id="authUser" placeholder="Nhập tài khoản...">
-    </div>
-    <div class="form-group">
-      <label>Mật khẩu</label>
-      <input type="password" class="form-input" id="authPass" placeholder="Nhập mật khẩu...">
-    </div>
-    <button class="btn-full" id="authBtn" onclick="handleAuth()">ĐĂNG NHẬP</button>
-    <div class="switch-form">
-      <span id="authSwitchText">Chưa có tài khoản?</span> <a onclick="toggleAuthMode()" id="authSwitchBtn">Đăng ký ngay</a>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL SHOP -->
-<div class="modal" id="shopModal">
-  <div class="modal-box" style="max-width: 480px;">
-    <button class="modal-close" onclick="closeShopModal()">✕</button>
-    
-    <div class="shop-header">
-      <div>
-        <div style="font-size:0.65rem;color:#8ba0b8; text-transform:uppercase; letter-spacing:1px;">XIN CHÀO, <span id="shopUser" style="color:var(--neon); font-weight:900;"></span></div>
-        <div class="shop-balance">💰 <span id="shopBalance">0</span>đ</div>
-      </div>
-      <button style="background:rgba(255,51,102,0.2);color:#ff3366;border:1px solid #ff3366;padding:8px 14px;border-radius:10px;font-size:0.75rem;font-weight:bold;cursor:pointer; transition:0.3s;" onmouseover="this.style.background='#ff3366'; this.style.color='#fff'" onmouseout="this.style.background='rgba(255,51,102,0.2)'; this.style.color='#ff3366'" onclick="logoutShop()">ĐĂNG XUẤT</button>
-    </div>
-
-    <div class="shop-nav">
-      <button class="active" onclick="switchShopTab('shop-keys', this)">Cửa Hàng</button>
-      <button onclick="switchShopTab('shop-topup', this)">Nạp Tiền</button>
-      <button onclick="switchShopTab('shop-history', this)">Lịch Sử</button>
-    </div>
-
-    <div id="shop-keys" class="shop-tab-content">
-      <div class="coupon-box">
-        <input type="text" id="couponInput" placeholder="Nhập mã giảm giá...">
-        <button onclick="applyCoupon()">ÁP DỤNG</button>
-      </div>
-      <div id="couponMsg" style="font-size:0.75rem; margin-bottom:10px; font-weight:bold; text-align:center;"></div>
-      
-      <div id="shopList"></div>
-    </div>
-
-    <div id="shop-topup" class="shop-tab-content" style="display:none">
-      <div class="form-group">
-        <label>Số tiền muốn nạp (VNĐ)</label>
-        <input type="number" class="form-input" id="topupAmount" placeholder="VD: 50000">
-      </div>
-      
-      <div id="qrContainer" style="display:none; text-align:center; margin-top:15px;">
-        <p style="font-size:0.8rem;color:#8ba0b8;margin-bottom:15px">Quét mã QR bên dưới để thanh toán</p>
-        <img id="qrImage" src="" style="width:220px;height:220px;border-radius:16px;border:2px solid var(--neon);object-fit:cover; margin-bottom:15px; box-shadow: 0 0 20px rgba(0,240,255,0.2);">
-        
-        <div style="background:rgba(255,170,0,0.1);border:1px solid var(--neon4);padding:14px;border-radius:12px;margin-top:10px;">
-           <p style="color:var(--neon4);font-size:0.8rem;font-weight:bold;margin-bottom:6px; text-transform:uppercase;">⚠️ QUAN TRỌNG</p>
-           <p style="font-size:0.75rem;color:#cfefff;line-height:1.6">Vui lòng chuyển <strong style="color:#fff">ĐÚNG SỐ TIỀN</strong> đã nhập và khi bên server duyệt thì hiện thông báo thành công cho họ biết.</p>
-        </div>
-        <button class="btn-full" onclick="confirmTopup()" style="margin-top:15px; background:linear-gradient(135deg, #00ff88, #009944);">TÔI ĐÃ CHUYỂN KHOẢN</button>
-      </div>
-
-      <button class="btn-full" id="btnShowQR" onclick="showQR()" style="margin-top:15px;">NẠP TIỀN</button>
-    </div>
-
-    <div id="shop-history" class="shop-tab-content" style="display:none">
-      <div id="historyList"></div>
-    </div>
-  </div>
-</div>
-
-<!-- MÀN HÌNH CHÍNH (LOCK SCREEN) -->
+<!-- MÀN HÌNH CHÍNH -->
 <div class="lock-screen" id="lockScreen" style="flex-direction: column;">
   <div class="lock-box">
-    
-    <!-- HÒM THƯ ĐÃ ĐƯỢC ĐƯA VÀO GÓC TRÊN BÊN PHẢI CỦA KHUNG -->
-    <div class="mailbox-icon" onclick="openMailbox()">
-      📬
-      <div class="mailbox-badge" id="mailBadge" style="display:none;">1</div>
-    </div>
-
     <div class="app-profile">
       <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/85/1a2230/00f0ff?text=IC'">
       <h1>INNOVACHEAT</h1>
@@ -356,33 +204,24 @@
 
     <div class="install-steps">
       <div class="install-title">⚙️ CÁC BƯỚC CÀI ĐẶT</div>
-      
       <div class="step-item">
         <div class="step-num">1</div>
         <div class="step-text">
           <strong>Nhập Key bản quyền:</strong> Bấm nút Mở Khóa và điền mã Key (áp dụng từ 1 Giờ trở lên) để xác thực bản quyền & liên kết thiết bị.
         </div>
       </div>
-      
       <div class="step-item">
         <div class="step-num">2</div>
         <div class="step-text">
           <strong>Xác nhận tải về:</strong> Khi Safari hiện thông báo "muốn cài đặt...", chọn Cài đặt và về Màn hình chính xem app tải.
         </div>
       </div>
-      
       <div class="step-item">
         <div class="step-num">3</div>
         <div class="step-text">
           <strong>Tin cậy chứng chỉ:</strong> Vào Cài đặt > Cài đặt chung > Quản lý VPN & Thiết bị > Chọn chứng chỉ doanh nghiệp và bấm Tin cậy.
         </div>
       </div>
-    </div>
-
-    <div class="shop-btn-container">
-      <button class="btn-shop-trigger" onclick="openShop()">
-        🛒 VÀO SHOP MUA KEY
-      </button>
     </div>
 
     <div class="extra-section">
@@ -528,15 +367,29 @@
   </div>
 </div>
 
+<!-- ====== CHATBOT UI ====== -->
+<div class="chatbot-btn" onclick="toggleChat()">🤖</div>
+
+<div class="chat-window" id="chatWindow">
+  <div class="chat-header">
+    <h3>INNOVA BOT</h3>
+    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-body" id="chatBody">
+    <div class="chat-msg msg-bot">Xin chào! Tôi là Innova Bot. Bạn cần mua Key hay kiểm tra tài khoản?</div>
+  </div>
+  <div class="chat-input-area">
+    <input type="text" class="chat-input" id="chatInput" placeholder="Nhập tin nhắn..." onkeypress="handleChatEnter(event)">
+    <button class="chat-send" onclick="sendChat()">Gửi</button>
+  </div>
+</div>
+
 <script>
 const SERVER_URL = 'https://innova-key.onrender.com';
-const QR_IMAGE_URL = 'https://files.catbox.moe/4ot0fd.jpeg';
-
 let currentUser = null;
-let isRegisterMode = false;
-let checkStatusInterval = null;
-let currentDiscountCode = ""; 
+let isLoggedIn = false;
 
+// KHỞI TẠO PARTICLES
 const pWrap = document.getElementById('particles');
 for(let i=0;i<50;i++){
   const s = document.createElement('span');
@@ -548,278 +401,132 @@ for(let i=0;i<50;i++){
   pWrap.appendChild(s);
 }
 
-function openLightbox(src) {
-  document.getElementById('lightboxImg').src = src;
-  document.getElementById('lightbox').classList.add('show');
+// CHATBOT LOGIC
+function toggleChat() {
+  document.getElementById('chatWindow').classList.toggle('show');
 }
 
-async function openMailbox() {
-  document.getElementById('mailModal').classList.add('show');
-  document.getElementById('mailBadge').style.display = 'none';
-  const el = document.getElementById('mailList');
-  el.innerHTML = '<div style="padding:20px; text-align:center; color:#5e7a94;">Đang tải...</div>';
+function handleChatEnter(e) {
+  if(e.key === 'Enter') sendChat();
+}
+
+function addMessage(text, sender = 'bot') {
+  const chatBody = document.getElementById('chatBody');
+  const div = document.createElement('div');
+  div.className = `chat-msg ${sender === 'bot' ? 'msg-bot' : 'msg-user'}`;
+  div.innerHTML = text;
+  chatBody.appendChild(div);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
   
-  try {
-    const r = await fetch(SERVER_URL + '/api/shop/notifications');
-    const d = await r.json();
-    el.innerHTML = '';
-    if(d.ok && d.notifications.length > 0) {
-      d.notifications.forEach(n => {
-        const div = document.createElement('div');
-        div.className = 'mail-item';
-        div.innerHTML = `<div style="color:#00f0ff; font-weight: 600;">📢 ${n.message}</div><span class="mail-time">${new Date(n.created_at).toLocaleString('vi-VN')}</span>`;
-        el.appendChild(div);
+  addMessage(text, 'user');
+  input.value = '';
+
+  const lowerText = text.toLowerCase();
+
+  // Xử lý lệnh của Bot
+  if(lowerText.includes('chào') || lowerText.includes('hello') || lowerText.includes('hi')) {
+    setTimeout(() => addMessage('Chào bạn! Tôi có thể giúp gì cho bạn? Gõ "help" để xem hướng dẫn.'), 500);
+  } 
+  else if(lowerText === 'help' || lowerText.includes('giúp')) {
+    setTimeout(() => addMessage(`
+      <strong>HƯỚNG DẪN:</strong><br>
+      - Gõ "đăng ký" để tạo tài khoản.<br>
+      - Gõ "đăng nhập" để vào tài khoản.<br>
+      - Gõ "tài khoản" để xem số dư.<br>
+      - Gõ "Key 1 ngày", "Key 1 tuần", "Key 1 tháng" để mua Key.
+    `), 500);
+  }
+  else if(lowerText.includes('đăng ký') || lowerText.includes('register')) {
+    addMessage('Vui lòng nhập: <strong>dk [tên] [mật khẩu]</strong> (Ví dụ: dk samm 123456)', 'bot');
+  }
+  else if(lowerText.startsWith('dk ')) {
+    const parts = text.split(' ');
+    if(parts.length < 3) return addMessage('Sai cú pháp. Vui lòng nhập: dk [tên] [mật khẩu]', 'bot');
+    const u = parts[1]; const p = parts[2];
+    
+    addMessage('Đang xử lý đăng ký...', 'bot');
+    try {
+      const r = await fetch(SERVER_URL + '/api/shop/register', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username: u, password: p })
       });
-    } else {
-      el.innerHTML = '<div style="padding:20px; text-align:center; color:#5e7a94;">Không có thông báo nào.</div>';
-    }
-  } catch(e) {
-    el.innerHTML = '<div style="padding:20px; text-align:center; color:#ff4466;">Lỗi kết nối!</div>';
+      const d = await r.json();
+      if(d.ok) addMessage(`Đăng ký thành công tài khoản <strong>${u}</strong>! Bạn hãy gõ "đăng nhập" để vào.`, 'bot');
+      else addMessage(`Lỗi: ${d.error}`, 'bot');
+    } catch(e) { addMessage('Lỗi kết nối Server!', 'bot'); }
   }
-}
-
-async function applyCoupon() {
-  const code = document.getElementById('couponInput').value.trim().toUpperCase();
-  const msg = document.getElementById('couponMsg');
-  if(!code) return;
-
-  msg.textContent = 'Đang kiểm tra...'; msg.style.color = '#fff';
-  
-  try {
-    const r = await fetch(SERVER_URL + '/api/shop/check-coupon', {
-      method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ code })
-    });
-    const d = await r.json();
-    
-    if(d.ok) {
-      msg.textContent = `✓ Mã hợp lệ! Giảm ${d.discount}%`; msg.style.color = '#00ff88';
-      currentDiscountCode = code;
-    } else {
-      msg.textContent = '✗ ' + d.error; msg.style.color = '#ff4466';
-      currentDiscountCode = "";
-    }
-  } catch(e) {
-    msg.textContent = 'Lỗi kết nối!'; msg.style.color = '#ff4466';
+  else if(lowerText.includes('đăng nhập') || lowerText.includes('login')) {
+    addMessage('Vui lòng nhập: <strong>dn [tên] [mật khẩu]</strong> (Ví dụ: dn samm 123456)', 'bot');
   }
-}
+  else if(lowerText.startsWith('dn ')) {
+    const parts = text.split(' ');
+    if(parts.length < 3) return addMessage('Sai cú pháp. Vui lòng nhập: dn [tên] [mật khẩu]', 'bot');
+    const u = parts[1]; const p = parts[2];
 
-function openShop() {
-  if (currentUser) {
-    document.getElementById('shopModal').classList.add('show');
-    updateShopUI();
-    loadShopKeys();
-  } else {
-    document.getElementById('authModal').classList.add('show');
-  }
-}
-
-function closeShopModal() {
-  document.getElementById('shopModal').classList.remove('show');
-  if(checkStatusInterval) { clearInterval(checkStatusInterval); checkStatusInterval = null; }
-}
-
-function toggleAuthMode() {
-  isRegisterMode = !isRegisterMode;
-  document.getElementById('authTitle').textContent = isRegisterMode ? 'ĐĂNG KÝ TÀI KHOẢN' : 'ĐĂNG NHẬP SHOP';
-  document.getElementById('authBtn').textContent = isRegisterMode ? 'ĐĂNG KÝ' : 'ĐĂNG NHẬP';
-  document.getElementById('authSwitchText').textContent = isRegisterMode ? 'Đã có tài khoản?' : 'Chưa có tài khoản?';
-  document.getElementById('authSwitchBtn').textContent = isRegisterMode ? 'Đăng nhập' : 'Đăng ký ngay';
-}
-
-async function handleAuth() {
-  const u = document.getElementById('authUser').value;
-  const p = document.getElementById('authPass').value;
-  if(!u || !p) return alert('Nhập đủ tài khoản và mật khẩu!');
-
-  const endpoint = isRegisterMode ? '/api/shop/register' : '/api/shop/login';
-  const btn = document.getElementById('authBtn');
-  btn.textContent = 'ĐANG XỬ LÝ...'; btn.disabled = true;
-
-  try {
-    const r = await fetch(SERVER_URL + endpoint, {
-      method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ username: u, password: p })
-    });
-    const d = await r.json();
-    
-    if(d.ok) {
-      if(isRegisterMode) {
-        alert('Đăng ký thành công! Hãy đăng nhập.');
-        toggleAuthMode();
-      } else {
+    addMessage('Đang xử lý đăng nhập...', 'bot');
+    try {
+      const r = await fetch(SERVER_URL + '/api/shop/login', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username: u, password: p })
+      });
+      const d = await r.json();
+      if(d.ok) {
         currentUser = d.user;
-        document.getElementById('authModal').classList.remove('show');
-        document.getElementById('shopModal').classList.add('show');
-        updateShopUI();
-        loadShopKeys();
+        isLoggedIn = true;
+        addMessage(`Đăng nhập thành công! Chào mừng <strong>${currentUser.username}</strong>. Bạn có thể gõ "tài khoản" để xem số dư.`, 'bot');
+      } else {
+        addMessage(`Lỗi: ${d.error}`, 'bot');
       }
-    } else {
-      alert(d.error);
-    }
-  } catch(e) { alert('Lỗi kết nối Server! Vui lòng đợi 30s và thử lại.'); }
-  btn.textContent = isRegisterMode ? 'ĐĂNG KÝ' : 'ĐĂNG NHẬP'; btn.disabled = false;
-}
-
-function updateShopUI() {
-  document.getElementById('shopUser').textContent = currentUser.username;
-  document.getElementById('shopBalance').textContent = currentUser.balance.toLocaleString('vi-VN');
-}
-
-function logoutShop() {
-  currentUser = null;
-  closeShopModal();
-  document.getElementById('authModal').classList.remove('show');
-  document.getElementById('authUser').value = '';
-  document.getElementById('authPass').value = '';
-}
-
-function switchShopTab(tabId, btn) {
-  document.querySelectorAll('.shop-nav button').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.shop-tab-content').forEach(c => c.style.display = 'none');
-  btn.classList.add('active');
-  document.getElementById(tabId).style.display = 'block';
-  
-  if(tabId === 'shop-history') loadHistory();
-}
-
-async function loadShopKeys() {
-  const el = document.getElementById('shopList');
-  el.innerHTML = '<p style="text-align:center;color:#8ba0b8; padding: 20px;">Đang tải...</p>';
-  const r = await fetch(SERVER_URL + '/api/shop/keys');
-  const d = await r.json();
-  el.innerHTML = '';
-  if(d.ok && d.keys.length > 0) {
-    d.keys.forEach(k => {
-      const div = document.createElement('div');
-      div.className = 'shop-item';
-      div.innerHTML = `
-        <img src="${k.image || 'https://via.placeholder.com/70/1a2230/00f0ff?text=Key'}" onerror="this.src='https://via.placeholder.com/70/1a2230/00f0ff?text=Key'">
-        <div class="shop-item-info">
-          <div class="shop-item-name">${k.name || 'Gói Key'}</div>
-          <div class="shop-item-price">${k.price.toLocaleString('vi-VN')}đ</div>
-        </div>
-        <button class="btn-buy" onclick="buyKey('${k.key}', ${k.price})">MUA</button>
-      `;
-      el.appendChild(div);
-    });
-  } else {
-    el.innerHTML = '<p style="text-align:center;color:#8ba0b8; padding: 20px;">Cửa hàng đang trống.</p>';
+    } catch(e) { addMessage('Lỗi kết nối Server!', 'bot'); }
   }
-}
-
-async function buyKey(key, price) {
-  if(!confirm('Bạn có chắc muốn mua Key này với giá ' + price.toLocaleString('vi-VN') + 'đ?')) return;
-  const r = await fetch(SERVER_URL + '/api/shop/buy', {
-    method: 'POST', headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ username: currentUser.username, key, couponCode: currentDiscountCode })
-  });
-  const d = await r.json();
-  if(d.ok) {
-    alert(`Mua thành công! Đã thanh toán: ${d.finalPrice.toLocaleString('vi-VN')}đ. Xem lại trong Lịch sử.`);
-    currentUser.balance -= d.finalPrice;
-    updateShopUI();
-    loadShopKeys();
-    document.getElementById('couponInput').value = '';
-    document.getElementById('couponMsg').textContent = '';
-    currentDiscountCode = "";
-  } else {
-    alert(d.error);
+  else if(lowerText.includes('tài khoản') || lowerText.includes('số dư')) {
+    if(!isLoggedIn) return addMessage('Bạn chưa đăng nhập. Hãy gõ "đăng nhập" trước.', 'bot');
+    addMessage(`Tài khoản: <strong>${currentUser.username}</strong><br>Số dư: <strong>${currentUser.balance.toLocaleString('vi-VN')}đ</strong>`, 'bot');
   }
-}
-
-function showQR() {
-  const amt = parseInt(document.getElementById('topupAmount').value);
-  if(!amt || amt < 1000) return alert('Vui lòng nhập số tiền từ 1,000đ trở lên!');
-  
-  document.getElementById('qrImage').src = QR_IMAGE_URL;
-  document.getElementById('qrContainer').style.display = 'block';
-  document.getElementById('btnShowQR').style.display = 'none';
-}
-
-async function confirmTopup() {
-  const amt = parseInt(document.getElementById('topupAmount').value);
-  if(!amt) return;
-
-  const btn = event.target;
-  btn.textContent = 'ĐANG GỬI YÊU CẦU...'; btn.disabled = true;
-
-  try {
-    const r = await fetch(SERVER_URL + '/api/shop/topup', {
-      method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ username: currentUser.username, amount: amt })
-    });
-    const d = await r.json();
+  else if(lowerText.includes('key')) {
+    if(!isLoggedIn) return addMessage('Bạn chưa đăng nhập. Hãy gõ "đăng nhập" trước.', 'bot');
     
-    if(d.ok) {
-      document.getElementById('qrContainer').innerHTML = `
-        <div style="background:rgba(0,240,255,0.1);border:1px solid var(--neon);padding:24px;border-radius:16px;margin-top:15px;text-align:center;">
-          <h3 style="color:var(--neon);font-size:1.1rem;margin-bottom:12px;">⏳ ĐANG XÁC THỰC</h3>
-          <p style="font-size:0.85rem;color:#cfefff;line-height:1.6;">
-            Yêu cầu nạp <strong>${amt.toLocaleString('vi-VN')}đ</strong> của bạn đã được gửi.<br>
-            Vui lòng chờ <strong>Admin kiểm tra và cộng tiền</strong>.
-          </p>
-          <button class="btn-full" onclick="closeShopModal(); location.reload();" style="margin-top:20px;background:rgba(255,255,255,0.1); border: 1px solid #fff; color: #fff;">ĐÓNG</button>
-        </div>
-      `;
+    let type = '';
+    let typeName = '';
+    if(lowerText.includes('1 ngày') || lowerText.includes('ngày')) { type = 'day'; typeName = '1 Ngày'; }
+    else if(lowerText.includes('1 tuần') || lowerText.includes('tuần')) { type = 'week'; typeName = '1 Tuần'; }
+    else if(lowerText.includes('1 tháng') || lowerText.includes('tháng')) { type = 'month'; typeName = '1 Tháng'; }
+    else if(lowerText.includes('vĩnh viễn')) { type = 'forever'; typeName = 'Vĩnh Viễn'; }
 
-      if(checkStatusInterval) clearInterval(checkStatusInterval);
-      checkStatusInterval = setInterval(async () => {
-        try {
-          const checkRes = await fetch(SERVER_URL + '/api/shop/check-topup-status?username=' + currentUser.username);
-          const checkData = await checkRes.json();
-          
-          if (checkData.ok && checkData.status === 'success') {
-            clearInterval(checkStatusInterval);
-            checkStatusInterval = null;
-            currentUser.balance = checkData.newBalance;
-            updateShopUI();
-            document.getElementById('qrContainer').innerHTML = `
-              <div style="background:rgba(0,255,136,0.1);border:1px solid var(--neon3);padding:24px;border-radius:16px;margin-top:15px;text-align:center;">
-                <h3 style="color:var(--neon3);font-size:1.1rem;margin-bottom:12px;">✅ NẠP THÀNH CÔNG</h3>
-                <p style="font-size:0.85rem;color:#cfefff;line-height:1.6;">
-                  Số tiền <strong>${amt.toLocaleString('vi-VN')}đ</strong> đã được cộng vào tài khoản!
-                </p>
-                <button class="btn-full" onclick="closeShopModal()" style="margin-top:20px;background:var(--neon3); color:#000;">HOÀN TẤT</button>
-              </div>
-            `;
-          }
-        } catch (err) { console.log('Đang chờ duyệt...'); }
-      }, 3000);
-    } else {
-      alert(d.error);
-      btn.textContent = 'TÔI ĐÃ CHUYỂN KHOẢN'; btn.disabled = false;
-    }
-  } catch(e) {
-    alert('Lỗi kết nối Server!');
-    btn.textContent = 'TÔI ĐÃ CHUYỂN KHOẢN'; btn.disabled = false;
+    if(!type) return addMessage('Bạn muốn mua Key gì? (Gõ "Key 1 ngày", "Key 1 tuần", "Key 1 tháng", "Key vĩnh viễn").', 'bot');
+
+    addMessage(`Đang tiến hành mua Key ${typeName}...`, 'bot');
+    try {
+      const r = await fetch(SERVER_URL + '/api/bot/buy', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username: currentUser.username, type })
+      });
+      const d = await r.json();
+      if(d.ok) {
+        currentUser.balance -= d.price; // Cập nhật số dư tạm thời
+        addMessage(`
+          Mua thành công Key <strong>${typeName}</strong>!<br>
+          Mã Key của bạn là: <br>
+          <span style="color:#00ff88; font-size:1.1rem; font-family:monospace; font-weight:bold;">${d.key}</span><br>
+          <i>(Hãy copy mã này để nhập vào App)</i>
+        `, 'bot');
+      } else {
+        addMessage(`Lỗi: ${d.error}`, 'bot');
+      }
+    } catch(e) { addMessage('Lỗi kết nối Server!', 'bot'); }
+  }
+  else {
+    setTimeout(() => addMessage('Tôi không hiểu ý bạn. Gõ "help" để xem danh sách lệnh.', 'bot'), 500);
   }
 }
 
-async function loadHistory() {
-  const el = document.getElementById('historyList');
-  el.innerHTML = '<p style="text-align:center;color:#8ba0b8; padding: 20px;">Đang tải...</p>';
-  const r = await fetch(SERVER_URL + '/api/shop/history?username=' + currentUser.username);
-  const d = await r.json();
-  el.innerHTML = '';
-  if(d.ok && d.history.length > 0) {
-    d.history.forEach(k => {
-      const div = document.createElement('div');
-      div.className = 'shop-item';
-      div.style.padding = '16px';
-      div.innerHTML = `
-        <div style="flex:1">
-          <div style="color:#00ff88;font-family:monospace;font-size:1rem;font-weight:bold; letter-spacing:1px;">${k.key}</div>
-          <div style="font-size:0.75rem;color:#8ba0b8;margin-top:6px">${k.name || 'Key'} - Đã mua</div>
-        </div>
-      `;
-      el.appendChild(div);
-    });
-  } else {
-    el.innerHTML = '<p style="text-align:center;color:#8ba0b8; padding: 20px;">Chưa mua Key nào.</p>';
-  }
-}
-
+// XỬ LÝ MỞ KHÓA APP
 document.getElementById('unlockBtn').addEventListener('click', async ()=>{
   const key = document.getElementById('keyInput').value.trim().toUpperCase();
   const msg = document.getElementById('keyMsg');
@@ -857,11 +564,13 @@ document.getElementById('unlockBtn').addEventListener('click', async ()=>{
   }
 });
 
+// CHUYỂN TAB APP (ĐÃ FIX LỖI BỊ VĂNG)
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', ()=>{
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    tab.classList.add('active'); document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    tab.classList.add('active'); 
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
   });
 });
 
@@ -895,17 +604,6 @@ document.getElementById('btnActivate').addEventListener('click', () => {
     alert('✅ KÍCH HOẠT THÀNH CÔNG!\nToàn bộ chức năng đã được áp dụng vào game.');
   }, 2500);
 });
-
-async function checkNewMail() {
-  try {
-    const r = await fetch(SERVER_URL + '/api/shop/notifications');
-    const d = await r.json();
-    if(d.ok && d.notifications.length > 0) {
-      document.getElementById('mailBadge').style.display = 'flex';
-    }
-  } catch(e) {}
-}
-checkNewMail();
 </script>
 </body>
 </html>
