@@ -225,15 +225,28 @@ app.get('/api/admin/coupons', async (req, res) => {
   res.json({ ok: true, coupons: data || [] });
 });
 
+// THÊM NHIỀU MÃ GIẢM GIÁ CÙNG LÚC
 app.post('/api/admin/add-coupon', async (req, res) => {
   const pass = req.headers['x-admin-pass'];
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai pass' });
-  const { code, discount, max_uses } = req.body;
-  const item = { code: code.toUpperCase(), discount: parseInt(discount), max_uses: parseInt(max_uses), used_count: 0, status: 'active' };
-  const { error } = await supabase.from('coupons').insert([item]);
-  if(error) return res.json({ ok: false, error: error.message });
-  await supabase.from('notifications').insert([{ message: `SAMM VIP ĐÃ CẬP NHẬP MÃ GIẢM GIÁ MỚI: ${code.toUpperCase()}`, created_at: Date.now() }]);
-  res.json({ ok: true });
+  
+  const { code, discount, max_uses, count } = req.body;
+  const n = Math.min(Math.max(parseInt(count) || 1, 1), 100);
+  const createdCodes = [];
+  
+  for (let i = 0; i < n; i++) {
+    // Nếu tạo nhiều hơn 1, tự động thêm hậu tố (VD: SAMM1, SAMM2)
+    const finalCode = n > 1 ? `${code.toUpperCase()}${i + 1}` : code.toUpperCase();
+    const item = { code: finalCode, discount: parseInt(discount), max_uses: parseInt(max_uses), used_count: 0, status: 'active' };
+    const { error } = await supabase.from('coupons').insert([item]);
+    if(!error) createdCodes.push(finalCode);
+  }
+  
+  if(createdCodes.length > 0) {
+    await supabase.from('notifications').insert([{ message: `SAMM VIP ĐÃ CẬP NHẬP ${n} MÃ GIẢM GIÁ MỚI: ${code.toUpperCase()}...`, created_at: Date.now() }]);
+  }
+  
+  res.json({ ok: true, count: createdCodes.length, codes: createdCodes });
 });
 
 app.delete('/api/admin/delete-coupon/:id', async (req, res) => {
@@ -257,7 +270,7 @@ app.delete('/api/delete/:key', async (req, res) => {
   res.json({ ok: true });
 });
 
-// ================= GIAO DIỆN ADMIN (DÙNG CHUỖI NỐI ĐỂ TRÁNH LỖI BACKTICK) =================
+// ================= GIAO DIỆN ADMIN =================
 const adminHtml = '<!DOCTYPE html>' +
 '<html lang="vi"><head><meta charset="utf-8"><title>Admin - Headlock</title>' +
 '<meta name="viewport" content="width=device-width,initial-scale=1">' +
@@ -365,7 +378,8 @@ const adminHtml = '<!DOCTYPE html>' +
 '      <input id="c_code" type="text" placeholder="Mã (VD: GIAM20)" style="flex:1">' +
 '      <input id="c_discount" type="number" placeholder="Giảm (%)" style="width:100px">' +
 '      <input id="c_max" type="number" placeholder="Lượt dùng tối đa" style="width:150px">' +
-'      <button onclick="addCoupon()" style="background:linear-gradient(135deg, #ff00e5, #7000ff);">TẠO MÃ</button>' +
+'      <input id="c_count" type="number" value="1" min="1" max="100" style="width:80px" title="Số lượng mã muốn tạo">' +
+'      <button onclick="addCouponMultiple()" style="background:linear-gradient(135deg, #ff00e5, #7000ff);">TẠO MÃ</button>' +
 '      <button class="btn-gray" onclick="loadCoupons()">LOAD DS</button>' +
 '    </div>' +
 '    <table id="tbl-coupons"><thead><tr><th>Mã</th><th>Giảm giá</th><th>Đã dùng</th><th>Tối đa</th><th>Trạng thái</th><th>Xóa</th></tr></thead><tbody></tbody></table>' +
@@ -477,14 +491,19 @@ const adminHtml = '<!DOCTYPE html>' +
 '    alert("Lỗi: " + d.error);' +
 '  }' +
 '}' +
-'async function addCoupon() {' +
+'async function addCouponMultiple() {' +
 '  if(!getPass()) return alert("Nhập pass!");' +
 '  const r = await fetch("/api/admin/add-coupon", {' +
 '    method: "POST", headers: {"Content-Type": "application/json", "x-admin-pass": getPass()},' +
-'    body: JSON.stringify({ code: document.getElementById("c_code").value, discount: document.getElementById("c_discount").value, max_uses: document.getElementById("c_max").value })' +
+'    body: JSON.stringify({ ' +
+'      code: document.getElementById("c_code").value, ' +
+'      discount: document.getElementById("c_discount").value, ' +
+'      max_uses: document.getElementById("c_max").value,' +
+'      count: document.getElementById("c_count").value' +
+'    })' +
 '  });' +
 '  const d = await r.json();' +
-'  alert(d.ok ? "Đã tạo mã giảm giá!" : "Lỗi: "+d.error);' +
+'  alert(d.ok ? "Đã tạo "+d.count+" mã giảm giá!" : "Lỗi: "+d.error);' +
 '  if(d.ok) loadCoupons();' +
 '}' +
 'async function loadCoupons() {' +
