@@ -7,21 +7,41 @@
 <style>
   * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
   :root { 
-    --neon:#00f0ff; --neon2:#ff00e5; --neon3:#00ff88; --neon4:#ffaa00; 
-    --bg-dark:#05070d; --glass: rgba(16, 24, 38, 0.85);
-    --glass-border: rgba(0, 240, 255, 0.3);
+    --neon:#ff0033; 
+    --neon2:#ff00e5; 
+    --neon3:#00ff88; 
+    --neon4:#ffaa00; 
+    --bg-dark:#0a0505; 
+    --glass: rgba(24, 10, 12, 0.85);
+    --glass-border: rgba(255, 0, 51, 0.4);
   }
   body { 
-    min-height:100vh; background: #03050a; 
-    background-image: radial-gradient(circle at 0% 0%, rgba(0,240,255,0.1) 0%, transparent 40%), radial-gradient(circle at 100% 100%, rgba(255,0,229,0.1) 0%, transparent 40%);
+    min-height:100vh; background: #030000; 
+    background-image: radial-gradient(circle at 0% 0%, rgba(255,0,51,0.2) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(255,0,229,0.15) 0%, transparent 50%);
     display:flex; justify-content:center; align-items:flex-start; 
-    padding:14px 10px 40px; overflow-x:hidden; position:relative; color: #e0eef5;
+    padding:14px 10px 40px; overflow-x:hidden; position:relative; color: #f5e0e0;
   }
   
   /* NỀN */
   .bg-particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-  .bg-particles span{position:absolute;width:3px;height:3px;border-radius:50%;opacity:.4;animation:floatUp linear infinite}
-  @keyframes floatUp{0%{transform:translateY(100vh) scale(.5);opacity:0}10%{opacity:.8}90%{opacity:.3}100%{transform:translateY(-10vh) scale(1.5);opacity:0}}
+  .bg-particles span{position:absolute;width:3px;height:3px;border-radius:50%;opacity:.6;animation:floatUp linear infinite; box-shadow: 0 0 10px currentColor;}
+  @keyframes floatUp{0%{transform:translateY(100vh) scale(.5);opacity:0}10%{opacity:1}90%{opacity:.5}100%{transform:translateY(-10vh) scale(1.5);opacity:0}}
+
+  /* HIỆU ỨNG TOAST THÔNG BÁO KHI BẬT/TẮT */
+  .toast-container {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 1000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: 90%; max-width: 350px;
+  }
+  .toast {
+    background: rgba(255, 0, 51, 0.95); color: #fff; padding: 14px 20px;
+    border-radius: 12px; font-weight: 900; font-size: 0.85rem; text-align: center;
+    box-shadow: 0 0 30px rgba(255, 0, 51, 0.8), inset 0 0 10px rgba(255,255,255,0.3); border: 1px solid #fff;
+    animation: slideDownFade 0.3s ease, fadeOut 0.3s ease 1.7s forwards;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .toast.off { background: rgba(50, 50, 50, 0.95); box-shadow: 0 0 20px rgba(0,0,0,0.8); border: 1px solid #888; }
+  @keyframes slideDownFade { from{opacity:0; transform:translateY(-20px) scale(0.9);} to{opacity:1; transform:translateY(0) scale(1);} }
+  @keyframes fadeOut { to{opacity:0; transform:translateY(-20px);} }
 
   /* MÀN HÌNH CHÍNH */
   .lock-screen{position:fixed;inset:0;z-index:100;background:transparent;display:flex;align-items:center;justify-content:center;padding:15px;transition:opacity .6s,visibility .6s; overflow-y: auto;}
@@ -29,162 +49,174 @@
   
   .lock-box{
     width:100%;max-width:380px; background:var(--glass);border:1px solid var(--glass-border);
-    border-radius:28px;padding:26px 22px; box-shadow:0 30px 60px rgba(0,0,0,0.9), inset 0 0 40px rgba(0,240,255,0.05);
+    border-radius:28px;padding:26px 22px; box-shadow:0 30px 60px rgba(0,0,0,0.9), inset 0 0 50px rgba(255,0,51,0.1);
     position:relative;overflow:hidden; backdrop-filter: blur(20px);
   }
   .lock-box::before {
     content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
     background: conic-gradient(transparent, var(--neon), transparent 30%);
-    animation: rotateBorder 4s linear infinite; z-index: -1;
+    animation: rotateBorder 3s linear infinite; z-index: -1;
   }
-  .lock-box::after { content: ''; position: absolute; inset: 2px; background: #070b14; border-radius: 26px; z-index: -1; }
+  .lock-box::after { content: ''; position: absolute; inset: 2px; background: #0a0505; border-radius: 26px; z-index: -1; }
   @keyframes rotateBorder { 100% { transform: rotate(360deg); } }
 
   .app-profile { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 24px; text-align: center; }
-  .app-profile img { width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 2px solid var(--neon); box-shadow: 0 0 20px rgba(0,240,255,0.5); margin-bottom: 10px; background: #000; }
-  .app-profile h1 { font-size: 1.6rem; font-weight: 900; letter-spacing: 2px; background: linear-gradient(90deg, #fff, var(--neon), var(--neon2), #fff); background-size: 300% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: gm 4s linear infinite; text-transform: uppercase; filter: drop-shadow(0 0 10px rgba(0,240,255,0.6)); }
+  .app-profile img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--neon); box-shadow: 0 0 25px rgba(255,0,51,0.7); margin-bottom: 10px; background: #000; }
+  .app-profile h1 { font-size: 1.7rem; font-weight: 900; letter-spacing: 3px; background: linear-gradient(90deg, #fff, var(--neon), var(--neon2), #fff); background-size: 300% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: gm 3s linear infinite; text-transform: uppercase; filter: drop-shadow(0 0 15px rgba(255,0,51,0.8)); }
   @keyframes gm { 0%{background-position:0% center} 100%{background-position:300% center} }
-  .app-profile p { font-size: 0.65rem; color: var(--neon); letter-spacing: 4px; text-transform: uppercase; margin-top: 2px; font-weight: 700; }
+  .app-profile p { font-size: 0.7rem; color: var(--neon); letter-spacing: 5px; text-transform: uppercase; margin-top: 2px; font-weight: 700; text-shadow: 0 0 10px rgba(255,0,51,0.5);}
 
   .key-section{margin-bottom:24px}
-  .key-label{display:block;font-size:.75rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#8ba0b8;margin-bottom:10px; text-align: center;}
-  .key-input-wrap{display:flex;gap:8px; background: rgba(0,0,0,0.6); padding: 6px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); transition: 0.3s; box-shadow: inset 0 2px 10px rgba(0,0,0,0.8);}
-  .key-input-wrap:focus-within { border-color: var(--neon); box-shadow: 0 0 20px rgba(0,240,255,0.3), inset 0 2px 10px rgba(0,0,0,0.8); }
-  .key-input{flex:1;padding:12px 14px;background:transparent;border:none;color:#fff;font-weight:800;font-family:'Courier New',monospace;font-size:0.95rem;outline:none; text-align: center; letter-spacing: 2px;}
-  .key-input::placeholder { color: #4a5a70; font-weight: 600;}
-  .btn-unlock{padding:12px 20px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--neon),#0099cc);color:#001a22;font-weight:900;font-size:.8rem;cursor:pointer; transition: 0.3s; text-transform: uppercase;}
+  .key-label{display:block;font-size:.75rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#d0a0a0;margin-bottom:10px; text-align: center;}
+  .key-input-wrap{display:flex;gap:8px; background: rgba(0,0,0,0.7); padding: 6px; border-radius: 16px; border: 1px solid rgba(255,0,51,0.3); transition: 0.3s; box-shadow: inset 0 2px 15px rgba(0,0,0,0.9);}
+  .key-input-wrap:focus-within { border-color: var(--neon); box-shadow: 0 0 25px rgba(255,0,51,0.4), inset 0 2px 15px rgba(0,0,0,0.9); }
+  .key-input{flex:1;padding:12px 14px;background:transparent;border:none;color:#fff;font-weight:800;font-family:'Courier New',monospace;font-size:1rem;outline:none; text-align: center; letter-spacing: 2px;}
+  .key-input::placeholder { color: #5a3a3a; font-weight: 600;}
+  .btn-unlock{padding:12px 20px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--neon),#990011);color:#fff;font-weight:900;font-size:.85rem;cursor:pointer; transition: 0.3s; text-transform: uppercase; box-shadow: 0 0 15px rgba(255,0,51,0.5);}
   .btn-unlock:disabled{opacity:.4;cursor:not-allowed; filter: grayscale(1);}
-  .btn-unlock:hover:not(:disabled) { box-shadow: 0 0 20px var(--neon); transform: scale(1.05); }
+  .btn-unlock:hover:not(:disabled) { box-shadow: 0 0 25px var(--neon); transform: scale(1.05); }
   
-  .key-msg{font-size:.75rem;margin-top:10px;min-height:18px;font-weight:700; text-align: center;}
-  .key-msg.ok{color:var(--neon3); text-shadow: 0 0 10px rgba(0,255,136,0.6);} 
-  .key-msg.err{color:#ff4466; text-shadow: 0 0 10px rgba(255,68,102,0.6);} 
-  .key-msg.info{color:var(--neon)}
+  .key-msg{font-size:.8rem;margin-top:10px;min-height:18px;font-weight:700; text-align: center;}
+  .key-msg.ok{color:var(--neon3); text-shadow: 0 0 10px rgba(0,255,136,0.8);} 
+  .key-msg.err{color:var(--neon); text-shadow: 0 0 10px rgba(255,0,51,0.8);} 
+  .key-msg.info{color:var(--neon2)}
 
-  .install-steps { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px; margin-top: 20px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);}
-  .install-title { font-size: 0.75rem; color: var(--neon4); font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .install-steps { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,0,51,0.2); border-radius: 16px; padding: 16px; margin-top: 20px; box-shadow: inset 0 0 25px rgba(0,0,0,0.8);}
+  .install-title { font-size: 0.75rem; color: var(--neon4); font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(255,170,0,0.5);}
   .step-item { display: flex; gap: 12px; margin-bottom: 12px; position: relative; }
   .step-item:last-child { margin-bottom: 0; }
-  .step-num { width: 22px; height: 22px; border-radius: 50%; background: rgba(0,240,255,0.1); border: 1px solid var(--neon); color: var(--neon); font-size: 0.7rem; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 10px rgba(0,240,255,0.2);}
-  .step-text { font-size: 0.75rem; color: #b0c4d8; line-height: 1.5; }
+  .step-num { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,0,51,0.15); border: 1px solid var(--neon); color: var(--neon); font-size: 0.7rem; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 10px rgba(255,0,51,0.3);}
+  .step-text { font-size: 0.75rem; color: #c4b0b0; line-height: 1.5; }
   .step-text strong { color: #fff; }
 
-  .extra-section { margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(255,255,255,0.15); text-align: center; }
-  .zalo-btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #0068FF, #00C6FF); color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 900; text-decoration: none; font-size: 0.85rem; box-shadow: 0 5px 20px rgba(0, 104, 255, 0.4); margin-bottom: 15px; text-transform: uppercase; transition: 0.3s; }
-  .zalo-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 30px rgba(0, 104, 255, 0.6); }
-  .app-intro { font-size: 0.7rem; color: #8ba0b8; line-height: 1.6; margin-top: 10px; }
-  .app-intro strong { color: #00f0ff; }
+  .extra-section { margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(255,0,51,0.3); text-align: center; }
+  .zalo-btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #0068FF, #00C6FF); color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 900; text-decoration: none; font-size: 0.85rem; box-shadow: 0 5px 20px rgba(0, 104, 255, 0.5); margin-bottom: 15px; text-transform: uppercase; transition: 0.3s; }
+  .zalo-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 30px rgba(0, 104, 255, 0.7); }
+  .app-intro { font-size: 0.7rem; color: #d0a0a0; line-height: 1.6; margin-top: 10px; }
+  .app-intro strong { color: var(--neon); text-shadow: 0 0 8px rgba(255,0,51,0.5);}
 
   /* MAIN APP UI */
   .app{position:relative;z-index:2;width:100%;max-width:540px;display:flex;flex-direction:column;gap:16px; display:none;}
-  .header{display:flex;align-items:center;gap:14px;padding:16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:20px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+  .header{display:flex;align-items:center;gap:14px;padding:16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:20px; backdrop-filter: blur(10px); box-shadow: 0 10px 40px rgba(0,0,0,0.7), inset 0 0 20px rgba(255,0,51,0.1);}
   .avatar-wrap{position:relative;flex-shrink:0}
-  .avatar-wrap img{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--neon); box-shadow: 0 0 15px rgba(0,240,255,0.4);}
+  .avatar-wrap img{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--neon); box-shadow: 0 0 20px rgba(255,0,51,0.5);}
   .title-wrap{flex:1;min-width:0}
-  .title-wrap h1{font-size:1.6rem;font-weight:900;letter-spacing:2px;background:linear-gradient(90deg,var(--neon),var(--neon2));-webkit-background-clip:text;color:transparent;line-height:1.1;text-transform:uppercase}
+  .title-wrap h1{font-size:1.6rem;font-weight:900;letter-spacing:2px;background:linear-gradient(90deg,var(--neon),var(--neon2));-webkit-background-clip:text;color:transparent;line-height:1.1;text-transform:uppercase; filter: drop-shadow(0 0 8px rgba(255,0,51,0.5));}
   
-  .user-info{display:none;flex-direction:column;gap:4px;font-size:0.7rem;color:#8ba0b8;margin-top:8px;background:rgba(0,0,0,0.5);padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.05)}
-  .user-info span{color:var(--neon3);font-weight:700; text-shadow: 0 0 5px rgba(0,255,136,0.3);}
+  .user-info{display:none;flex-direction:column;gap:4px;font-size:0.7rem;color:#d0a0a0;margin-top:8px;background:rgba(0,0,0,0.6);padding:8px 12px;border-radius:10px;border:1px solid rgba(255,0,51,0.2)}
+  .user-info span{color:var(--neon3);font-weight:700; text-shadow: 0 0 8px rgba(0,255,136,0.4);}
 
-  .tabs{display:flex;gap:8px;padding:8px;background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;overflow-x:auto;scrollbar-width:none; backdrop-filter: blur(10px);}
-  .tab{flex-shrink:0;padding:12px 18px;border:none;border-radius:12px;background:transparent;color:#8ba0b8;font-weight:800;font-size:.75rem;text-transform:uppercase;cursor:pointer; transition: 0.3s;}
-  .tab.active{background:rgba(0,240,255,0.15);color:var(--neon);border:1px solid rgba(0,240,255,0.3); box-shadow: 0 0 15px rgba(0,240,255,0.1);}
+  .tabs{display:flex;gap:8px;padding:8px;background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;overflow-x:auto;scrollbar-width:none; backdrop-filter: blur(10px); box-shadow: 0 5px 20px rgba(0,0,0,0.5);}
+  .tab{flex-shrink:0;padding:12px 18px;border:none;border-radius:12px;background:transparent;color:#d0a0a0;font-weight:800;font-size:.75rem;text-transform:uppercase;cursor:pointer; transition: 0.3s; letter-spacing: 0.5px;}
+  .tab.active{background:linear-gradient(135deg, rgba(255,0,51,0.2), rgba(255,0,229,0.1));color:#fff;border:1px solid var(--neon); box-shadow: 0 0 20px rgba(255,0,51,0.3); text-shadow: 0 0 8px var(--neon);}
   
   .panel{display:none;flex-direction:column;gap:10px}
   .panel.active{display:flex;animation:fadeIn .3s ease}
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-  .section{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:16px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
-  .section-title{display:flex;align-items:center;gap:8px;font-size:.75rem;font-weight:800;text-transform:uppercase;color:#8ba0b8;margin-bottom:16px; letter-spacing: 1px;}
-  .section-title::before{content:'';width:4px;height:16px;background:var(--neon);border-radius:4px; box-shadow: 0 0 10px var(--neon);}
+  .section{background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;padding:16px; backdrop-filter: blur(10px); box-shadow: 0 10px 40px rgba(0,0,0,0.6);}
+  .section-title{display:flex;align-items:center;gap:8px;font-size:.75rem;font-weight:800;text-transform:uppercase;color:#d0a0a0;margin-bottom:16px; letter-spacing: 1px;}
+  .section-title::before{content:'';width:4px;height:16px;background:var(--neon);border-radius:4px; box-shadow: 0 0 15px var(--neon);}
 
-  .cheat-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
-  .cheat-item:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
-  .cheat-item.active { border-color: rgba(0,240,255,0.5); background: linear-gradient(90deg, rgba(0,240,255,0.1), rgba(0,0,0,0.2)); box-shadow: 0 0 25px rgba(0,240,255,0.15); transform: translateY(-2px); }
-  .cheat-item.active::before { content: ''; position: absolute; left: 0; top: 0; width: 4px; height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); }
+  .cheat-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
+  .cheat-item:hover { background: rgba(255,0,51,0.05); border-color: rgba(255,0,51,0.3); transform: translateY(-2px); }
+  .cheat-item.active { border-color: var(--neon); background: linear-gradient(90deg, rgba(255,0,51,0.15), rgba(0,0,0,0.3)); box-shadow: 0 0 30px rgba(255,0,51,0.25), inset 0 0 15px rgba(255,0,51,0.1); transform: translateY(-2px); }
+  .cheat-item.active::before { content: ''; position: absolute; left: 0; top: 0; width: 4px; height: 100%; background: var(--neon); box-shadow: 0 0 15px var(--neon); }
   
   .cheat-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; font-size: 1.4rem; transition: 0.3s; }
-  .cheat-item.active .cheat-icon { background: rgba(0,240,255,0.15); border-color: var(--neon); box-shadow: 0 0 15px rgba(0,240,255,0.3); color: var(--neon); }
+  .cheat-item.active .cheat-icon { background: rgba(255,0,51,0.2); border-color: var(--neon); box-shadow: 0 0 20px rgba(255,0,51,0.5); color: #fff; transform: scale(1.05); }
   
   .cheat-info { flex: 1; }
   .cheat-info .name { font-size: 0.95rem; font-weight: 800; color: #fff; transition: 0.3s; text-transform: uppercase; letter-spacing: 0.5px;}
-  .cheat-info .desc { font-size: 0.7rem; color: #8ba0b8; margin-top: 2px; }
-  .cheat-item.active .name { color: var(--neon); text-shadow: 0 0 10px rgba(0,240,255,0.5); }
+  .cheat-info .desc { font-size: 0.7rem; color: #c4b0b0; margin-top: 2px; }
+  .cheat-item.active .name { color: var(--neon); text-shadow: 0 0 12px rgba(255,0,51,0.8); }
+
+  /* THANH TRƯỢT ĐỘ NHẠY */
+  .slider-box { margin-top: -6px; margin-bottom: 12px; padding: 14px; background: rgba(255,0,51,0.05); border: 1px dashed rgba(255,0,51,0.4); border-radius: 16px; display: none; box-shadow: inset 0 0 15px rgba(0,0,0,0.5);}
+  .slider-box.show { display: block; }
+  .slider-box label { font-size: 0.75rem; color: #d0a0a0; margin-bottom: 8px; display: block; text-transform: uppercase; font-weight: 800;}
+  .slider-box input[type=range] { width: 100%; accent-color: var(--neon); }
 
   .switch { position: relative; display: inline-block; width: 56px; height: 30px; flex-shrink: 0; }
   .switch input { opacity: 0; width: 0; height: 0; }
-  .slider { position: absolute; cursor: pointer; inset: 0; background: #0f1722; border-radius: 30px; border: 2px solid #2a3a4d; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); box-shadow: inset 0 3px 6px rgba(0,0,0,0.8); }
-  .slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #5a6a80; border-radius: 50%; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
-  input:checked + .slider { background: rgba(0,240,255,0.15); border-color: var(--neon); box-shadow: inset 0 0 15px rgba(0,240,255,0.3), 0 0 15px rgba(0,240,255,0.2); }
-  input:checked + .slider:before { transform: translateX(26px); background: var(--neon); box-shadow: 0 0 15px var(--neon), 0 0 5px #fff; }
+  .slider { position: absolute; cursor: pointer; inset: 0; background: #221010; border-radius: 30px; border: 2px solid #4a2a2a; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); box-shadow: inset 0 3px 6px rgba(0,0,0,0.8); }
+  .slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #806060; border-radius: 50%; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+  input:checked + .slider { background: rgba(255,0,51,0.2); border-color: var(--neon); box-shadow: inset 0 0 15px rgba(255,0,51,0.5), 0 0 20px rgba(255,0,51,0.4); }
+  input:checked + .slider:before { transform: translateX(26px); background: var(--neon); box-shadow: 0 0 20px var(--neon), 0 0 8px #fff; }
 
   .btn-row{display:flex;gap:12px; margin-top: 5px;}
   .btn{flex:1;padding:16px;border:none;border-radius:16px;font-weight:900;font-size:.9rem;text-transform:uppercase;cursor:pointer;letter-spacing:1px;transition:0.3s;}
-  .btn-primary{background:linear-gradient(135deg,var(--neon),#0099cc);color:#001a22;box-shadow: 0 5px 20px rgba(0,240,255,0.3);}
-  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,240,255,0.5); }
-  .btn-danger{background:rgba(255,51,102,0.1);border:1px solid #ff3366;color:#ff3366;}
-  .btn-danger:hover { background: #ff3366; color: #fff; box-shadow: 0 5px 20px rgba(255,51,102,0.4); }
+  .btn-primary{background:linear-gradient(135deg,var(--neon),#990011);color:#fff;box-shadow: 0 5px 25px rgba(255,0,51,0.5); border: 1px solid rgba(255,255,255,0.2);}
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 35px rgba(255,0,51,0.8); }
+  .btn-danger{background:rgba(255,255,255,0.05);border:1px solid #fff;color:#fff;}
+  .btn-danger:hover { background: #fff; color: #000; box-shadow: 0 5px 25px rgba(255,255,255,0.5); }
 
-  .loading-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 20px; backdrop-filter: blur(10px); }
+  .loading-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 20px; backdrop-filter: blur(10px); }
   .loading-overlay.show { display: flex; }
-  .spinner { width: 70px; height: 70px; border: 4px solid rgba(0,240,255,0.1); border-top: 4px solid var(--neon); border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 30px rgba(0,240,255,0.3); }
+  .spinner { width: 80px; height: 80px; border: 5px solid rgba(255,0,51,0.1); border-top: 5px solid var(--neon); border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 40px rgba(255,0,51,0.4); }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  .loading-text { color: var(--neon); font-weight: 900; font-size: 1.3rem; letter-spacing: 3px; text-transform: uppercase; animation: pulseText 1.5s infinite; }
-  @keyframes pulseText { 0%, 100% { opacity: 1; text-shadow: 0 0 20px var(--neon); } 50% { opacity: 0.5; text-shadow: none; } }
+  .loading-text { color: var(--neon); font-weight: 900; font-size: 1.4rem; letter-spacing: 4px; text-transform: uppercase; animation: pulseText 1.5s infinite; text-shadow: 0 0 20px rgba(255,0,51,0.8);}
+  @keyframes pulseText { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.95); } }
 
   /* ====== CHATBOT UI ====== */
   .chatbot-btn {
     position: fixed; bottom: 20px; right: 20px; z-index: 600;
-    width: 60px; height: 60px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--neon), #0099cc);
+    width: 65px; height: 65px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--neon), #990011);
     display: flex; align-items: center; justify-content: center;
-    font-size: 2rem; cursor: pointer;
-    box-shadow: 0 5px 25px rgba(0,240,255,0.5);
+    font-size: 2.2rem; cursor: pointer;
+    box-shadow: 0 5px 30px rgba(255,0,51,0.7), inset 0 0 15px rgba(255,255,255,0.4);
     animation: floatBot 3s ease-in-out infinite;
-    transition: 0.3s;
+    transition: 0.3s; border: 2px solid rgba(255,255,255,0.3);
   }
-  .chatbot-btn:hover { transform: scale(1.1); }
+  .chatbot-btn:hover { transform: scale(1.1); box-shadow: 0 5px 40px rgba(255,0,51,1); }
   @keyframes floatBot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
   .chatbot-badge {
-    position: absolute; top: -5px; right: -5px; background: #ff3366;
-    color: #fff; font-size: 0.7rem; font-weight: bold; width: 20px; height: 20px;
+    position: absolute; top: -5px; right: -5px; background: #ffaa00;
+    color: #000; font-size: 0.75rem; font-weight: 900; width: 22px; height: 22px;
     border-radius: 50%; display: none; align-items: center; justify-content: center;
-    border: 2px solid #000; box-shadow: 0 0 10px #ff3366;
+    border: 2px solid #000; box-shadow: 0 0 15px #ffaa00;
   }
 
   .chat-window {
-    position: fixed; bottom: 90px; right: 20px; z-index: 600;
-    width: calc(100% - 40px); max-width: 350px; height: 480px;
-    background: rgba(10, 14, 22, 0.95); border: 1px solid var(--neon);
+    position: fixed; bottom: 95px; right: 20px; z-index: 600;
+    width: calc(100% - 40px); max-width: 350px; height: 500px;
+    background: rgba(15, 5, 8, 0.98); border: 1px solid var(--neon);
     border-radius: 20px; display: none; flex-direction: column;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    box-shadow: 0 15px 50px rgba(0,0,0,0.9), 0 0 30px rgba(255,0,51,0.3);
     backdrop-filter: blur(15px); overflow: hidden;
-    animation: slideUp 0.3s ease;
+    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
   .chat-window.show { display: flex; }
-  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-  .chat-header { background: rgba(0,240,255,0.1); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
-  .chat-header h3 { font-size: 0.9rem; color: var(--neon); font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
-  .chat-close { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
+  .chat-header { background: linear-gradient(90deg, rgba(255,0,51,0.2), rgba(0,0,0,0.5)); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,0,51,0.4); }
+  .chat-header h3 { font-size: 1rem; color: var(--neon); font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 0 10px rgba(255,0,51,0.6);}
+  .chat-close { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; transition: 0.3s;}
+  .chat-close:hover { color: var(--neon); transform: rotate(90deg); }
 
-  .chat-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-  .chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 0.8rem; line-height: 1.4; word-wrap: break-word;}
-  .msg-bot { background: rgba(0,240,255,0.15); color: #cfefff; align-self: flex-start; border-bottom-left-radius: 2px; }
-  .msg-user { background: var(--neon); color: #000; align-self: flex-end; border-bottom-right-radius: 2px; font-weight: 600; }
+  .chat-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+  .chat-body::-webkit-scrollbar { width: 4px; }
+  .chat-body::-webkit-scrollbar-thumb { background: rgba(255,0,51,0.5); border-radius: 4px; }
+  .chat-msg { max-width: 85%; padding: 12px 16px; border-radius: 14px; font-size: 0.85rem; line-height: 1.5; word-wrap: break-word;}
+  .msg-bot { background: rgba(255,0,51,0.15); color: #ffd6d6; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid rgba(255,0,51,0.3); box-shadow: 0 4px 15px rgba(0,0,0,0.3);}
+  .msg-user { background: linear-gradient(135deg, var(--neon), #990011); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; font-weight: 600; box-shadow: 0 4px 20px rgba(255,0,51,0.5);}
 
-  .chat-input-area { padding: 10px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 8px; }
-  .chat-input { flex: 1; padding: 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: #fff; outline: none; font-size: 0.85rem; }
-  .chat-input:focus { border-color: var(--neon); }
-  .chat-send { padding: 10px 15px; border-radius: 20px; border: none; background: var(--neon); color: #000; font-weight: 900; cursor: pointer; }
-  .chat-send:hover { background: #fff; }
+  .chat-input-area { padding: 12px; border-top: 1px solid rgba(255,0,51,0.3); display: flex; gap: 10px; background: rgba(0,0,0,0.4);}
+  .chat-input { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid rgba(255,0,51,0.3); background: rgba(0,0,0,0.6); color: #fff; outline: none; font-size: 0.9rem; transition: 0.3s;}
+  .chat-input:focus { border-color: var(--neon); box-shadow: 0 0 15px rgba(255,0,51,0.3);}
+  .chat-send { padding: 12px 18px; border-radius: 20px; border: none; background: linear-gradient(135deg, var(--neon), #990011); color: #fff; font-weight: 900; cursor: pointer; box-shadow: 0 0 15px rgba(255,0,51,0.4); transition: 0.3s;}
+  .chat-send:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(255,0,51,0.8); }
 
-  .qr-img { width: 100%; max-width: 200px; border-radius: 10px; margin-top: 10px; border: 2px solid var(--neon); display: block; margin-left: auto; margin-right: auto;}
+  .qr-img { width: 100%; max-width: 220px; border-radius: 12px; margin-top: 12px; border: 2px solid var(--neon); display: block; margin-left: auto; margin-right: auto; box-shadow: 0 0 20px rgba(255,0,51,0.4);}
 </style>
 </head>
 <body>
 
 <div class="bg-particles" id="particles"></div>
+
+<!-- KHU VỰC HIỆN THÔNG BÁO TOAST -->
+<div class="toast-container" id="toastContainer"></div>
 
 <!-- HIỆU ỨNG LOADING -->
 <div class="loading-overlay" id="loadingOverlay">
@@ -196,7 +228,7 @@
 <div class="lock-screen" id="lockScreen" style="flex-direction: column;">
   <div class="lock-box">
     <div class="app-profile">
-      <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/85/1a2230/00f0ff?text=IC'">
+      <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/85/1a2230/ff0033?text=IC'">
       <h1>INNOVACHEAT</h1>
       <p>▸ PRO MAX ◂</p>
     </div>
@@ -249,7 +281,7 @@
 <div class="app" id="app">
   <div class="header">
     <div class="avatar-wrap">
-      <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/64/1a2230/00f0ff?text=IC'">
+      <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/64/1a2230/ff0033?text=IC'">
     </div>
     <div class="title-wrap">
       <h1>INNOVA</h1>
@@ -261,111 +293,104 @@
   </div>
 
   <div class="tabs" id="tabs">
-    <button class="tab active" data-tab="combat"><span class="ico">⚔️</span>COMBAT</button>
-    <button class="tab" data-tab="visual"><span class="ico">🎨</span>VISUAL</button>
+    <button class="tab active" data-tab="aim"><span class="ico">🎯</span>AIMLOCK</button>
+    <button class="tab" data-tab="cheat"><span class="ico">🔥</span>AIM CHEAT</button>
+    <button class="tab" data-tab="skin"><span class="ico">👕</span>MOD SKIN</button>
     <button class="tab" data-tab="misc"><span class="ico">⚙️</span>MISC</button>
   </div>
 
-  <div class="panel active" id="panel-combat">
+  <!-- TAB AIMLOCK -->
+  <div class="panel active" id="panel-aim">
     <div class="section">
-      <div class="section-title">COMBAT MODULES</div>
+      <div class="section-title">AIMLOCK MODULES</div>
+      
       <div class="cheat-item">
-        <div class="cheat-icon">💥</div>
-        <div class="cheat-info"><div class="name">Tăng Sát Thương (Buff Dame)</div><div class="desc">Cường hóa sát thương khi bắn trúng</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
-      </div>
-      <div class="cheat-item">
-        <div class="cheat-icon">⚡</div>
-        <div class="cheat-info"><div class="name">Bắn Siêu Tốc (Fast Fire)</div><div class="desc">Tăng tốc độ bắn của mọi loại súng</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
-      </div>
-      <div class="cheat-item">
-        <div class="cheat-icon">🔄</div>
-        <div class="cheat-info"><div class="name">Đổi Súng Nhanh</div><div class="desc">Chuyển đổi vũ khí siêu mượt</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
-      </div>
-      <div class="cheat-item">
-        <div class="cheat-icon">📦</div>
-        <div class="cheat-info"><div class="name">Nạp Đạn Nhanh</div><div class="desc">Giảm thời gian nạp đạn</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
-      </div>
-      <div class="cheat-item">
-        <div class="cheat-icon">🎮</div>
-        <div class="cheat-info"><div class="name">Giảm Giật Súng (No Recoil)</div><div class="desc">Loại bỏ độ giật khi bắn</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
-      </div>
-    </div>
-  </div>
-
-  <div class="panel" id="panel-visual">
-    <div class="section">
-      <div class="section-title">VISUAL MODULES</div>
-      <div class="cheat-item">
-        <div class="cheat-icon">👁️</div>
-        <div class="cheat-info"><div class="name">Khung 2D (Box ESP)</div><div class="desc">Hiển thị khung xương địch</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
-      </div>
-      <div class="cheat-item">
-        <div class="cheat-icon">📡</div>
-        <div class="cheat-info"><div class="name">Tia Chỉ Hướng (Line ESP)</div><div class="desc">Vẽ đường thẳng tới kẻ địch</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
-      </div>
-      <div class="cheat-item">
-        <div class="cheat-icon">💚</div>
-        <div class="cheat-info"><div class="name">Thanh Máu (Health Bar)</div><div class="desc">Hiển thị lượng máu của địch</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
-      </div>
-      <div class="cheat-item">
-        <div class="cheat-icon">🏷️</div>
-        <div class="cheat-info"><div class="name">Tên Kẻ Địch (Name Tag)</div><div class="desc">Hiển thị tên của người chơi</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
-      </div>
-      <div class="cheat-item">
-        <div class="cheat-icon">📏</div>
-        <div class="cheat-info"><div class="name">Khoảng Cách (Distance Tag)</div><div class="desc">Hiển thị khoảng cách tới địch</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
-      </div>
-    </div>
-  </div>
-
-  <div class="panel" id="panel-misc">
-    <div class="section">
-      <div class="section-title">MISC MODULES</div>
-      <div class="cheat-item">
-        <div class="cheat-icon">🦘</div>
-        <div class="cheat-info"><div class="name">Nhảy Cao (High Jump)</div><div class="desc">Tăng độ cao khi nhảy</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
-      </div>
-      <div class="cheat-item">
-        <div class="cheat-icon">🌀</div>
-        <div class="cheat-info"><div class="name">Đảo Nhựa (360°)</div><div class="desc">Xoay camera 360 độ quanh nhân vật</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+        <div class="cheat-icon">🎯</div>
+        <div class="cheat-info"><div class="name">AIMLOCK V1</div><div class="desc">Khóa mục tiêu cơ bản</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIMLOCK V1"><span class="slider"></span></label>
       </div>
       <div class="cheat-item">
         <div class="cheat-icon">🎯</div>
-        <div class="cheat-info"><div class="name">Khóa Góc 100% (No Gra)</div><div class="desc">Hỗ trợ ngắm bắn chính xác</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+        <div class="cheat-info"><div class="name">AIMLOCK V2</div><div class="desc">Khóa mục tiêu nâng cao</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIMLOCK V2"><span class="slider"></span></label>
       </div>
       <div class="cheat-item">
-        <div class="cheat-icon">🌫️</div>
-        <div class="cheat-info"><div class="name">Khử Sương Mù (No Fog)</div><div class="desc">Loại bỏ sương mù trên bản đồ</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+        <div class="cheat-icon">🎯</div>
+        <div class="cheat-info"><div class="name">AIMLOCK V3</div><div class="desc">Khóa mục tiêu siêu mượt</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIMLOCK V3"><span class="slider"></span></label>
       </div>
       <div class="cheat-item">
-        <div class="cheat-icon">🎒</div>
-        <div class="cheat-info"><div class="name">Loot Đồ Nhanh</div><div class="desc">Tự động nhặt vật phẩm siêu tốc</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+        <div class="cheat-icon">🎯</div>
+        <div class="cheat-info"><div class="name">AIMLOCK V6</div><div class="desc">Khóa mục tiêu Pro Max</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIMLOCK V6"><span class="slider"></span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB AIM CHEAT -->
+  <div class="panel" id="panel-cheat">
+    <div class="section">
+      <div class="section-title">AIM CHEAT MODULES</div>
+      
+      <div class="cheat-item">
+        <div class="cheat-icon">🔥</div>
+        <div class="cheat-info"><div class="name">AIM CHEAT 1.0</div><div class="desc">Hỗ trợ ngắm bắn thế hệ 1</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIM CHEAT 1.0"><span class="slider"></span></label>
       </div>
       <div class="cheat-item">
-        <div class="cheat-icon">🏃</div>
-        <div class="cheat-info"><div class="name">Nâng Di Chuyển</div><div class="desc">Tăng tốc độ chạy của nhân vật</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+        <div class="cheat-icon">🔥</div>
+        <div class="cheat-info"><div class="name">AIM CHEAT 2.0</div><div class="desc">Hỗ trợ ngắm bắn thế hệ 2</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIM CHEAT 2.0"><span class="slider"></span></label>
+      </div>
+
+      <!-- THANH TRƯỢT ĐỘ NHẠY -->
+      <div class="cheat-item">
+        <div class="cheat-icon">🎚️</div>
+        <div class="cheat-info"><div class="name">ĐỘ NHẠY (SENSITIVITY)</div><div class="desc">Tùy chỉnh độ nhạy ngắm bắn</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle" id="sensToggle" data-name="ĐỘ NHẠY"><span class="slider"></span></label>
+      </div>
+      <div class="slider-box" id="sensBox">
+        <label>Độ nhạy: <span id="sensValue" style="color:var(--neon);">50%</span></label>
+        <input type="range" min="1" max="100" value="50" id="sensRange">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TAB MOD SKIN -->
+  <div class="panel" id="panel-skin">
+    <div class="section">
+      <div class="section-title">MOD SKIN MODULES</div>
+      
+      <div class="cheat-item">
+        <div class="cheat-icon">👕</div>
+        <div class="cheat-info"><div class="name">MOD SKIN V1</div><div class="desc">Bộ skin cơ bản</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="MOD SKIN V1"><span class="slider"></span></label>
       </div>
       <div class="cheat-item">
-        <div class="cheat-icon">🖱️</div>
-        <div class="cheat-info"><div class="name">Aim Silent (Tàng Hình)</div><div class="desc">Ngắm bắn không lộ vị trí</div></div>
-        <label class="switch"><input type="checkbox" class="cheat-toggle"><span class="slider"></span></label>
+        <div class="cheat-icon">👕</div>
+        <div class="cheat-info"><div class="name">MOD SKIN V2</div><div class="desc">Bộ skin nâng cao</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="MOD SKIN V2"><span class="slider"></span></label>
       </div>
+      <div class="cheat-item">
+        <div class="cheat-icon">👕</div>
+        <div class="cheat-info"><div class="name">MOD SKIN V3</div><div class="desc">Bộ skin cao cấp</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="MOD SKIN V3"><span class="slider"></span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB MISC -->
+  <div class="panel" id="panel-misc">
+    <div class="section">
+      <div class="section-title">MISC MODULES</div>
+      
+      <div class="cheat-item">
+        <div class="cheat-icon">🛡️</div>
+        <div class="cheat-info"><div class="name">ANTIBAN</div><div class="desc">Chống bị khóa tài khoản</div></div>
+        <label class="switch"><input type="checkbox" class="cheat-toggle" data-name="ANTIBAN"><span class="slider"></span></label>
+      </div>
+
     </div>
   </div>
 
@@ -396,7 +421,11 @@
 
 <script>
 const SERVER_URL = 'https://innova-key.onrender.com';
-const QR_IMAGE_URL = 'https://files.catbox.moe/4ot0fd.jpeg';
+
+// THÔNG TIN NGÂN HÀNG ĐỂ TẠO MÃ QR ĐỘNG
+const BANK_ID = 'MB'; 
+const ACCOUNT_NO = '2333612345555'; 
+const ACCOUNT_NAME = 'CA VAN SAM'; 
 
 let currentUser = null;
 let isLoggedIn = false;
@@ -405,15 +434,44 @@ let lastNotificationId = null;
 
 // KHỞI TẠO PARTICLES
 const pWrap = document.getElementById('particles');
-for(let i=0;i<50;i++){
+for(let i=0;i<60;i++){
   const s = document.createElement('span');
   s.style.left = Math.random()*100 + '%';
-  s.style.animationDuration = (5 + Math.random()*10) + 's';
+  s.style.animationDuration = (4 + Math.random()*8) + 's';
   s.style.animationDelay = (Math.random()*5) + 's';
-  s.style.background = ['#00f0ff','#ff00e5','#00ff88'][Math.floor(Math.random()*3)];
+  s.style.color = ['#ff0033','#ff00e5','#ffaa00'][Math.floor(Math.random()*3)];
+  s.style.background = s.style.color;
   s.style.width = s.style.height = (1 + Math.random()*3) + 'px';
   pWrap.appendChild(s);
 }
+
+// HÀM HIỂN THỊ THÔNG BÁO TOAST
+function showToast(message, isOff = false) {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${isOff ? 'off' : ''}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    if(toast.parentNode) toast.parentNode.removeChild(toast);
+  }, 2000);
+}
+
+// XỬ LÝ THANH TRƯỢT ĐỘ NHẠY
+const sensToggle = document.getElementById('sensToggle');
+const sensBox = document.getElementById('sensBox');
+const sensRange = document.getElementById('sensRange');
+const sensValue = document.getElementById('sensValue');
+
+sensToggle.addEventListener('change', function() {
+  if(this.checked) sensBox.classList.add('show');
+  else sensBox.classList.remove('show');
+});
+
+sensRange.addEventListener('input', function() {
+  sensValue.textContent = this.value + '%';
+});
 
 // KIỂM TRA THÔNG BÁO TỪ ADMIN (CHẠY NGẦM)
 async function checkNotifications() {
@@ -422,23 +480,16 @@ async function checkNotifications() {
     const d = await r.json();
     if(d.ok && d.notifications.length > 0) {
       const latest = d.notifications[0];
-      // Nếu có thông báo mới và khác với thông báo cũ
       if(lastNotificationId !== latest.id) {
         lastNotificationId = latest.id;
-        
-        // Hiện chấm đỏ trên icon chat
         document.getElementById('chatBadge').style.display = 'flex';
         
-        // Tự động gửi tin nhắn vào khung chat nếu đang mở
         let message = latest.message;
-        
-        // Tùy chỉnh câu chữ nếu là thông báo tạo Key
         if(message.includes('sản phẩm')) {
           message = `📢 <strong>SAMM ĐÃ TẠO KEY MỚI!</strong><br>AE NÀO CẦN LIÊN HỆ SAMM 0355757211 ZALO NHA MỌI NGƯỜI.<br>Giá Key: 20k/ngày, 50k/tuần, 80k/tháng, 200k/vĩnh viễn. Mỗi key chỉ dùng trên 1 thiết bị.`;
         } else if(message.includes('MÃ GIẢM GIÁ')) {
           message = `📢 <strong>SAMM ĐÃ TẠO RA MÃ GIẢM GIÁ!</strong><br>${message}`;
         }
-        
         addMessage(message, 'bot');
       }
     }
@@ -480,7 +531,6 @@ async function sendChat() {
 
   const lowerText = text.toLowerCase();
 
-  // Xử lý lệnh của Bot
   if(lowerText.includes('chào') || lowerText.includes('hello') || lowerText.includes('hi')) {
     setTimeout(() => addMessage('Chào bạn! Tôi có thể giúp gì cho bạn? Gõ "help" để xem hướng dẫn.'), 500);
   } 
@@ -561,7 +611,7 @@ async function sendChat() {
       });
       const d = await r.json();
       if(d.ok) {
-        currentUser.balance -= d.price; // Cập nhật số dư tạm thời
+        currentUser.balance -= d.price;
         addMessage(`
           Mua thành công Key <strong>${typeName}</strong>!<br>
           Mã Key của bạn là: <br>
@@ -577,12 +627,12 @@ async function sendChat() {
     addMessage(`
       Bạn muốn nạp bao nhiêu? Vui lòng chọn mệnh giá bên dưới:<br>
       <div style="display:flex; gap:5px; flex-wrap:wrap; margin-top:8px;">
-        <button onclick="selectTopup(10000)" style="padding:5px 10px; background:#334; border:1px solid #00f0ff; color:#fff; border-radius:5px; cursor:pointer;">10.000đ</button>
-        <button onclick="selectTopup(20000)" style="padding:5px 10px; background:#334; border:1px solid #00f0ff; color:#fff; border-radius:5px; cursor:pointer;">20.000đ</button>
-        <button onclick="selectTopup(50000)" style="padding:5px 10px; background:#334; border:1px solid #00f0ff; color:#fff; border-radius:5px; cursor:pointer;">50.000đ</button>
-        <button onclick="selectTopup(100000)" style="padding:5px 10px; background:#334; border:1px solid #00f0ff; color:#fff; border-radius:5px; cursor:pointer;">100.000đ</button>
-        <button onclick="selectTopup(200000)" style="padding:5px 10px; background:#334; border:1px solid #00f0ff; color:#fff; border-radius:5px; cursor:pointer;">200.000đ</button>
-        <button onclick="selectTopup(500000)" style="padding:5px 10px; background:#334; border:1px solid #00f0ff; color:#fff; border-radius:5px; cursor:pointer;">500.000đ</button>
+        <button onclick="selectTopup(10000)" style="padding:5px 10px; background:#331111; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">10.000đ</button>
+        <button onclick="selectTopup(20000)" style="padding:5px 10px; background:#331111; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">20.000đ</button>
+        <button onclick="selectTopup(50000)" style="padding:5px 10px; background:#331111; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">50.000đ</button>
+        <button onclick="selectTopup(100000)" style="padding:5px 10px; background:#331111; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">100.000đ</button>
+        <button onclick="selectTopup(200000)" style="padding:5px 10px; background:#331111; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">200.000đ</button>
+        <button onclick="selectTopup(500000)" style="padding:5px 10px; background:#331111; border:1px solid #ff0033; color:#fff; border-radius:5px; cursor:pointer;">500.000đ</button>
       </div>
     `, 'bot');
   }
@@ -591,15 +641,18 @@ async function sendChat() {
   }
 }
 
-// HÀM XỬ LÝ KHI CHỌN MỆNH GIÁ NẠP
+// HÀM XỬ LÝ KHI CHỌN MỆNH GIÁ NẠP VÀ TẠO QR ĐỘNG
 async function selectTopup(amount) {
   if(!isLoggedIn) return addMessage('Bạn chưa đăng nhập. Hãy gõ "đăng nhập" trước.', 'bot');
   
   addMessage(`Bạn đã chọn nạp <strong>${amount.toLocaleString('vi-VN')}đ</strong>.`, 'user');
+  
+  const qrUrl = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-compact2.png?amount=${amount}&addInfo=Nap%20App%20${currentUser.username}&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
+
   addMessage(`
     Vui lòng quét mã QR bên dưới để thanh toán.<br>
-    <strong>Lưu ý:</strong> Chuyển ĐÚNG SỐ TIỀN là <strong>${amount.toLocaleString('vi-VN')}đ</strong>.<br>
-    <img src="${QR_IMAGE_URL}" class="qr-img">
+    <strong>Lưu ý:</strong> Hệ thống đã tự động điền đúng số tiền <strong>${amount.toLocaleString('vi-VN')}đ</strong> vào mã QR.<br>
+    <img src="${qrUrl}" class="qr-img">
   `, 'bot');
 
   addMessage('Đang chờ xác thực...', 'bot');
@@ -612,8 +665,6 @@ async function selectTopup(amount) {
     const d = await r.json();
     
     if(d.ok) {
-      addMessage('Yêu cầu nạp tiền đã được gửi. Vui lòng chờ Admin duyệt.', 'bot');
-
       if(checkStatusInterval) clearInterval(checkStatusInterval);
       checkStatusInterval = setInterval(async () => {
         try {
@@ -684,6 +735,7 @@ document.querySelectorAll('.tab').forEach(tab => {
   });
 });
 
+// HIỆU ỨNG TOGGLE KHI GẠT CÔNG TẮC
 document.querySelectorAll('.cheat-item').forEach(item => {
   item.addEventListener('click', (e) => {
     if(e.target.closest('.switch')) return;
@@ -698,11 +750,25 @@ document.querySelectorAll('.cheat-item').forEach(item => {
 document.querySelectorAll('.cheat-toggle').forEach(toggle => {
   toggle.addEventListener('change', function() {
     const item = this.closest('.cheat-item');
-    if(this.checked) item.classList.add('active');
-    else item.classList.remove('active');
+    const name = this.getAttribute('data-name') || 'Chức năng';
+    
+    if(this.checked) {
+      item.classList.add('active');
+      showToast(`ĐÃ BẬT: ${name}`);
+      
+      // THÔNG BÁO BOT KHI BẬT MOD SKIN
+      if(name.includes('MOD SKIN')) {
+        addMessage(`🤖 <strong>THÔNG BÁO TỪ BOT:</strong><br>MOD SKIN ALOK ĐÃ KÍCH HOẠT THÀNH CÔNG!`, 'bot');
+      }
+      
+    } else {
+      item.classList.remove('active');
+      showToast(`ĐÃ TẮT: ${name}`, true);
+    }
   });
 });
 
+// XỬ LÝ NÚT KÍCH HOẠT
 document.getElementById('btnActivate').addEventListener('click', () => {
   const activeModules = document.querySelectorAll('.cheat-toggle:checked');
   if (activeModules.length === 0) return alert('Vui lòng bật ít nhất 1 chức năng trước khi kích hoạt!');
