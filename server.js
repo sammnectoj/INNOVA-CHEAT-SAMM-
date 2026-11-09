@@ -62,34 +62,54 @@ app.get('/api/shop/notifications', async (req, res) => {
   res.json({ ok: true, notifications: data || [] });
 });
 
-// Chatbot mua Key
-app.post('/api/bot/buy', async (req, res) => {
-  const { username, type } = req.body;
+// Chatbot mua NHIỀU Key cùng lúc
+app.post('/api/bot/buy-multiple', async (req, res) => {
+  const { username, type, count, discount } = req.body;
   
   const { data: user } = await supabase.from('users').select('*').eq('username', username).single();
   if(!user) return res.json({ ok: false, error: 'Bạn chưa đăng nhập hoặc tài khoản không tồn tại.' });
 
-  let price = 0;
-  let typeName = '';
-  if(type === 'day') { price = 20000; typeName = '1 Ngày'; }
-  else if(type === 'week') { price = 50000; typeName = '1 Tuần'; }
-  else if(type === 'month') { price = 80000; typeName = '1 Tháng'; }
-  else if(type === 'forever') { price = 200000; typeName = 'Vĩnh Viễn'; }
+  let basePrice = 0;
+  if(type === 'day') basePrice = 20000;
+  else if(type === 'week') basePrice = 50000;
+  else if(type === 'month') basePrice = 80000;
+  else if(type === 'forever') basePrice = 200000;
   else return res.json({ ok: false, error: 'Loại Key không hợp lệ.' });
 
-  if(user.balance < price) {
-    return res.json({ ok: false, error: `Số dư không đủ. Bạn cần thêm ${(price - user.balance).toLocaleString('vi-VN')}đ để mua Key ${typeName}.` });
+  let finalPricePerKey = basePrice;
+  if (discount && discount > 0) {
+    finalPricePerKey = basePrice - (basePrice * discount / 100);
+  }
+  
+  const totalPrice = finalPricePerKey * count;
+
+  if(user.balance < totalPrice) {
+    return res.json({ ok: false, error: `Số dư không đủ. Bạn cần thêm ${(totalPrice - user.balance).toLocaleString('vi-VN')}đ.` });
   }
 
-  // Lấy 1 Key trống trong kho
-  const { data: keyData } = await supabase.from('keys').select('*').eq('type', type).is('device_id', null).limit(1).single();
-  if(!keyData) return res.json({ ok: false, error: 'Rất tiếc, kho đã hết Key loại này. Vui lòng liên hệ Admin.' });
+  const { data: keyDatas } = await supabase.from('keys').select('*').eq('type', type).is('device_id', null).limit(count);
+  
+  if(!keyDatas || keyDatas.length < count) {
+    return res.json({ ok: false, error: `Rất tiếc, kho chỉ còn ${keyDatas ? keyDatas.length : 0} Key loại này. Vui lòng liên hệ Admin.` });
+  }
 
-  // Trừ tiền và gán Key cho user
-  await supabase.from('users').update({ balance: user.balance - price }).eq('username', username);
-  await supabase.from('keys').update({ device_id: 'BOUGHT_' + username }).eq('key', keyData.key);
+  const newBalance = user.balance - totalPrice;
+  await supabase.from('users').update({ balance: newBalance }).eq('username', username);
 
-  res.json({ ok: true, key: keyData.key, price, typeName });
+  const keysToReturn = [];
+  for (let keyData of keyDatas) {
+    await supabase.from('keys').update({ device_id: 'BOUGHT_' + username }).eq('key', keyData.key);
+    keysToReturn.push(keyData.key);
+  }
+
+  res.json({ ok: true, keys: keysToReturn, totalPrice, newBalance });
+});
+
+// Lấy danh sách Key của User (Xem lịch sử mua)
+app.get('/api/bot/my-keys', async (req, res) => {
+  const { username } = req.query;
+  const { data } = await supabase.from('keys').select('*').eq('device_id', 'BOUGHT_' + username).order('created_at', { ascending: false });
+  res.json({ ok: true, keys: data || [] });
 });
 
 // Chatbot nạp tiền
@@ -162,24 +182,6 @@ app.post('/api/create', async (req, res) => {
     created.push(item);
   }
   res.json({ ok: true, created });
-});
-
-app.post('/api/admin/add-shop-key', async (req, res) => {
-  const pass = req.headers['x-admin-pass'];
-  if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai mật khẩu' });
-
-  const { name, image, price, type } = req.body;
-  const item = {
-    key: generateKey(), type, created_at: Date.now(), expires_at: calcExpiry(type),
-    note: 'Shop Item', device_id: null, name, image, price: parseInt(price)
-  };
-  
-  const { error } = await supabase.from('keys').insert([item]);
-  if(error) return res.json({ ok: false, error: error.message });
-  
-  await supabase.from('notifications').insert([{ message: `SAMM VIP ĐÃ THÊM 1 sản phẩm ${name}`, created_at: Date.now() }]);
-  
-  res.json({ ok: true, item });
 });
 
 app.get('/api/admin/users', async (req, res) => {
@@ -309,7 +311,6 @@ app.get('/admin', (req, res) => {
 
 <div class="tabs">
   <div class="tab active" onclick="switchTab('tab-key')">Quản Lý Key</div>
-  <div class="tab" onclick="switchTab('tab-shop')">Thêm Key Shop</div>
   <div class="tab" onclick="switchTab('tab-user')">Khách Hàng</div>
   <div class="tab" onclick="switchTab('tab-topup')">Duyệt Nạp Tiền</div>
   <div class="tab" onclick="switchTab('tab-coupon')">Mã Giảm Giá</div>
@@ -349,21 +350,6 @@ app.get('/admin', (req, res) => {
       <button class="btn-gray" onclick="loadList()">LOAD DS</button>
     </div>
     <table id="tbl"><thead><tr><th>Key</th><th>Hạn</th><th>Thiết bị</th><th>Ghi chú</th><th>Xóa</th></tr></thead><tbody></tbody></table>
-  </div>
-</div>
-
-<div id="tab-shop" class="panel">
-  <div class="box">
-    <h3 style="margin-bottom:10px; color:#00ff88">Thêm Key Bán Trong Shop</h3>
-    <div class="row">
-      <input id="s_name" type="text" placeholder="Tên gói (VD: Gói VIP 1 Tháng)" style="flex:1">
-      <input id="s_price" type="number" placeholder="Giá tiền (VNĐ)" style="width:150px">
-    </div>
-    <div class="row">
-      <input id="s_img" type="text" placeholder="Link ảnh (VD: https://...)" style="flex:1">
-      <select id="s_type"><option value="day">1 Ngày</option><option value="week">1 Tuần</option><option value="month">1 Tháng</option><option value="forever">Vĩnh viễn</option></select>
-      <button onclick="addShopKey()">THÊM VÀO SHOP</button>
-    </div>
   </div>
 </div>
 
@@ -412,13 +398,6 @@ async function createKey(){
   const d = await r.json();
   alert(d.ok ? 'Tạo thành công!' : 'Lỗi: '+d.error);
   if(d.ok) loadList();
-}
-
-async function addShopKey(){
-  if(!getPass()) return alert('Nhập pass!');
-  const r = await fetch('/api/admin/add-shop-key',{method:'POST',headers:{'Content-Type':'application/json','x-admin-pass':getPass()},body:JSON.stringify({name:document.getElementById('s_name').value, image:document.getElementById('s_img').value, price:document.getElementById('s_price').value, type:document.getElementById('s_type').value})});
-  const d = await r.json();
-  alert(d.ok ? 'Đã thêm Key vào Shop!' : 'Lỗi: '+d.error);
 }
 
 async function loadList(){
