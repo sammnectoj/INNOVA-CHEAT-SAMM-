@@ -225,7 +225,6 @@ app.get('/api/admin/coupons', async (req, res) => {
   res.json({ ok: true, coupons: data || [] });
 });
 
-// THÊM NHIỀU MÃ GIẢM GIÁ CÙNG LÚC
 app.post('/api/admin/add-coupon', async (req, res) => {
   const pass = req.headers['x-admin-pass'];
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai pass' });
@@ -235,7 +234,6 @@ app.post('/api/admin/add-coupon', async (req, res) => {
   const createdCodes = [];
   
   for (let i = 0; i < n; i++) {
-    // Nếu tạo nhiều hơn 1, tự động thêm hậu tố (VD: SAMM1, SAMM2)
     const finalCode = n > 1 ? `${code.toUpperCase()}${i + 1}` : code.toUpperCase();
     const item = { code: finalCode, discount: parseInt(discount), max_uses: parseInt(max_uses), used_count: 0, status: 'active' };
     const { error } = await supabase.from('coupons').insert([item]);
@@ -270,33 +268,38 @@ app.delete('/api/delete/:key', async (req, res) => {
   res.json({ ok: true });
 });
 
-// ================= GIAO DIỆN ADMIN =================
+// ================= GIAO DIỆN ADMIN (NEON GREEN) =================
 const adminHtml = '<!DOCTYPE html>' +
 '<html lang="vi"><head><meta charset="utf-8"><title>Admin - Headlock</title>' +
 '<meta name="viewport" content="width=device-width,initial-scale=1">' +
 '<style>' +
-'  * { box-sizing: border-box; font-family: system-ui, sans-serif; }' +
-'  body { background: #0a0f17; color: #cfefff; padding: 20px; max-width: 1000px; margin: auto; }' +
-'  h1 { color: #ff0033; text-align: center; text-shadow: 0 0 10px #ff003380; }' +
-'  .box { background: #101a24; padding: 20px; border-radius: 12px; border: 1px solid #1a2a3d; margin-bottom: 20px; }' +
-'  input,select,button { padding: 10px; border-radius: 8px; border: 1px solid #2a3a4d; background: #0a0f17; color: #cfefff; font-size: 14px; outline: none; margin-bottom: 5px;}' +
-'  button { background: linear-gradient(135deg, #ff0033, #990011); color: #fff; font-weight: 800; cursor: pointer; border: none; transition: 0.2s;}' +
-'  button:hover { transform: scale(1.02); }' +
-'  .btn-gray { background: #2a3a4d; color: #fff; }' +
+'  * { box-sizing: border-box; font-family: "Segoe UI", system-ui, sans-serif; }' +
+'  body { background: #050a05; color: #d0ffd0; padding: 20px; max-width: 1000px; margin: auto; }' +
+'  h1 { color: #00ff88; text-align: center; text-shadow: 0 0 15px #00ff8880; letter-spacing: 2px; }' +
+'  .box { background: rgba(10, 30, 15, 0.8); padding: 20px; border-radius: 16px; border: 1px solid rgba(0, 255, 136, 0.2); margin-bottom: 20px; box-shadow: 0 0 20px rgba(0,255,136,0.1); }' +
+'  input,select,button { padding: 12px; border-radius: 8px; border: 1px solid rgba(0, 255, 136, 0.3); background: rgba(0,0,0,0.5); color: #fff; font-size: 14px; outline: none; margin-bottom: 5px; transition: 0.3s; }' +
+'  input:focus, select:focus { border-color: #00ff88; box-shadow: 0 0 10px rgba(0,255,136,0.3); }' +
+'  button { background: linear-gradient(135deg, #00ff88, #009944); color: #000; font-weight: 800; cursor: pointer; border: none; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;}' +
+'  button:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(0,255,136,0.6); }' +
+'  .btn-gray { background: rgba(255,255,255,0.1); color: #d0ffd0; border: 1px solid #555; }' +
+'  .btn-gray:hover { background: #fff; color: #000; }' +
 '  .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items: flex-start; }' +
 '  table { width: 100%; border-collapse: collapse; font-size: 13px; overflow-x: auto; display: block; margin-top: 10px;}' +
-'  th,td { padding: 10px; border-bottom: 1px solid #1a2a3d; text-align: left; white-space: nowrap; }' +
-'  .key { color: #00ff88; font-family: monospace; font-weight: bold; }' +
+'  th,td { padding: 12px 10px; border-bottom: 1px solid rgba(0, 255, 136, 0.1); text-align: left; white-space: nowrap; }' +
+'  th { color: #00ff88; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }' +
+'  .key { color: #00ff88; font-family: monospace; font-weight: bold; text-shadow: 0 0 5px rgba(0,255,136,0.5); }' +
 '  .tabs { display:flex; flex-wrap: wrap; gap:10px; margin-bottom:20px; padding-bottom: 5px;}' +
-'  .tab { padding:10px 20px; background:#1a2a3d; border-radius:8px; cursor:pointer; font-weight:bold; white-space: nowrap; font-size: 13px;}' +
-'  .tab.active { background:#ff0033; color:#fff; }' +
+'  .tab { padding:12px 20px; background:rgba(0,0,0,0.5); border: 1px solid rgba(0,255,136,0.2); border-radius:12px; cursor:pointer; font-weight:bold; white-space: nowrap; font-size: 13px; transition: 0.3s;}' +
+'  .tab:hover { background: rgba(0,255,136,0.1); }' +
+'  .tab.active { background:#00ff88; color:#000; box-shadow: 0 0 15px rgba(0,255,136,0.5); border-color: transparent; }' +
 '  .panel { display:none; }' +
-'  .panel.active { display:block; }' +
-'  .status-pending { color: #ffaa00; font-weight: bold; }' +
-'  .status-success { color: #00ff88; font-weight: bold; }' +
+'  .panel.active { display:block; animation: fadeIn 0.3s ease; }' +
+'  @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }' +
+'  .status-pending { color: #ffaa00; font-weight: bold; text-shadow: 0 0 5px rgba(255,170,0,0.5); }' +
+'  .status-success { color: #00ff88; font-weight: bold; text-shadow: 0 0 5px rgba(0,255,136,0.5); }' +
 '  .status-cancel { color: #ff3366; font-weight: bold; }' +
-'  .modal-edit { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 100; }' +
-'  .modal-box { background: #101a24; padding: 20px; border-radius: 12px; border: 1px solid #ff0033; width: 100%; max-width: 400px; }' +
+'  .modal-edit { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(5px); }' +
+'  .modal-box { background: #0a150a; padding: 24px; border-radius: 16px; border: 1px solid #00ff88; width: 100%; max-width: 400px; box-shadow: 0 0 30px rgba(0,255,136,0.3); }' +
 '</style></head><body>' +
 '<h1>⚡ HEADLOCK ADMIN ⚡</h1>' +
 '<div class="row"><input id="pass" type="password" placeholder="Mật khẩu Admin..." style="flex:1; max-width: 300px;"></div>' +
@@ -309,24 +312,24 @@ const adminHtml = '<!DOCTYPE html>' +
 '</div>' +
 '<div class="modal-edit" id="editModal">' +
 '  <div class="modal-box">' +
-'    <h3 style="color:#ff0033; margin-bottom: 15px;">SỬA ĐƠN NẠP</h3>' +
+'    <h3 style="color:#00ff88; margin-bottom: 15px; text-align: center; letter-spacing: 1px;">SỬA ĐƠN NẠP</h3>' +
 '    <input type="hidden" id="edit-id">' +
 '    <input type="hidden" id="edit-username">' +
 '    <div style="margin-bottom:10px;">' +
-'      <label style="font-size:12px;color:#8ba0b8">Số tiền (VNĐ)</label>' +
-'      <input type="number" id="edit-amount" class="form-input" style="width:100%">' +
+'      <label style="font-size:12px;color:#8ba0b8; font-weight:bold; margin-bottom:5px; display:block;">Số tiền (VNĐ)</label>' +
+'      <input type="number" id="edit-amount" style="width:100%">' +
 '    </div>' +
 '    <div style="margin-bottom:20px;">' +
-'      <label style="font-size:12px;color:#8ba0b8">Trạng thái</label>' +
-'      <select id="edit-status" class="form-input" style="width:100%">' +
+'      <label style="font-size:12px;color:#8ba0b8; font-weight:bold; margin-bottom:5px; display:block;">Trạng thái</label>' +
+'      <select id="edit-status" style="width:100%">' +
 '        <option value="pending">Chờ duyệt</option>' +
 '        <option value="success">Thành công</option>' +
 '        <option value="cancel">Đã hủy</option>' +
 '      </select>' +
 '    </div>' +
 '    <div class="row" style="margin-bottom:0;">' +
-'      <button onclick="saveEditTopup()" style="flex:1; background:#00ff88; color:#000;">LƯU THAY ĐỔI</button>' +
-'      <button onclick="document.getElementById(\'editModal\').style.display=\'none\'" style="flex:1; background:#ff3366;">HỦY</button>' +
+'      <button onclick="saveEditTopup()" style="flex:1; background:#00ff88; color:#000;">LƯU</button>' +
+'      <button onclick="document.getElementById(\'editModal\').style.display=\'none\'" style="flex:1; background:#ff3366; color:#fff;">HỦY</button>' +
 '    </div>' +
 '  </div>' +
 '</div>' +
@@ -344,7 +347,7 @@ const adminHtml = '<!DOCTYPE html>' +
 '</div>' +
 '<div id="tab-shop" class="panel">' +
 '  <div class="box">' +
-'    <h3 style="margin-bottom:10px; color:#00ff88">Thêm Key Bán Trong Shop</h3>' +
+'    <h3 style="margin-bottom:15px; color:#00ff88; text-transform:uppercase;">Thêm Key Bán Trong Shop</h3>' +
 '    <div class="row">' +
 '      <input id="s_name" type="text" placeholder="Tên gói (VD: Gói VIP 1 Tháng)" style="flex:1">' +
 '      <input id="s_price" type="number" placeholder="Giá tiền (VNĐ)" style="width:150px">' +
@@ -353,33 +356,33 @@ const adminHtml = '<!DOCTYPE html>' +
 '      <input id="s_img" type="text" placeholder="Link ảnh (VD: https://...)" style="flex:1">' +
 '      <select id="s_type"><option value="day">1 Ngày</option><option value="week">1 Tuần</option><option value="month">1 Tháng</option><option value="forever">Vĩnh viễn</option></select>' +
 '      <input id="s_count" type="number" value="1" min="1" max="100" style="width:80px" title="Số lượng muốn thêm">' +
-'      <button onclick="addShopKeyMultiple()">THÊM VÀO SHOP</button>' +
+'      <button onclick="addShopKeyMultiple()">THÊM</button>' +
 '    </div>' +
 '  </div>' +
 '</div>' +
 '<div id="tab-user" class="panel">' +
 '  <div class="box">' +
-'    <h3 style="margin-bottom:10px; color:#00ff88">Danh Sách Khách Hàng</h3>' +
-'    <button class="btn-gray" onclick="loadUsers()">Tải Danh Sách</button>' +
+'    <h3 style="margin-bottom:15px; color:#00ff88; text-transform:uppercase;">Danh Sách Khách Hàng</h3>' +
+'    <button class="btn-gray" onclick="loadUsers()" style="margin-bottom:10px;">Tải Danh Sách</button>' +
 '    <table id="tbl-users"><thead><tr><th>Tài khoản</th><th>Số dư</th></tr></thead><tbody></tbody></table>' +
 '  </div>' +
 '</div>' +
 '<div id="tab-topup" class="panel">' +
 '  <div class="box">' +
-'    <h3 style="margin-bottom:10px; color:#ffaa00">Lịch Sử Nạp Tiền</h3>' +
-'    <button class="btn-gray" onclick="loadTopups()">Tải Lịch Sử</button>' +
+'    <h3 style="margin-bottom:15px; color:#ffaa00; text-transform:uppercase;">Lịch Sử Nạp Tiền</h3>' +
+'    <button class="btn-gray" onclick="loadTopups()" style="margin-bottom:10px;">Tải Lịch Sử</button>' +
 '    <table id="tbl-topups"><thead><tr><th>Tài khoản</th><th>Số tiền</th><th>Thời gian</th><th>Trạng thái</th><th>Hành động</th></tr></thead><tbody></tbody></table>' +
 '  </div>' +
 '</div>' +
 '<div id="tab-coupon" class="panel">' +
 '  <div class="box">' +
-'    <h3 style="margin-bottom:10px; color:#ff00e5">Quản Lý Mã Giảm Giá</h3>' +
+'    <h3 style="margin-bottom:15px; color:#ff00e5; text-transform:uppercase;">Quản Lý Mã Giảm Giá</h3>' +
 '    <div class="row">' +
 '      <input id="c_code" type="text" placeholder="Mã (VD: GIAM20)" style="flex:1">' +
 '      <input id="c_discount" type="number" placeholder="Giảm (%)" style="width:100px">' +
-'      <input id="c_max" type="number" placeholder="Lượt dùng tối đa" style="width:150px">' +
+'      <input id="c_max" type="number" placeholder="Lượt dùng" style="width:100px">' +
 '      <input id="c_count" type="number" value="1" min="1" max="100" style="width:80px" title="Số lượng mã muốn tạo">' +
-'      <button onclick="addCouponMultiple()" style="background:linear-gradient(135deg, #ff00e5, #7000ff);">TẠO MÃ</button>' +
+'      <button onclick="addCouponMultiple()" style="background:linear-gradient(135deg, #ff00e5, #7000ff); color:#fff;">TẠO MÃ</button>' +
 '      <button class="btn-gray" onclick="loadCoupons()">LOAD DS</button>' +
 '    </div>' +
 '    <table id="tbl-coupons"><thead><tr><th>Mã</th><th>Giảm giá</th><th>Đã dùng</th><th>Tối đa</th><th>Trạng thái</th><th>Xóa</th></tr></thead><tbody></tbody></table>' +
