@@ -7,60 +7,32 @@
 <style>
   * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
   :root { 
-    --neon:#ff0033; 
-    --neon2:#ff00e5; 
-    --neon3:#00ff88; 
-    --neon4:#ffaa00; 
-    --bg-dark:#050000; 
-    --glass: rgba(15, 5, 5, 0.85);
+    --neon:#ff0033; --neon2:#ff00e5; --neon3:#00ff88; --neon4:#ffaa00; 
+    --bg-dark:#050000; --glass: rgba(15, 5, 5, 0.85);
     --glass-border: rgba(255, 0, 51, 0.4);
   }
   body { 
     min-height:100vh; background: var(--bg-dark); 
-    background-image: 
-      radial-gradient(circle at 0% 0%, rgba(255,0,51,0.15) 0%, transparent 40%),
-      radial-gradient(circle at 100% 100%, rgba(255,0,229,0.1) 0%, transparent 40%);
+    background-image: radial-gradient(circle at 0% 0%, rgba(255,0,51,0.15) 0%, transparent 40%), radial-gradient(circle at 100% 100%, rgba(255,0,229,0.1) 0%, transparent 40%);
     display:flex; justify-content:center; align-items:flex-start; 
     padding:14px 10px 40px; overflow-x:hidden; position:relative; color: #f5e0e0;
   }
-  
-  /* NỀN PARTICLES */
   .bg-particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
   .bg-particles span{position:absolute;width:3px;height:3px;border-radius:50%;opacity:.6;animation:floatUp linear infinite; box-shadow: 0 0 15px currentColor;}
   @keyframes floatUp{0%{transform:translateY(100vh) scale(.5);opacity:0}10%{opacity:1}90%{opacity:.5}100%{transform:translateY(-10vh) scale(1.5);opacity:0}}
-
-  /* TOAST THÔNG BÁO */
-  .toast-container {
-    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-    z-index: 1000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: 90%; max-width: 350px;
-  }
-  .toast {
-    background: rgba(20, 0, 0, 0.95); color: #fff; padding: 14px 20px;
-    border-radius: 12px; font-weight: 900; font-size: 0.85rem; text-align: center;
-    box-shadow: 0 0 30px rgba(255, 0, 51, 0.5); border: 1px solid var(--neon);
-    animation: slideDownFade 0.3s ease, fadeOut 0.3s ease 1.7s forwards;
-    text-transform: uppercase; letter-spacing: 1px;
-  }
+  
+  .toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: 90%; max-width: 350px; }
+  .toast { background: rgba(20, 0, 0, 0.95); color: #fff; padding: 14px 20px; border-radius: 12px; font-weight: 900; font-size: 0.85rem; text-align: center; box-shadow: 0 0 30px rgba(255, 0, 51, 0.5); border: 1px solid var(--neon); animation: slideDownFade 0.3s ease, fadeOut 0.3s ease 1.7s forwards; text-transform: uppercase; letter-spacing: 1px; }
   .toast.off { border-color: #555; box-shadow: none; color: #888;}
   .toast.success { border-color: var(--neon3); box-shadow: 0 0 30px rgba(0, 255, 136, 0.5); color: var(--neon3);}
   @keyframes slideDownFade { from{opacity:0; transform:translateY(-20px) scale(0.9);} to{opacity:1; transform:translateY(0) scale(1);} }
   @keyframes fadeOut { to{opacity:0; transform:translateY(-20px);} }
 
-  /* MÀN HÌNH CHÍNH (LOCK SCREEN) */
   .lock-screen{position:fixed;inset:0;z-index:100;background:transparent;display:flex;align-items:center;justify-content:center;padding:15px;transition:opacity .6s,visibility .6s; overflow-y: auto;}
   .lock-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
   
-  .lock-box{
-    width:100%;max-width:380px; background:var(--glass);border:1px solid var(--glass-border);
-    border-radius:28px;padding:26px 22px; box-shadow:0 20px 50px rgba(0,0,0,0.9), inset 0 0 30px rgba(255,0,51,0.1);
-    position:relative;overflow:hidden; backdrop-filter: blur(20px);
-  }
-  /* Viền Neon chạy vòng quanh */
-  .lock-box::before {
-    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-    background: conic-gradient(transparent, var(--neon), transparent 30%);
-    animation: rotateBorder 3s linear infinite; z-index: -1;
-  }
+  .lock-box{ width:100%;max-width:380px; background:var(--glass);border:1px solid var(--glass-border); border-radius:28px;padding:26px 22px; box-shadow:0 20px 50px rgba(0,0,0,0.9), inset 0 0 30px rgba(255,0,51,0.1); position:relative;overflow:hidden; backdrop-filter: blur(20px); }
+  .lock-box::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent, var(--neon), transparent 30%); animation: rotateBorder 3s linear infinite; z-index: -1; }
   .lock-box::after { content: ''; position: absolute; inset: 2px; background: #0a0000; border-radius: 26px; z-index: -1; }
   @keyframes rotateBorder { 100% { transform: rotate(360deg); } }
 
@@ -70,7 +42,6 @@
   @keyframes gm { 0%{background-position:0% center} 100%{background-position:300% center} }
   .app-profile p { font-size: 0.7rem; color: var(--neon); letter-spacing: 5px; text-transform: uppercase; margin-top: 4px; font-weight: 800; text-shadow: 0 0 10px rgba(255,0,51,0.5);}
 
-  /* XÁC THỰC THIẾT BỊ */
   .verify-section{background:rgba(0,0,0,.6);border:1px solid rgba(255,0,51,.3);border-radius:14px;padding:16px;margin-bottom:18px; display: none;}
   .verify-section.show { display: block; }
   .verify-header{display:flex;align-items:center;gap:8px;font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#d0a0a0;margin-bottom:12px}
@@ -101,7 +72,6 @@
   .app-intro { font-size: 0.7rem; color: #d0a0a0; line-height: 1.6; margin-top: 10px; }
   .app-intro strong { color: var(--neon); }
 
-  /* APP CHÍNH (GIAO DIỆN CYBERPUNK) */
   .app{position:relative;z-index:2;width:100%;max-width:540px;display:flex;flex-direction:column;gap:16px; display:none;}
   
   .header{display:flex;align-items:center;gap:14px;padding:16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:20px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); position: relative; overflow: hidden;}
@@ -114,11 +84,9 @@
   .user-info{display:none;flex-direction:column;gap:4px;font-size:0.7rem;color:#d0a0a0;margin-top:8px;}
   .user-info span{color:var(--neon3);font-weight:700;}
 
-  /* NÚT ĐĂNG XUẤT NHỎ */
   .btn-logout { position: absolute; top: 16px; right: 16px; background: transparent; border: 1px solid #552222; color: #d0a0a0; padding: 6px 12px; border-radius: 8px; font-size: 0.65rem; font-weight: 700; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
   .btn-logout:hover { background: #ff0033; color: #fff; border-color: #ff0033; box-shadow: 0 0 15px rgba(255,0,51,0.5); }
 
-  /* GAME SELECTOR */
   .game-selector { display: flex; gap: 10px; margin-bottom: 10px;}
   .game-btn { flex: 1; padding: 12px; border: 1px solid rgba(255,0,51,0.3); background: rgba(0,0,0,0.5); border-radius: 12px; color: #d0a0a0; font-weight: 800; font-size: 0.8rem; text-align: center; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
   .game-btn.active { background: rgba(255,0,51,0.2); border-color: var(--neon); color: #fff; box-shadow: 0 0 20px rgba(255,0,51,0.4); text-shadow: 0 0 10px var(--neon); }
@@ -172,7 +140,6 @@
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   .loading-text { color: #fff; font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase;}
 
-  /* CHATBOT UI (RED NEON) */
   .chatbot-btn { position: fixed; bottom: 20px; right: 20px; z-index: 600; width: 65px; height: 65px; border-radius: 50%; background: linear-gradient(135deg, var(--neon), #990011); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; cursor: pointer; box-shadow: 0 0 30px rgba(255,0,51,0.6); animation: floatBot 3s ease-in-out infinite; transition: 0.3s; border: 2px solid rgba(255,255,255,0.3); }
   .chatbot-btn:hover { transform: scale(1.1); box-shadow: 0 0 40px rgba(255,0,51,1); }
   @keyframes floatBot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -239,8 +206,6 @@
       </div>
       <div class="key-msg" id="keyMsg"></div>
     </div>
-
-    <!-- ĐÃ XÓA CÁC BƯỚC CÀI ĐẶT -->
 
     <div class="extra-section">
       <a href="https://zalo.me/0355757211" target="_blank" class="zalo-btn">TÊN ZALO SAMM VIP</a>
@@ -350,7 +315,6 @@
 </div>
 
 <script>
-// ✅ ĐÃ CẬP NHẬT ĐÚNG LINK SERVER RENDER
 const SERVER_URL = 'https://innova-key.onrender.com';
 const BANK_ID = 'MB'; 
 const ACCOUNT_NO = '2333612345555'; 
@@ -365,7 +329,6 @@ let selectedSkin = null;
 let currentDiscount = 0; 
 let pendingBuyType = null; 
 
-// KHỞI TẠO PARTICLES
 const pWrap = document.getElementById('particles');
 for(let i=0;i<60;i++){
   const s = document.createElement('span');
@@ -378,7 +341,6 @@ for(let i=0;i<60;i++){
   pWrap.appendChild(s);
 }
 
-// HÀM CHỌN GAME
 function selectGame(element, gameName) {
   document.querySelectorAll('.game-btn').forEach(btn => btn.classList.remove('active'));
   element.classList.add('active');
@@ -386,7 +348,6 @@ function selectGame(element, gameName) {
   showToast(`ĐÃ CHỌN: ${gameName}`);
 }
 
-// HÀM HIỂN THỊ THÔNG BÁO TOAST
 function showToast(message, isOff = false, isSuccess = false) {
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
@@ -396,7 +357,6 @@ function showToast(message, isOff = false, isSuccess = false) {
   setTimeout(() => { if(toast.parentNode) toast.parentNode.removeChild(toast); }, 2000);
 }
 
-// XỬ LÝ THANH TRƯỢT ĐỘ NHẠY
 const sensToggle = document.getElementById('sensToggle');
 const sensBox = document.getElementById('sensBox');
 const sensRange = document.getElementById('sensRange');
@@ -410,7 +370,6 @@ sensRange.addEventListener('input', function() {
   sensValue.textContent = this.value + '%';
 });
 
-// HÀM ĐĂNG XUẤT
 function logoutApp() {
   if(!confirm('Bạn có chắc muốn đăng xuất và thoát App?')) return;
   currentUser = null;
@@ -424,7 +383,6 @@ function logoutApp() {
   document.getElementById('verifySection').classList.remove('show');
 }
 
-// KIỂM TRA THÔNG BÁO TỪ ADMIN
 async function checkNotifications() {
   try {
     const r = await fetch(SERVER_URL + '/api/shop/notifications');
@@ -446,7 +404,6 @@ async function checkNotifications() {
 setInterval(checkNotifications, 10000);
 checkNotifications();
 
-// ====== CHATBOT LOGIC ======
 function toggleChat() {
   const chatWin = document.getElementById('chatWindow');
   chatWin.classList.toggle('show');
@@ -636,7 +593,6 @@ async function sendChat() {
   }
 }
 
-// HÀM NẠP TIỀN
 async function selectTopup(amount) {
   if(!isLoggedIn) return addMessage('Bạn chưa đăng nhập. Hãy gõ "đăng nhập" trước.', 'bot');
   addMessage(`Bạn đã chọn nạp <strong>${amount.toLocaleString('vi-VN')}đ</strong>.`, 'user');
@@ -674,7 +630,6 @@ async function selectTopup(amount) {
   } catch(e) { addMessage('Lỗi kết nối Server!', 'bot'); }
 }
 
-// XỬ LÝ XÁC THỰC KEY VÀ CHẠY % THIẾT BỊ
 document.getElementById('unlockBtn').addEventListener('click', async ()=>{
   const key = document.getElementById('keyInput').value.trim().toUpperCase();
   const msg = document.getElementById('keyMsg');
@@ -736,7 +691,6 @@ document.getElementById('unlockBtn').addEventListener('click', async ()=>{
   }
 });
 
-// CHUYỂN TAB APP
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', ()=>{
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -746,7 +700,6 @@ document.querySelectorAll('.tab').forEach(tab => {
   });
 });
 
-// GẠT CÔNG TẮC
 document.querySelectorAll('.cheat-item').forEach(item => {
   item.addEventListener('click', (e) => {
     if(e.target.closest('.switch')) return;
@@ -779,7 +732,6 @@ document.querySelectorAll('.cheat-toggle').forEach(toggle => {
   });
 });
 
-// KÍCH HOẠT
 document.getElementById('btnActivate').addEventListener('click', () => {
   const activeModules = document.querySelectorAll('.cheat-toggle:checked');
   if (activeModules.length === 0) return alert('Vui lòng bật ít nhất 1 chức năng trước khi kích hoạt!');
