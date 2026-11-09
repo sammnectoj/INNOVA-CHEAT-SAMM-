@@ -40,6 +40,7 @@
     text-transform: uppercase; letter-spacing: 1px;
   }
   .toast.off { background: rgba(50, 50, 50, 0.95); box-shadow: 0 0 20px rgba(0,0,0,0.8); border: 1px solid #888; }
+  .toast.success { background: rgba(0, 255, 136, 0.95); color: #000; border: 1px solid #fff;}
   @keyframes slideDownFade { from{opacity:0; transform:translateY(-20px) scale(0.9);} to{opacity:1; transform:translateY(0) scale(1);} }
   @keyframes fadeOut { to{opacity:0; transform:translateY(-20px);} }
 
@@ -120,6 +121,12 @@
     background: rgba(255,0,51,0.2); border-color: var(--neon); color: #fff;
     box-shadow: 0 0 15px rgba(255,0,51,0.4);
   }
+
+  /* Ô NHẬP MÃ GIẢM GIÁ */
+  .coupon-box { display: flex; gap: 10px; margin-bottom: 15px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 14px; border: 1px dashed rgba(255,170,0,0.4); }
+  .coupon-box input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.6); color: #ffaa00; font-weight: 900; outline: none; text-transform: uppercase; transition: 0.3s; font-family: 'Courier New', monospace; font-size: 0.9rem;}
+  .coupon-box input:focus { border-color: #ffaa00; box-shadow: 0 0 15px rgba(255,170,0,0.2); }
+  .coupon-box button { padding: 12px 20px; background: linear-gradient(135deg, #ffaa00, #ff7700); border: none; color: #000; border-radius: 10px; font-weight: 900; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;}
 
   .tabs{display:flex;gap:8px;padding:8px;background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;overflow-x:auto;scrollbar-width:none; backdrop-filter: blur(10px); box-shadow: 0 5px 20px rgba(0,0,0,0.5);}
   .tab{flex-shrink:0;padding:12px 18px;border:none;border-radius:12px;background:transparent;color:#d0a0a0;font-weight:800;font-size:.75rem;text-transform:uppercase;cursor:pointer; transition: 0.3s; letter-spacing: 0.5px;}
@@ -313,6 +320,12 @@
     <div class="game-btn" onclick="selectGame(this, 'Free Fire Max')" id="gameFFMax">Free Fire Max</div>
   </div>
 
+  <!-- Ô NHẬP MÃ GIẢM GIÁ -->
+  <div class="coupon-box">
+    <input type="text" id="couponInput" placeholder="Nhập mã giảm giá...">
+    <button onclick="applyCoupon()">ÁP DỤNG</button>
+  </div>
+
   <div class="tabs" id="tabs">
     <button class="tab active" data-tab="aim"><span class="ico">🎯</span>AIMLOCK</button>
     <button class="tab" data-tab="cheat"><span class="ico">🔥</span>AIM CHEAT</button>
@@ -452,8 +465,8 @@ let currentUser = null;
 let isLoggedIn = false;
 let checkStatusInterval = null;
 let lastNotificationId = null;
-let selectedGame = 'Free Fire'; // Mặc định chọn FF
-let selectedSkin = null; // Lưu tên skin đang chọn
+let selectedGame = 'Free Fire'; 
+let selectedSkin = null; 
 
 // KHỞI TẠO PARTICLES
 const pWrap = document.getElementById('particles');
@@ -477,10 +490,10 @@ function selectGame(element, gameName) {
 }
 
 // HÀM HIỂN THỊ THÔNG BÁO TOAST
-function showToast(message, isOff = false) {
+function showToast(message, isOff = false, isSuccess = false) {
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
-  toast.className = `toast ${isOff ? 'off' : ''}`;
+  toast.className = `toast ${isOff ? 'off' : ''} ${isSuccess ? 'success' : ''}`;
   toast.textContent = message;
   container.appendChild(toast);
   
@@ -503,6 +516,29 @@ sensToggle.addEventListener('change', function() {
 sensRange.addEventListener('input', function() {
   sensValue.textContent = this.value + '%';
 });
+
+// HÀM XỬ LÝ NHẬP MÃ GIẢM GIÁ
+async function applyCoupon() {
+  const code = document.getElementById('couponInput').value.trim().toUpperCase();
+  if(!code) return;
+
+  // Gửi API kiểm tra mã
+  try {
+    const r = await fetch(SERVER_URL + '/api/shop/check-coupon', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ code })
+    });
+    const d = await r.json();
+    
+    if(d.ok) {
+      showToast(`ĐÃ GIẢM ${d.discount}%`, false, true);
+    } else {
+      showToast(`LỖI: ${d.error}`, true);
+    }
+  } catch(e) {
+    showToast('LỖI KẾT NỐI SERVER', true);
+  }
+}
 
 // KIỂM TRA THÔNG BÁO TỪ ADMIN (CHẠY NGẦM)
 async function checkNotifications() {
