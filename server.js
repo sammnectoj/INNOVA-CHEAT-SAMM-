@@ -268,7 +268,7 @@ app.delete('/api/delete/:key', async (req, res) => {
   res.json({ ok: true });
 });
 
-// ================= GIAO DIỆN ADMIN (NEON GREEN + CHỐNG ĐÓNG BĂNG) =================
+// ================= GIAO DIỆN ADMIN (ĐÃ SỬA LỖI CHUYỂN TAB) =================
 const adminHtml = '<!DOCTYPE html>' +
 '<html lang="vi"><head><meta charset="utf-8"><title>Admin - Headlock</title>' +
 '<meta name="viewport" content="width=device-width,initial-scale=1">' +
@@ -309,11 +309,11 @@ const adminHtml = '<!DOCTYPE html>' +
 '<h1>⚡ HEADLOCK ADMIN ⚡</h1>' +
 '<div class="row"><input id="pass" type="password" placeholder="Mật khẩu Admin..." style="flex:1; max-width: 300px;"></div>' +
 '<div class="tabs">' +
-'  <div class="tab active" onclick="switchTab(event, \'tab-key\')">Quản Lý Key</div>' +
-'  <div class="tab" onclick="switchTab(event, \'tab-shop\')">Thêm Key Shop</div>' +
-'  <div class="tab" onclick="switchTab(event, \'tab-user\')">Khách Hàng</div>' +
-'  <div class="tab" onclick="switchTab(event, \'tab-topup\')">Duyệt Nạp Tiền</div>' +
-'  <div class="tab" onclick="switchTab(event, \'tab-coupon\')">Mã Giảm Giá</div>' +
+'  <div class="tab active" onclick="switchTab(this, \'tab-key\')">Quản Lý Key</div>' +
+'  <div class="tab" onclick="switchTab(this, \'tab-shop\')">Thêm Key Shop</div>' +
+'  <div class="tab" onclick="switchTab(this, \'tab-user\')">Khách Hàng</div>' +
+'  <div class="tab" onclick="switchTab(this, \'tab-topup\')">Duyệt Nạp Tiền</div>' +
+'  <div class="tab" onclick="switchTab(this, \'tab-coupon\')">Mã Giảm Giá</div>' +
 '</div>' +
 '<div class="modal-edit" id="editModal">' +
 '  <div class="modal-box">' +
@@ -400,10 +400,10 @@ const adminHtml = '<!DOCTYPE html>' +
 '  el.className = "toast-msg " + (isError ? "error" : "success");' +
 '  setTimeout(() => { el.className = "toast-msg"; }, 3000);' +
 '}' +
-'function switchTab(e, id){' +
+'function switchTab(element, id){' +
 '  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));' +
 '  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));' +
-'  e.target.classList.add("active");' +
+'  element.classList.add("active");' +
 '  document.getElementById(id).classList.add("active");' +
 '}' +
 'function getPass(){ return document.getElementById("pass").value; }' +
