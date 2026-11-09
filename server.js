@@ -34,7 +34,7 @@ function calcExpiry(type) {
   }
 }
 
-// ================= SHOP API =================
+// ================= SHOP & USER API =================
 app.post('/api/shop/register', async (req, res) => {
   const { username, password } = req.body;
   if(!username || !password) return res.json({ ok: false, error: 'Thiếu thông tin' });
@@ -54,83 +54,32 @@ app.post('/api/shop/login', async (req, res) => {
   res.json({ ok: true, user: { username: user.username, balance: user.balance } });
 });
 
-// Lấy thông báo mới nhất (Hòm thư)
-app.get('/api/shop/notifications', async (req, res) => {
-  const { data } = await supabase.from('notifications').select('*').order('created_at', { ascending: false }).limit(10);
-  res.json({ ok: true, notifications: data || [] });
-});
-
-// Kiểm tra mã giảm giá
-app.post('/api/shop/check-coupon', async (req, res) => {
-  const { code } = req.body;
-  const { data } = await supabase.from('coupons').select('*').eq('code', code.toUpperCase()).single();
+// API CHO CHATBOT MUA KEY
+app.post('/api/bot/buy', async (req, res) => {
+  const { username, type } = req.body;
   
-  if(!data || data.status !== 'active') return res.json({ ok: false, error: 'Mã không hợp lệ hoặc đã khóa' });
-  if(data.used_count >= data.max_uses) return res.json({ ok: false, error: 'Mã đã hết lượt sử dụng' });
-  res.json({ ok: true, discount: data.discount });
-});
-
-app.get('/api/shop/keys', async (req, res) => {
-  const { data } = await supabase.from('keys').select('*').not('price', 'is', null).gt('price', 0).is('device_id', null);
-  res.json({ ok: true, keys: data || [] });
-});
-
-app.post('/api/shop/buy', async (req, res) => {
-  const { username, key, couponCode } = req.body;
   const { data: user } = await supabase.from('users').select('*').eq('username', username).single();
-  const { data: keyData } = await supabase.from('keys').select('*').eq('key', key).single();
+  if(!user) return res.json({ ok: false, error: 'Bạn chưa đăng nhập hoặc tài khoản không tồn tại.' });
 
-  if(!user || !keyData) return res.json({ ok: false, error: 'Lỗi dữ liệu' });
-  
-  let finalPrice = keyData.price;
-  if(couponCode) {
-    const { data: coupon } = await supabase.from('coupons').select('*').eq('code', couponCode.toUpperCase()).eq('status', 'active').single();
-    if(coupon && coupon.used_count < coupon.max_uses) {
-      const discountAmount = (finalPrice * coupon.discount) / 100;
-      finalPrice = finalPrice - discountAmount;
-      await supabase.from('coupons').update({ used_count: coupon.used_count + 1 }).eq('id', coupon.id);
-    }
+  let price = 0;
+  let typeName = '';
+  if(type === 'day') { price = 20000; typeName = '1 Ngày'; }
+  else if(type === 'week') { price = 50000; typeName = '1 Tuần'; }
+  else if(type === 'month') { price = 100000; typeName = '1 Tháng'; }
+  else if(type === 'forever') { price = 500000; typeName = 'Vĩnh Viễn'; }
+  else return res.json({ ok: false, error: 'Loại Key không hợp lệ.' });
+
+  if(user.balance < price) {
+    return res.json({ ok: false, error: `Số dư không đủ. Bạn cần thêm ${(price - user.balance).toLocaleString('vi-VN')}đ để mua Key ${typeName}.` });
   }
 
-  if(user.balance < finalPrice) return res.json({ ok: false, error: 'Số dư không đủ' });
+  const { data: keyData } = await supabase.from('keys').select('*').eq('type', type).is('device_id', null).limit(1).single();
+  if(!keyData) return res.json({ ok: false, error: 'Rất tiếc, kho đã hết Key loại này. Vui lòng liên hệ Admin.' });
 
-  await supabase.from('users').update({ balance: user.balance - finalPrice }).eq('username', username);
-  
-  // Đánh dấu Key đã bán cho user này (Bắt đầu bằng BOUGHT_)
-  await supabase.from('keys').update({ device_id: 'BOUGHT_' + username }).eq('key', key);
-  
-  res.json({ ok: true, message: 'Mua thành công!', finalPrice });
-});
+  await supabase.from('users').update({ balance: user.balance - price }).eq('username', username);
+  await supabase.from('keys').update({ device_id: 'BOUGHT_' + username }).eq('key', keyData.key);
 
-app.post('/api/shop/topup', async (req, res) => {
-  const { username, amount } = req.body;
-  const { error } = await supabase.from('topups').insert([{ 
-    username, amount: parseInt(amount), created_at: Date.now(), status: 'pending' 
-  }]);
-  if(error) return res.json({ ok: false, error: error.message });
-  res.json({ ok: true, message: 'Đã gửi yêu cầu' });
-});
-
-// API Tự động kiểm tra trạng thái nạp (Polling)
-app.get('/api/shop/check-topup-status', async (req, res) => {
-  const { username } = req.query;
-  const { data: topups } = await supabase.from('topups')
-    .select('*').eq('username', username).order('created_at', { ascending: false }).limit(1);
-
-  if (!topups || topups.length === 0) return res.json({ ok: true, status: 'none' });
-  const latest = topups[0];
-  
-  if (latest.status === 'success') {
-    const { data: user } = await supabase.from('users').select('balance').eq('username', username).single();
-    return res.json({ ok: true, status: 'success', newBalance: user ? user.balance : 0 });
-  }
-  res.json({ ok: true, status: latest.status });
-});
-
-app.get('/api/shop/history', async (req, res) => {
-  const { username } = req.query;
-  const { data } = await supabase.from('keys').select('*').eq('device_id', 'BOUGHT_' + username);
-  res.json({ ok: true, history: data || [] });
+  res.json({ ok: true, key: keyData.key, price, typeName });
 });
 
 // ================= ADMIN API =================
@@ -147,7 +96,6 @@ app.post('/api/admin/add-shop-key', async (req, res) => {
   const { error } = await supabase.from('keys').insert([item]);
   if(error) return res.json({ ok: false, error: error.message });
   
-  // Tạo thông báo hòm thư
   await supabase.from('notifications').insert([{ message: `SAMM VIP ĐÃ THÊM 1 sản phẩm ${name}`, created_at: Date.now() }]);
   
   res.json({ ok: true, item });
@@ -220,7 +168,6 @@ app.post('/api/admin/add-coupon', async (req, res) => {
   const { error } = await supabase.from('coupons').insert([item]);
   if(error) return res.json({ ok: false, error: error.message });
   
-  // Tạo thông báo hòm thư
   await supabase.from('notifications').insert([{ message: `SAMM VIP ĐÃ CẬP NHẬP MÃ GIẢM GIÁ MỚI: ${code.toUpperCase()}`, created_at: Date.now() }]);
   
   res.json({ ok: true });
@@ -248,7 +195,6 @@ app.post('/api/create', async (req, res) => {
   res.json({ ok: true, created });
 });
 
-// SỬA LỖI VERIFY TẠI ĐÂY (Đồng bộ BOUGHT_)
 app.post('/api/verify', async (req, res) => {
   const { key, deviceId } = req.body || {};
   if (!key || !deviceId) return res.status(400).json({ ok: false, error: 'Thiếu key hoặc deviceId' });
@@ -256,7 +202,6 @@ app.post('/api/verify', async (req, res) => {
   
   if (!found) return res.json({ ok: false, error: 'Key không tồn tại' });
   
-  // NẾU LÀ KEY MUA TỪ SHOP (BẮT ĐẦU BẰNG BOUGHT_) -> TỰ ĐỘNG CHO QUA
   if (found.device_id && found.device_id.startsWith('BOUGHT_')) {
     if (found.expires_at && Date.now() > found.expires_at) return res.json({ ok: false, error: 'Key đã hết hạn' });
     return res.json({ ok: true, type: found.type, isForever: !found.expires_at, remainingMs: found.expires_at ? Math.max(0, found.expires_at - Date.now()) : null });
@@ -285,7 +230,7 @@ app.delete('/api/delete/:key', async (req, res) => {
 // ================= GIAO DIỆN ADMIN =================
 app.get('/admin', (req, res) => {
   res.send(`<!DOCTYPE html>
-<html lang="vi"><head><meta charset="utf-8"><title>Admin - Innova Shop</title>
+<html lang="vi"><head><meta charset="utf-8"><title>Admin - Innova</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
   * { box-sizing: border-box; font-family: system-ui, sans-serif; }
@@ -322,7 +267,6 @@ app.get('/admin', (req, res) => {
   <div class="tab" onclick="switchTab('tab-coupon')">Mã Giảm Giá</div>
 </div>
 
-<!-- Modal Sửa Đơn Nạp -->
 <div class="modal-edit" id="editModal">
   <div class="modal-box">
     <h3 style="color:var(--neon); margin-bottom: 15px;">SỬA ĐƠN NẠP</h3>
@@ -336,7 +280,7 @@ app.get('/admin', (req, res) => {
       <label style="font-size:12px;color:#8ba0b8">Trạng thái</label>
       <select id="edit-status" class="form-input" style="width:100%">
         <option value="pending">Chờ duyệt</option>
-        <option value="success">Thành công (Đã cộng tiền)</option>
+        <option value="success">Thành công</option>
         <option value="cancel">Đã hủy</option>
       </select>
     </div>
