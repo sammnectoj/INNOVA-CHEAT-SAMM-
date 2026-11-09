@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INNOVA CHEAT · PRO MAX</title>
+<title>HEADLOCK VIP</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
   :root { 
@@ -27,7 +27,7 @@
   .bg-particles span{position:absolute;width:3px;height:3px;border-radius:50%;opacity:.6;animation:floatUp linear infinite; box-shadow: 0 0 10px currentColor;}
   @keyframes floatUp{0%{transform:translateY(100vh) scale(.5);opacity:0}10%{opacity:1}90%{opacity:.5}100%{transform:translateY(-10vh) scale(1.5);opacity:0}}
 
-  /* HIỆU ỨNG TOAST THÔNG BÁO KHI BẬT/TẮT */
+  /* TOAST THÔNG BÁO */
   .toast-container {
     position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
     z-index: 1000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: 90%; max-width: 350px;
@@ -105,6 +105,21 @@
   
   .user-info{display:none;flex-direction:column;gap:4px;font-size:0.7rem;color:#d0a0a0;margin-top:8px;background:rgba(0,0,0,0.6);padding:8px 12px;border-radius:10px;border:1px solid rgba(255,0,51,0.2)}
   .user-info span{color:var(--neon3);font-weight:700; text-shadow: 0 0 8px rgba(0,255,136,0.4);}
+
+  /* CHỌN GAME */
+  .game-selector {
+    display: flex; gap: 10px; margin-bottom: 10px;
+  }
+  .game-btn {
+    flex: 1; padding: 12px; border: 1px solid rgba(255,0,51,0.3);
+    background: rgba(0,0,0,0.5); border-radius: 12px; color: #d0a0a0;
+    font-weight: 800; font-size: 0.8rem; text-align: center; cursor: pointer;
+    transition: 0.3s; text-transform: uppercase;
+  }
+  .game-btn.active {
+    background: rgba(255,0,51,0.2); border-color: var(--neon); color: #fff;
+    box-shadow: 0 0 15px rgba(255,0,51,0.4);
+  }
 
   .tabs{display:flex;gap:8px;padding:8px;background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;overflow-x:auto;scrollbar-width:none; backdrop-filter: blur(10px); box-shadow: 0 5px 20px rgba(0,0,0,0.5);}
   .tab{flex-shrink:0;padding:12px 18px;border:none;border-radius:12px;background:transparent;color:#d0a0a0;font-weight:800;font-size:.75rem;text-transform:uppercase;cursor:pointer; transition: 0.3s; letter-spacing: 0.5px;}
@@ -221,7 +236,7 @@
 <!-- HIỆU ỨNG LOADING -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
-  <div class="loading-text">ĐANG KÍCH HOẠT...</div>
+  <div class="loading-text">ĐANG VÀO GAME...</div>
 </div>
 
 <!-- MÀN HÌNH CHÍNH -->
@@ -229,7 +244,7 @@
   <div class="lock-box">
     <div class="app-profile">
       <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/85/1a2230/ff0033?text=IC'">
-      <h1>INNOVACHEAT</h1>
+      <h1>HEADLOCK VIP</h1>
       <p>▸ PRO MAX ◂</p>
     </div>
 
@@ -270,7 +285,7 @@
         TÊN ZALO SAMM VIP
       </a>
       <div class="app-intro">
-        <strong>INNOVA CHEAT</strong> là ứng dụng hỗ trợ game với hàng chục tính năng hiện đại.<br>
+        <strong>HEADLOCK VIP</strong> là ứng dụng hỗ trợ game với hàng chục tính năng hiện đại.<br>
         👉 <strong>ẤN VÀO NÚT ZALO</strong> bên trên để được cấp Key và nhận hỗ trợ trực tiếp 24/7 (Hotline: <strong>0355757211</strong>).
       </div>
     </div>
@@ -284,12 +299,18 @@
       <img src="https://files.catbox.moe/ton80g.png" alt="Avatar" onerror="this.src='https://via.placeholder.com/64/1a2230/ff0033?text=IC'">
     </div>
     <div class="title-wrap">
-      <h1>INNOVA</h1>
+      <h1>HEADLOCK VIP</h1>
       <div class="user-info" id="userInfo">
         <div>Thiết bị: <span id="uiDevice">...</span></div>
         <div>Hạn dùng: <span id="uiExpiry">...</span></div>
       </div>
     </div>
+  </div>
+
+  <!-- CHỌN GAME -->
+  <div class="game-selector">
+    <div class="game-btn active" onclick="selectGame(this, 'Free Fire')" id="gameFF">Free Fire</div>
+    <div class="game-btn" onclick="selectGame(this, 'Free Fire Max')" id="gameFFMax">Free Fire Max</div>
   </div>
 
   <div class="tabs" id="tabs">
@@ -357,10 +378,10 @@
     </div>
   </div>
 
-  <!-- TAB MOD SKIN -->
+  <!-- TAB MOD SKIN (CHỈ ĐƯỢC CHỌN 1) -->
   <div class="panel" id="panel-skin">
     <div class="section">
-      <div class="section-title">MOD SKIN MODULES</div>
+      <div class="section-title">MOD SKIN MODULES (CHỌN 1)</div>
       
       <div class="cheat-item">
         <div class="cheat-icon">👕</div>
@@ -407,11 +428,11 @@
 
 <div class="chat-window" id="chatWindow">
   <div class="chat-header">
-    <h3>INNOVA BOT</h3>
+    <h3>HEADLOCK BOT</h3>
     <button class="chat-close" onclick="toggleChat()">✕</button>
   </div>
   <div class="chat-body" id="chatBody">
-    <div class="chat-msg msg-bot">Xin chào! Tôi là Innova Bot. Bạn cần mua Key hay nạp tiền? Gõ "help" để xem hướng dẫn.</div>
+    <div class="chat-msg msg-bot">Xin chào! Tôi là Headlock Bot. Bạn cần mua Key hay nạp tiền? Gõ "help" để xem hướng dẫn.</div>
   </div>
   <div class="chat-input-area">
     <input type="text" class="chat-input" id="chatInput" placeholder="Nhập tin nhắn..." onkeypress="handleChatEnter(event)">
@@ -431,6 +452,8 @@ let currentUser = null;
 let isLoggedIn = false;
 let checkStatusInterval = null;
 let lastNotificationId = null;
+let selectedGame = 'Free Fire'; // Mặc định chọn FF
+let selectedSkin = null; // Lưu tên skin đang chọn
 
 // KHỞI TẠO PARTICLES
 const pWrap = document.getElementById('particles');
@@ -443,6 +466,14 @@ for(let i=0;i<60;i++){
   s.style.background = s.style.color;
   s.style.width = s.style.height = (1 + Math.random()*3) + 'px';
   pWrap.appendChild(s);
+}
+
+// HÀM CHỌN GAME
+function selectGame(element, gameName) {
+  document.querySelectorAll('.game-btn').forEach(btn => btn.classList.remove('active'));
+  element.classList.add('active');
+  selectedGame = gameName;
+  showToast(`ĐÃ CHỌN: ${gameName}`);
 }
 
 // HÀM HIỂN THỊ THÔNG BÁO TOAST
@@ -752,33 +783,58 @@ document.querySelectorAll('.cheat-toggle').forEach(toggle => {
     const item = this.closest('.cheat-item');
     const name = this.getAttribute('data-name') || 'Chức năng';
     
-    if(this.checked) {
-      item.classList.add('active');
-      showToast(`ĐÃ BẬT: ${name}`);
-      
-      // THÔNG BÁO BOT KHI BẬT MOD SKIN
-      if(name.includes('MOD SKIN')) {
-        addMessage(`🤖 <strong>THÔNG BÁO TỪ BOT:</strong><br>MOD SKIN ALOK ĐÃ KÍCH HOẠT THÀNH CÔNG!`, 'bot');
+    // LOGIC CHỈ CHỌN 1 MOD SKIN
+    if (name.includes('MOD SKIN')) {
+      if (this.checked) {
+        // Tắt tất cả các MOD SKIN khác
+        document.querySelectorAll('.cheat-toggle').forEach(t => {
+          if (t !== this && t.getAttribute('data-name') && t.getAttribute('data-name').includes('MOD SKIN')) {
+            t.checked = false;
+            t.closest('.cheat-item').classList.remove('active');
+          }
+        });
+        selectedSkin = name;
+        showToast(`ĐÃ CHỌN: ${name}`);
+        addMessage(`🤖 <strong>THÔNG BÁO TỪ BOT:</strong><br>${name} ALOK ĐÃ KÍCH HOẠT THÀNH CÔNG!`, 'bot');
+      } else {
+        selectedSkin = null;
+        showToast(`ĐÃ TẮT: ${name}`, true);
       }
-      
     } else {
-      item.classList.remove('active');
-      showToast(`ĐÃ TẮT: ${name}`, true);
+      // Các chức năng khác
+      if(this.checked) {
+        item.classList.add('active');
+        showToast(`ĐÃ BẬT: ${name}`);
+      } else {
+        item.classList.remove('active');
+        showToast(`ĐÃ TẮT: ${name}`, true);
+      }
     }
   });
 });
 
-// XỬ LÝ NÚT KÍCH HOẠT
+// XỬ LÝ NÚT KÍCH HOẠT (TỰ ĐỘNG VÀO GAME)
 document.getElementById('btnActivate').addEventListener('click', () => {
   const activeModules = document.querySelectorAll('.cheat-toggle:checked');
   if (activeModules.length === 0) return alert('Vui lòng bật ít nhất 1 chức năng trước khi kích hoạt!');
+  
+  // Bắt buộc phải chọn Mod Skin
+  if (!selectedSkin) {
+    return alert('Vui lòng chọn 1 MOD SKIN (V1, V2 hoặc V3) trước khi Kích Hoạt!');
+  }
 
   const overlay = document.getElementById('loadingOverlay');
   overlay.classList.add('show');
+  
+  // Đổi text loading
+  overlay.querySelector('.loading-text').innerHTML = `ĐANG VÀO ${selectedGame.toUpperCase()}...`;
+
   setTimeout(() => {
     overlay.classList.remove('show');
-    alert('✅ KÍCH HOẠT THÀNH CÔNG!\nToàn bộ chức năng đã được áp dụng vào game.');
-  }, 2500);
+    alert(`✅ KÍCH HOẠT THÀNH CÔNG!\nĐang tự động vào game ${selectedGame} với ${selectedSkin}.\nToàn bộ chức năng đã được áp dụng!`);
+    // Xóa overlay
+    document.getElementById('loadingOverlay').classList.remove('show');
+  }, 3000); // Chờ 3 giây để giả lập load game
 });
 </script>
 </body>
