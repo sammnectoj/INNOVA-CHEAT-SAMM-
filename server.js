@@ -102,6 +102,17 @@ app.post('/api/shop/topup', async (req, res) => {
   res.json({ ok: true, message: 'Đã gửi yêu cầu' });
 });
 
+// API kiểm tra mã giảm giá (Cho App và Chatbot)
+app.post('/api/shop/check-coupon', async (req, res) => {
+  const { code } = req.body;
+  const { data } = await supabase.from('coupons').select('*').eq('code', code.toUpperCase()).single();
+  
+  if(!data || data.status !== 'active') return res.json({ ok: false, error: 'Mã không hợp lệ hoặc đã khóa' });
+  if(data.used_count >= data.max_uses) return res.json({ ok: false, error: 'Mã đã hết lượt sử dụng' });
+  
+  res.json({ ok: true, discount: data.discount });
+});
+
 // Kiểm tra trạng thái nạp (Polling cho Chatbot)
 app.get('/api/shop/check-topup-status', async (req, res) => {
   const { username } = req.query;
@@ -267,15 +278,15 @@ app.delete('/api/delete/:key', async (req, res) => {
 // ================= GIAO DIỆN ADMIN =================
 app.get('/admin', (req, res) => {
   res.send(`<!DOCTYPE html>
-<html lang="vi"><head><meta charset="utf-8"><title>Admin - Innova</title>
+<html lang="vi"><head><meta charset="utf-8"><title>Admin - Headlock</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
   * { box-sizing: border-box; font-family: system-ui, sans-serif; }
   body { background: #0a0f17; color: #cfefff; padding: 20px; max-width: 1000px; margin: auto; }
-  h1 { color: #00f0ff; text-align: center; text-shadow: 0 0 10px #00f0ff80; }
+  h1 { color: #ff0033; text-align: center; text-shadow: 0 0 10px #ff003380; }
   .box { background: #101a24; padding: 20px; border-radius: 12px; border: 1px solid #1a2a3d; margin-bottom: 20px; }
   input,select,button { padding: 10px; border-radius: 8px; border: 1px solid #2a3a4d; background: #0a0f17; color: #cfefff; font-size: 14px; outline: none; margin-bottom: 5px;}
-  button { background: linear-gradient(135deg, #00f0ff, #0099cc); color: #001a22; font-weight: 800; cursor: pointer; border: none; transition: 0.2s;}
+  button { background: linear-gradient(135deg, #ff0033, #990011); color: #fff; font-weight: 800; cursor: pointer; border: none; transition: 0.2s;}
   button:hover { transform: scale(1.02); }
   .btn-gray { background: #2a3a4d; color: #fff; }
   .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items: flex-start; }
@@ -284,16 +295,16 @@ app.get('/admin', (req, res) => {
   .key { color: #00ff88; font-family: monospace; font-weight: bold; }
   .tabs { display:flex; gap:10px; margin-bottom:20px; overflow-x: auto; padding-bottom: 5px;}
   .tab { padding:10px 20px; background:#1a2a3d; border-radius:8px; cursor:pointer; font-weight:bold; white-space: nowrap;}
-  .tab.active { background:#00f0ff; color:#000; }
+  .tab.active { background:#ff0033; color:#fff; }
   .panel { display:none; }
   .panel.active { display:block; }
   .status-pending { color: #ffaa00; font-weight: bold; }
   .status-success { color: #00ff88; font-weight: bold; }
   .status-cancel { color: #ff3366; font-weight: bold; }
   .modal-edit { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 100; }
-  .modal-box { background: #101a24; padding: 20px; border-radius: 12px; border: 1px solid #00f0ff; width: 100%; max-width: 400px; }
+  .modal-box { background: #101a24; padding: 20px; border-radius: 12px; border: 1px solid #ff0033; width: 100%; max-width: 400px; }
 </style></head><body>
-<h1>⚡ INNOVA ADMIN ⚡</h1>
+<h1>⚡ HEADLOCK ADMIN ⚡</h1>
 <div class="row"><input id="pass" type="password" placeholder="Mật khẩu Admin..." style="flex:1; max-width: 300px;"></div>
 
 <div class="tabs">
@@ -322,7 +333,7 @@ app.get('/admin', (req, res) => {
       </select>
     </div>
     <div class="row" style="margin-bottom:0;">
-      <button onclick="saveEditTopup()" style="flex:1; background:#00ff88;">LƯU THAY ĐỔI</button>
+      <button onclick="saveEditTopup()" style="flex:1; background:#00ff88; color:#000;">LƯU THAY ĐỔI</button>
       <button onclick="document.getElementById('editModal').style.display='none'" style="flex:1; background:#ff3366;">HỦY</button>
     </div>
   </div>
