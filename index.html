@@ -166,6 +166,16 @@
   .chat-send { padding: 12px 18px; border-radius: 20px; border: none; background: var(--neon); color: #fff; font-weight: 900; cursor: pointer;}
 
   .qr-img { width: 100%; max-width: 220px; border-radius: 12px; margin-top: 12px; border: 2px solid var(--neon); display: block; margin-left: auto; margin-right: auto; box-shadow: 0 0 20px rgba(255,0,51,0.3);}
+
+  /* CSS CHO TÚI LÌ XÌ */
+  .lixi-box {
+    display: inline-block; background: linear-gradient(135deg, #ffaa00, #ff0033); 
+    padding: 15px 25px; border-radius: 12px; cursor: pointer; 
+    text-align: center; font-weight: 900; color: #fff; 
+    animation: pulseLixi 1.5s infinite; margin-top: 10px;
+  }
+  @keyframes pulseLixi { 0%, 100% { transform: scale(1); box-shadow: 0 0 10px #ffaa00; } 50% { transform: scale(1.05); box-shadow: 0 0 25px #ff0033; } }
+  .lixi-box span { font-size: 2rem; display: block; margin-bottom: 5px; }
 </style>
 </head>
 <body>
@@ -315,7 +325,6 @@
 </div>
 
 <script>
-// ✅ LINK SERVER RENDER CỦA BẠN
 const SERVER_URL = 'https://innova-key.onrender.com';
 const BANK_ID = 'MB'; 
 const ACCOUNT_NO = '2333612345555'; 
@@ -329,8 +338,8 @@ let selectedGame = 'Free Fire';
 let selectedSkin = null; 
 let currentDiscount = 0; 
 let pendingBuyType = null; 
+let isLixiOpened = false; // Chống bấm nhiều lần
 
-// HÀM GỌI API CÓ TỰ ĐỘNG THỬ LẠI (RETRY)
 async function fetchWithRetry(url, options, retries = 3, delay = 2000) {
   for (let i = 0; i < retries; i++) {
     try {
@@ -343,7 +352,6 @@ async function fetchWithRetry(url, options, retries = 3, delay = 2000) {
   }
 }
 
-// KHỞI TẠO PARTICLES
 const pWrap = document.getElementById('particles');
 for(let i=0;i<60;i++){
   const s = document.createElement('span');
@@ -446,6 +454,21 @@ async function sendChat() {
 
   const lowerText = text.toLowerCase();
 
+  // LỆNH LÌ XÌ
+  if(lowerText === 'lixi') {
+    if(isLixiOpened) return addMessage('Bạn đã bóc lì xì rồi. Hãy thử lại vào ngày mai nhé!', 'bot');
+    isLixiOpened = true;
+    addMessage(`
+      🧧 <strong>BẠN ĐÃ NHẬN ĐƯỢC 1 BAO LÌ XÌ!</strong><br>
+      Bấm vào túi lì xì bên dưới để mở:
+      <div class="lixi-box" onclick="openLixi()">
+        <span>🧧</span>
+        NHẤN ĐỂ MỞ
+      </div>
+    `, 'bot');
+    return;
+  }
+
   if (pendingBuyType) {
     const num = parseInt(text);
     if(!isNaN(num) && num > 0 && num <= 100) {
@@ -505,7 +528,8 @@ async function sendChat() {
       - Gõ "tài khoản" để xem số dư.<br>
       - Gõ "Key 1 ngày", "Key 1 tuần", "Key 1 tháng" để mua Key.<br>
       - Gõ "nạp" để nạp tiền vào tài khoản.<br>
-      - Gõ mã giảm giá (VD: sammvip) để nhập mã.
+      - Gõ mã giảm giá (VD: sammvip) để nhập mã.<br>
+      - Gõ "lixi" để nhận bao lì xì may mắn.
     `), 500);
   }
   else if(lowerText.includes('đăng ký') || lowerText.includes('register')) {
@@ -608,6 +632,28 @@ async function sendChat() {
   }
 }
 
+// HÀM MỞ LÌ XÌ
+async function openLixi() {
+  addMessage('Đang bóc lì xì...', 'user');
+  try {
+    const r = await fetchWithRetry(SERVER_URL + '/api/bot/lixi');
+    const d = await r.json();
+    if(d.ok) {
+      addMessage(`
+        🎉 <strong>CHÚC MỪNG!</strong><br>
+        Bạn đã nhận được: <strong>Key ${d.name}</strong><br>
+        Mã Key của bạn là:<br>
+        <span style="color:#ffaa00; font-size:1.2rem; font-family:monospace; font-weight:bold;">${d.key}</span><br>
+        <i>(Hãy copy mã này để nhập vào App)</i>
+      `, 'bot');
+    } else {
+      addMessage('Có lỗi xảy ra khi mở lì xì!', 'bot');
+    }
+  } catch(e) {
+    addMessage('Lỗi kết nối Server!', 'bot');
+  }
+}
+
 async function selectTopup(amount) {
   if(!isLoggedIn) return addMessage('Bạn chưa đăng nhập. Hãy gõ "đăng nhập" trước.', 'bot');
   addMessage(`Bạn đã chọn nạp <strong>${amount.toLocaleString('vi-VN')}đ</strong>.`, 'user');
@@ -645,10 +691,19 @@ async function selectTopup(amount) {
   } catch(e) { addMessage('Lỗi kết nối Server!', 'bot'); }
 }
 
+// BẬT NHẠC KHI ẤN NÚT MỞ KHÓA
 document.getElementById('unlockBtn').addEventListener('click', async ()=>{
   const key = document.getElementById('keyInput').value.trim().toUpperCase();
   const msg = document.getElementById('keyMsg');
   if(!key){ msg.textContent = '⚠️ Vui lòng nhập key'; msg.className = 'key-msg err'; return; }
+
+  // PHÁT NHẠC Ở ĐÂY (VÌ ĐÃ CÓ TƯƠNG TÁC NGƯỜI DÙNG)
+  if(!window.audioEl) {
+    window.audioEl = new Audio('https://files.catbox.moe/ij9uix.mp3');
+    window.audioEl.loop = true;
+    window.audioEl.volume = 0.5;
+    window.audioEl.play().catch(e=>console.log('Autoplay blocked'));
+  }
 
   msg.textContent = '🔍 Đang kiểm tra key...'; msg.className = 'key-msg info'; document.getElementById('unlockBtn').disabled = true;
   
