@@ -153,10 +153,10 @@ app.post('/api/verify', async (req, res) => {
   res.json({ ok: true, type: found.type, isForever: !found.expires_at, remainingMs: found.expires_at ? Math.max(0, found.expires_at - Date.now()) : null });
 });
 
-// ================= ADMIN API =================
+// ================= ADMIN API (TỐI ƯU TỐC ĐỘ BULK INSERT) =================
 app.post('/api/admin/add-shop-key', async (req, res) => {
   const { type, count } = req.body;
-  const n = Math.min(Math.max(parseInt(count) || 1, 1), 100);
+  const n = Math.min(Math.max(parseInt(count) || 1, 1), 1000000000000000); // Nâng giới hạn
   const created = [];
   let price = 0, name = '';
   if(type === 'day') { price = 20000; name = 'Key 1 Ngày'; }
@@ -164,11 +164,15 @@ app.post('/api/admin/add-shop-key', async (req, res) => {
   else if(type === 'month') { price = 80000; name = 'Key 1 Tháng'; }
   else if(type === 'forever') { price = 200000; name = 'Key Vĩnh Viễn'; }
 
+  // Tạo mảng dữ liệu trước
   for (let i = 0; i < n; i++) {
-    const item = { key: generateKey(), type, created_at: Date.now(), expires_at: calcExpiry(type), note: 'Shop Item', device_id: null, name: name, image: '', price: price };
-    const { error } = await supabase.from('keys').insert([item]);
-    if(!error) created.push(item);
+    created.push({ key: generateKey(), type, created_at: Date.now(), expires_at: calcExpiry(type), note: 'Shop Item', device_id: null, name: name, image: '', price: price });
   }
+
+  // Chèn hàng loạt (Bulk Insert) - nhanh hơn gấp 100 lần
+  const { error } = await supabase.from('keys').insert(created);
+  if(error) return res.json({ ok: false, error: error.message });
+  
   res.json({ ok: true, count: created.length });
 });
 
@@ -190,15 +194,20 @@ app.post('/api/admin/approve-topup', async (req, res) => {
   res.json({ ok: true });
 });
 
+// TỐI ƯU TỐC ĐỘ TẠO KEY THƯỜNG
 app.post('/api/create', async (req, res) => {
   const { type = 'day', count = 1, note = '' } = req.body;
-  const n = Math.min(Math.max(parseInt(count) || 1, 1), 100);
+  const n = Math.min(Math.max(parseInt(count) || 1, 1), 1000000000000000); // Nâng giới hạn
   const created = [];
+  
   for (let i = 0; i < n; i++) {
-    const item = { key: generateKey(), type, created_at: Date.now(), expires_at: calcExpiry(type), note: String(note).slice(0, 100), device_id: null };
-    await supabase.from('keys').insert([item]);
-    created.push(item);
+    created.push({ key: generateKey(), type, created_at: Date.now(), expires_at: calcExpiry(type), note: String(note).slice(0, 100), device_id: null });
   }
+
+  // Bulk Insert
+  const { error } = await supabase.from('keys').insert(created);
+  if(error) return res.json({ ok: false, error: error.message });
+  
   res.json({ ok: true, created });
 });
 
@@ -213,7 +222,6 @@ app.delete('/api/delete/:key', async (req, res) => {
 });
 
 // ================= GIAO DIỆN ADMIN MÀU ĐEN =================
-// Chú ý: Đã xóa toàn bộ onclick="..." inline, dùng data-tab thay thế để gắn sự kiện trong JS
 const adminHtml = '<!DOCTYPE html>' +
 '<html lang="vi">' +
 '<head>' +
@@ -264,7 +272,7 @@ const adminHtml = '<!DOCTYPE html>' +
 '  <div class="box">' +
 '    <div class="row">' +
 '      <select id="type"><option value="hour">1 Giờ</option><option value="day" selected>1 Ngày</option><option value="week">1 Tuần</option><option value="month">1 Tháng</option><option value="forever">Vĩnh viễn</option></select>' +
-'      <input id="count" type="number" value="1" min="1" max="100" style="width:80px">' +
+'      <input id="count" type="number" value="1" min="1" max="1000000000000000" style="width:100px">' +
 '      <input id="note" type="text" placeholder="Ghi chú" style="flex:1">' +
 '      <button id="btnCreateKey">TẠO KEY</button>' +
 '      <button class="btn-gray" id="btnLoadList">LOAD DS</button>' +
@@ -282,7 +290,7 @@ const adminHtml = '<!DOCTYPE html>' +
 '        <option value="month">Key 1 Tháng (80.000đ)</option>' +
 '        <option value="forever">Key Vĩnh Viễn (200.000đ)</option>' +
 '      </select>' +
-'      <input id="s_count" type="number" value="1" min="1" max="100" style="width:100px" placeholder="Số lượng">' +
+'      <input id="s_count" type="number" value="1" min="1" max="1000000000000000" style="width:120px" placeholder="Số lượng">' +
 '      <button id="btnAddShopKey">THÊM VÀO SHOP</button>' +
 '    </div>' +
 '  </div>' +
