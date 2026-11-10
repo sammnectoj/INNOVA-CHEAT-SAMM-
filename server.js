@@ -7,8 +7,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'innova-admin-2024';
 
+// ✅ THÔNG TIN SUPABASE
 const SUPABASE_URL = 'https://llvlcqfievwtvylsqslm.supabase.co'; 
 const SUPABASE_KEY = 'sb_publishable_37lYwmdntFwHgspQ7b3vgA_Jna_S5r1'; 
+
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 app.use(cors());
@@ -225,31 +227,31 @@ app.delete('/api/delete/:key', async (req, res) => {
   res.json({ ok: true });
 });
 
-// ================= GIAO DIỆN ADMIN MÀU XANH NEON =================
+// ================= GIAO DIỆN ADMIN MÀU ĐỎ =================
 const adminHtml = '<!DOCTYPE html>' +
 '<html lang="vi"><head><meta charset="utf-8"><title>Admin - Headlock</title>' +
 '<meta name="viewport" content="width=device-width,initial-scale=1">' +
 '<style>' +
 '  * { box-sizing: border-box; font-family: "Segoe UI", system-ui, sans-serif; }' +
-'  body { background: #050a05; color: #d0ffd0; padding: 20px; max-width: 1000px; margin: auto; }' +
-'  h1 { color: #00ff88; text-align: center; text-shadow: 0 0 15px #00ff8880; letter-spacing: 2px; }' +
-'  .box { background: rgba(10, 30, 15, 0.8); padding: 20px; border-radius: 16px; border: 1px solid rgba(0, 255, 136, 0.2); margin-bottom: 20px; box-shadow: 0 0 20px rgba(0,255,136,0.1); }' +
-'  input,select,button { padding: 12px; border-radius: 8px; border: 1px solid rgba(0, 255, 136, 0.3); background: rgba(0,0,0,0.5); color: #fff; font-size: 14px; outline: none; margin-bottom: 5px; transition: 0.3s; }' +
-'  input:focus, select:focus { border-color: #00ff88; box-shadow: 0 0 10px rgba(0,255,136,0.3); }' +
-'  button { background: linear-gradient(135deg, #00ff88, #009944); color: #000; font-weight: 800; cursor: pointer; border: none; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;}' +
-'  button:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(0,255,136,0.6); }' +
+'  body { background: #050000; color: #ffd0d0; padding: 20px; max-width: 1000px; margin: auto; }' +
+'  h1 { color: #ff0033; text-align: center; text-shadow: 0 0 15px #ff003380; letter-spacing: 2px; }' +
+'  .box { background: rgba(30, 10, 10, 0.8); padding: 20px; border-radius: 16px; border: 1px solid rgba(255, 0, 51, 0.2); margin-bottom: 20px; box-shadow: 0 0 20px rgba(255,0,51,0.1); }' +
+'  input,select,button { padding: 12px; border-radius: 8px; border: 1px solid rgba(255, 0, 51, 0.3); background: rgba(0,0,0,0.5); color: #fff; font-size: 14px; outline: none; margin-bottom: 5px; transition: 0.3s; }' +
+'  input:focus, select:focus { border-color: #ff0033; box-shadow: 0 0 10px rgba(255,0,51,0.3); }' +
+'  button { background: linear-gradient(135deg, #ff0033, #990011); color: #fff; font-weight: 800; cursor: pointer; border: none; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;}' +
+'  button:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(255,0,51,0.6); }' +
 '  button:disabled { opacity: 0.5; cursor: not-allowed; }' +
-'  .btn-gray { background: rgba(255,255,255,0.1); color: #d0ffd0; border: 1px solid #555; }' +
+'  .btn-gray { background: rgba(255,255,255,0.1); color: #ffd0d0; border: 1px solid #555; }' +
 '  .btn-gray:hover { background: #fff; color: #000; }' +
 '  .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items: flex-start; }' +
 '  table { width: 100%; border-collapse: collapse; font-size: 13px; overflow-x: auto; display: block; margin-top: 10px;}' +
-'  th,td { padding: 12px 10px; border-bottom: 1px solid rgba(0, 255, 136, 0.1); text-align: left; white-space: nowrap; }' +
-'  th { color: #00ff88; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }' +
+'  th,td { padding: 12px 10px; border-bottom: 1px solid rgba(255, 0, 51, 0.1); text-align: left; white-space: nowrap; }' +
+'  th { color: #ff0033; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }' +
 '  .key { color: #00ff88; font-family: monospace; font-weight: bold; text-shadow: 0 0 5px rgba(0,255,136,0.5); }' +
 '  .tabs { display:flex; flex-wrap: wrap; gap:10px; margin-bottom:20px; padding-bottom: 5px;}' +
-'  .tab { padding:12px 20px; background:rgba(0,0,0,0.5); border: 1px solid rgba(0,255,136,0.2); border-radius:12px; cursor:pointer; font-weight:bold; white-space: nowrap; font-size: 13px; transition: 0.3s;}' +
-'  .tab:hover { background: rgba(0,255,136,0.1); }' +
-'  .tab.active { background:#00ff88; color:#000; box-shadow: 0 0 15px rgba(0,255,136,0.5); border-color: transparent; }' +
+'  .tab { padding:12px 20px; background:rgba(0,0,0,0.5); border: 1px solid rgba(255,0,51,0.2); border-radius:12px; cursor:pointer; font-weight:bold; white-space: nowrap; font-size: 13px; transition: 0.3s;}' +
+'  .tab:hover { background: rgba(255,0,51,0.1); }' +
+'  .tab.active { background:#ff0033; color:#fff; box-shadow: 0 0 15px rgba(255,0,51,0.5); border-color: transparent; }' +
 '  .panel { display:none; }' +
 '  .panel.active { display:block; animation: fadeIn 0.3s ease; }' +
 '  @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }' +
@@ -257,7 +259,7 @@ const adminHtml = '<!DOCTYPE html>' +
 '  .status-success { color: #00ff88; font-weight: bold; text-shadow: 0 0 5px rgba(0,255,136,0.5); }' +
 '  .toast-msg { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 8px; font-weight: bold; z-index: 1000; box-shadow: 0 0 20px rgba(0,0,0,0.5); display: none; text-align: center; }' +
 '  .toast-msg.success { background: #00ff88; color: #000; display: block; }' +
-'  .toast-msg.error { background: #ff3366; color: #fff; display: block; }' +
+'  .toast-msg.error { background: #ff0033; color: #fff; display: block; }' +
 '</style></head><body>' +
 '<div class="toast-msg" id="toastMsg"></div>' +
 '<h1>⚡ HEADLOCK ADMIN ⚡</h1>' +
