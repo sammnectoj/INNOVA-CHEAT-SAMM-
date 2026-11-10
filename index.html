@@ -92,7 +92,7 @@
   .game-btn.active { background: rgba(255,0,51,0.2); border-color: var(--neon); color: #fff; box-shadow: 0 0 20px rgba(255,0,51,0.4); text-shadow: 0 0 10px var(--neon); }
 
   .tabs{display:flex;gap:8px;padding:8px;background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;overflow-x:auto;scrollbar-width:none;}
-  .tab{flex-shrink:0;padding:12px 18px;border:none;border-radius:12px;background:transparent;color:#d0a0a0;font-weight:800;font-size:.75rem;text-transform:uppercase;cursor:pointer; transition: 0.3s;}
+  .tab{flex-shrink:0;padding:12px 18px;border:none;border-radius:12px;background:transparent;color:#d0a0a0;font-weight:800;font-size:.75rem;text-transform:uppercase;cursor:pointer; transition: 0.3s; display: flex; align-items: center; gap: 6px;}
   .tab.active{background:linear-gradient(135deg, rgba(255,0,51,0.2), rgba(255,0,229,0.1));color:#fff;border:1px solid var(--neon); box-shadow: 0 0 20px rgba(255,0,51,0.3); text-shadow: 0 0 8px var(--neon);}
   
   .panel{display:none;flex-direction:column;gap:10px}
@@ -167,7 +167,6 @@
 
   .qr-img { width: 100%; max-width: 220px; border-radius: 12px; margin-top: 12px; border: 2px solid var(--neon); display: block; margin-left: auto; margin-right: auto; box-shadow: 0 0 20px rgba(255,0,51,0.3);}
 
-  /* CSS CHO TÚI LÌ XÌ */
   .lixi-box {
     display: inline-block; background: linear-gradient(135deg, #ffaa00, #ff0033); 
     padding: 15px 25px; border-radius: 12px; cursor: pointer; 
@@ -249,53 +248,53 @@
     <div class="game-btn" onclick="selectGame(this, 'Free Fire Max')" id="gameFFMax">Free Fire Max</div>
   </div>
 
+  <!-- CHIA LÀM 2 KHU VỰC: AIM VÀ HACK -->
   <div class="tabs" id="tabs">
-    <button class="tab active" data-tab="aim"><span class="ico">🎯</span>AIMLOCK</button>
-    <button class="tab" data-tab="cheat"><span class="ico">🔥</span>AIM CHEAT</button>
-    <button class="tab" data-tab="skin"><span class="ico">👕</span>MOD SKIN</button>
-    <button class="tab" data-tab="misc"><span class="ico">⚙️</span>MISC</button>
+    <button class="tab active" data-tab="aim"><span class="ico">🎯</span> KHU VỰC AIM</button>
+    <button class="tab" data-tab="hack"><span class="ico">🔥</span> KHU VỰC HACK</button>
   </div>
 
-  <!-- TAB AIMLOCK -->
+  <!-- TAB KHU VỰC AIM -->
   <div class="panel active" id="panel-aim">
     <div class="section">
-      <div class="section-title">AIMLOCK MODULES</div>
+      <div class="section-title">AIM & CAMERA MODULES</div>
+      
       <div class="cheat-item"><div class="cheat-icon">🎯</div><div class="cheat-info"><div class="name">AIMLOCK V1</div><div class="desc">Khóa mục tiêu cơ bản</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIMLOCK V1"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">🎯</div><div class="cheat-info"><div class="name">AIMLOCK V2</div><div class="desc">Khóa mục tiêu nâng cao</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIMLOCK V2"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">🎯</div><div class="cheat-info"><div class="name">AIMLOCK V3</div><div class="desc">Khóa mục tiêu siêu mượt</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIMLOCK V3"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">🎯</div><div class="cheat-info"><div class="name">AIMLOCK V6</div><div class="desc">Khóa mục tiêu Pro Max</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIMLOCK V6"><span class="slider"></span></label></div>
-    </div>
-  </div>
-
-  <!-- TAB AIM CHEAT -->
-  <div class="panel" id="panel-cheat">
-    <div class="section">
-      <div class="section-title">AIM CHEAT MODULES</div>
+      
       <div class="cheat-item"><div class="cheat-icon">🔥</div><div class="cheat-info"><div class="name">AIM CHEAT 1.0</div><div class="desc">Hỗ trợ ngắm bắn thế hệ 1</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIM CHEAT 1.0"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">🔥</div><div class="cheat-info"><div class="name">AIM CHEAT 2.0</div><div class="desc">Hỗ trợ ngắm bắn thế hệ 2</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="AIM CHEAT 2.0"><span class="slider"></span></label></div>
+      
       <div class="cheat-item"><div class="cheat-icon">🎚️</div><div class="cheat-info"><div class="name">ĐỘ NHẠY</div><div class="desc">Tùy chỉnh độ nhạy ngắm bắn</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" id="sensToggle" data-name="ĐỘ NHẠY"><span class="slider"></span></label></div>
       <div class="slider-box" id="sensBox">
         <label>Độ nhạy: <span id="sensValue" style="color:var(--neon);">50%</span></label>
         <input type="range" min="1" max="100" value="50" id="sensRange">
       </div>
+
+      <div class="cheat-item"><div class="cheat-icon">🔄</div><div class="cheat-info"><div class="name">XOAY CAM 360°</div><div class="desc">Góc nhìn thứ 3 tự do</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="XOAY CAM 360"><span class="slider"></span></label></div>
     </div>
   </div>
 
-  <!-- TAB MOD SKIN -->
-  <div class="panel" id="panel-skin">
+  <!-- TAB KHU VỰC HACK -->
+  <div class="panel" id="panel-hack">
     <div class="section">
-      <div class="section-title">MOD SKIN (CHỌN 1)</div>
+      <div class="section-title">HACK MODULES</div>
+      
+      <div class="cheat-item"><div class="cheat-icon">⚡</div><div class="cheat-info"><div class="name">SPEED BOOST</div><div class="desc">Tăng tốc di chuyển</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="SPEED BOOST"><span class="slider"></span></label></div>
+      
+      <div class="cheat-item"><div class="cheat-icon">🕊️</div><div class="cheat-info"><div class="name">FLY MODE</div><div class="desc">Bay lượn tự do trên không</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="FLY MODE"><span class="slider"></span></label></div>
+      
+      <div class="cheat-item"><div class="cheat-icon">🛡️</div><div class="cheat-info"><div class="name">GOD MODE</div><div class="desc">Bất tử, không sát thương</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="GOD MODE"><span class="slider"></span></label></div>
+      
       <div class="cheat-item"><div class="cheat-icon">👕</div><div class="cheat-info"><div class="name">MOD SKIN V1</div><div class="desc">Bộ skin cơ bản</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="MOD SKIN V1"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">👕</div><div class="cheat-info"><div class="name">MOD SKIN V2</div><div class="desc">Bộ skin nâng cao</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="MOD SKIN V2"><span class="slider"></span></label></div>
       <div class="cheat-item"><div class="cheat-icon">👕</div><div class="cheat-info"><div class="name">MOD SKIN V3</div><div class="desc">Bộ skin cao cấp</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="MOD SKIN V3"><span class="slider"></span></label></div>
-    </div>
-  </div>
-
-  <!-- TAB MISC -->
-  <div class="panel" id="panel-misc">
-    <div class="section">
-      <div class="section-title">MISC MODULES</div>
-      <div class="cheat-item"><div class="cheat-icon">🛡️</div><div class="cheat-info"><div class="name">ANTIBAN</div><div class="desc">Chống bị khóa tài khoản</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="ANTIBAN"><span class="slider"></span></label></div>
+      
+      <div class="cheat-item"><div class="cheat-icon">⭐</div><div class="cheat-info"><div class="name">LEVEL HACK</div><div class="desc">Tăng level tức thì</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="LEVEL HACK"><span class="slider"></span></label></div>
+      
+      <div class="cheat-item"><div class="cheat-icon">🔒</div><div class="cheat-info"><div class="name">ANTIBAN</div><div class="desc">Chống bị khóa tài khoản</div></div><label class="switch"><input type="checkbox" class="cheat-toggle" data-name="ANTIBAN"><span class="slider"></span></label></div>
     </div>
   </div>
 
@@ -338,7 +337,7 @@ let selectedGame = 'Free Fire';
 let selectedSkin = null; 
 let currentDiscount = 0; 
 let pendingBuyType = null; 
-let isLixiOpened = false; // Chống bấm nhiều lần
+let isLixiOpened = false; 
 
 async function fetchWithRetry(url, options, retries = 3, delay = 2000) {
   for (let i = 0; i < retries; i++) {
@@ -454,7 +453,6 @@ async function sendChat() {
 
   const lowerText = text.toLowerCase();
 
-  // LỆNH LÌ XÌ
   if(lowerText === 'lixi') {
     if(isLixiOpened) return addMessage('Bạn đã bóc lì xì rồi. Hãy thử lại vào ngày mai nhé!', 'bot');
     isLixiOpened = true;
@@ -579,7 +577,7 @@ async function sendChat() {
   }
   else if(lowerText.includes('key của tôi') || lowerText.includes('lịch sử key')) {
     if(!isLoggedIn) return addMessage('Bạn chưa đăng nhập.', 'bot');
-    addMessage(`<strong>DANH SÁCH KEY CỦA BẠN:</strong><br><i>(Đang tải dữ liệu...)</em>`, 'bot');
+    addMessage(`<strong>DANH SÁCH KEY CỦA BẠN:</strong><br><i>(Đang tải dữ liệu...)</i>`, 'bot');
     try {
       const r = await fetchWithRetry(SERVER_URL + '/api/bot/my-keys?username=' + currentUser.username);
       const d = await r.json();
@@ -632,7 +630,6 @@ async function sendChat() {
   }
 }
 
-// HÀM MỞ LÌ XÌ
 async function openLixi() {
   addMessage('Đang bóc lì xì...', 'user');
   try {
@@ -691,13 +688,11 @@ async function selectTopup(amount) {
   } catch(e) { addMessage('Lỗi kết nối Server!', 'bot'); }
 }
 
-// BẬT NHẠC KHI ẤN NÚT MỞ KHÓA
 document.getElementById('unlockBtn').addEventListener('click', async ()=>{
   const key = document.getElementById('keyInput').value.trim().toUpperCase();
   const msg = document.getElementById('keyMsg');
   if(!key){ msg.textContent = '⚠️ Vui lòng nhập key'; msg.className = 'key-msg err'; return; }
 
-  // PHÁT NHẠC Ở ĐÂY (VÌ ĐÃ CÓ TƯƠNG TÁC NGƯỜI DÙNG)
   if(!window.audioEl) {
     window.audioEl = new Audio('https://files.catbox.moe/ij9uix.mp3');
     window.audioEl.loop = true;
