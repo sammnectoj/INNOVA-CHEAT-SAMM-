@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'innova-admin-2024';
 
-// ✅ THÔNG TIN SUPABASE
+// ✅ THÔNG TIN SUPABASE CỦA BẠN
 const SUPABASE_URL = 'https://llvlcqfievwtvylsqslm.supabase.co'; 
 const SUPABASE_KEY = 'sb_publishable_37lYwmdntFwHgspQ7b3vgA_Jna_S5r1'; 
 
