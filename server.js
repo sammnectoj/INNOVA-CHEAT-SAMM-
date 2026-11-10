@@ -34,7 +34,7 @@ function calcExpiry(type) {
   }
 }
 
-// ================= SHOP API =================
+// ================= API KHÁCH HÀNG =================
 app.post('/api/shop/register', async (req, res) => {
   const { username, password } = req.body;
   if(!username || !password) return res.json({ ok: false, error: 'Thiếu thông tin' });
@@ -52,6 +52,11 @@ app.post('/api/shop/login', async (req, res) => {
   res.json({ ok: true, user: { username: user.username, balance: user.balance } });
 });
 
+app.get('/api/shop/notifications', async (req, res) => {
+  const { data } = await supabase.from('notifications').select('*').order('created_at', { ascending: false }).limit(5);
+  res.json({ ok: true, notifications: data || [] });
+});
+
 app.post('/api/bot/buy-multiple', async (req, res) => {
   const { username, type, count, discount } = req.body;
   const { data: user } = await supabase.from('users').select('*').eq('username', username).single();
@@ -67,10 +72,10 @@ app.post('/api/bot/buy-multiple', async (req, res) => {
   if (discount && discount > 0) finalPricePerKey = basePrice - (basePrice * discount / 100);
   const totalPrice = finalPricePerKey * count;
 
-  if(user.balance < totalPrice) return res.json({ ok: false, error: `Số dư không đủ. Cần thêm ${(totalPrice - user.balance).toLocaleString('vi-VN')}đ.` });
+  if(user.balance < totalPrice) return res.json({ ok: false, error: `Số dư không đủ.` });
 
   const { data: keyDatas } = await supabase.from('keys').select('*').eq('type', type).is('device_id', null).limit(count);
-  if(!keyDatas || keyDatas.length < count) return res.json({ ok: false, error: `Kho chỉ còn ${keyDatas ? keyDatas.length : 0} Key loại này.` });
+  if(!keyDatas || keyDatas.length < count) return res.json({ ok: false, error: `Kho chỉ còn ${keyDatas ? keyDatas.length : 0} Key.` });
 
   const newBalance = user.balance - totalPrice;
   await supabase.from('users').update({ balance: newBalance }).eq('username', username);
@@ -83,7 +88,6 @@ app.post('/api/bot/buy-multiple', async (req, res) => {
   res.json({ ok: true, keys: keysToReturn, totalPrice, newBalance });
 });
 
-// API LÌ XÌ
 app.get('/api/bot/lixi', async (req, res) => {
   const rand = Math.random() * 100;
   let type = 'hour';
@@ -93,14 +97,7 @@ app.get('/api/bot/lixi', async (req, res) => {
   else if(rand > 70) { type = 'hour5'; name = '5 Giờ'; }
 
   const newKey = generateKey();
-  const item = { 
-    key: newKey, 
-    type: type, 
-    created_at: Date.now(), 
-    expires_at: calcExpiry(type), 
-    note: 'Lì xì', 
-    device_id: null 
-  };
+  const item = { key: newKey, type: type, created_at: Date.now(), expires_at: calcExpiry(type), note: 'Lì xì', device_id: null };
   await supabase.from('keys').insert([item]);
   res.json({ ok: true, key: newKey, name: name });
 });
@@ -138,6 +135,7 @@ app.get('/api/shop/check-topup-status', async (req, res) => {
   res.json({ ok: true, status: latest.status });
 });
 
+// ================= API XÁC THỰC =================
 app.post('/api/verify', async (req, res) => {
   const { key, deviceId } = req.body || {};
   if (!key || !deviceId) return res.status(400).json({ ok: false, error: 'Thiếu thông tin' });
@@ -154,14 +152,21 @@ app.post('/api/verify', async (req, res) => {
   res.json({ ok: true, type: found.type, isForever: !found.expires_at, remainingMs: found.expires_at ? Math.max(0, found.expires_at - Date.now()) : null });
 });
 
+// ================= ADMIN API =================
 app.post('/api/admin/add-shop-key', async (req, res) => {
   const pass = req.headers['x-admin-pass'];
   if (pass !== ADMIN_PASSWORD) return res.status(401).json({ ok: false, error: 'Sai pass' });
-  const { name, image, price, type, count } = req.body;
+  const { type, count } = req.body;
   const n = Math.min(Math.max(parseInt(count) || 1, 1), 100);
   const created = [];
+  let price = 0, name = '';
+  if(type === 'day') { price = 20000; name = 'Key 1 Ngày'; }
+  else if(type === 'week') { price = 50000; name = 'Key 1 Tuần'; }
+  else if(type === 'month') { price = 80000; name = 'Key 1 Tháng'; }
+  else if(type === 'forever') { price = 200000; name = 'Key Vĩnh Viễn'; }
+
   for (let i = 0; i < n; i++) {
-    const item = { key: generateKey(), type, created_at: Date.now(), expires_at: calcExpiry(type), note: 'Shop Item', device_id: null, name, image, price: parseInt(price) };
+    const item = { key: generateKey(), type, created_at: Date.now(), expires_at: calcExpiry(type), note: 'Shop Item', device_id: null, name: name, image: '', price: price };
     const { error } = await supabase.from('keys').insert([item]);
     if(!error) created.push(item);
   }
@@ -220,32 +225,42 @@ app.delete('/api/delete/:key', async (req, res) => {
   res.json({ ok: true });
 });
 
-// ================= ADMIN HTML =================
+// ================= GIAO DIỆN ADMIN MÀU XANH NEON =================
 const adminHtml = '<!DOCTYPE html>' +
 '<html lang="vi"><head><meta charset="utf-8"><title>Admin - Headlock</title>' +
 '<meta name="viewport" content="width=device-width,initial-scale=1">' +
 '<style>' +
-'  * { box-sizing: border-box; font-family: system-ui, sans-serif; }' +
-'  body { background: #0a0f17; color: #cfefff; padding: 20px; max-width: 900px; margin: auto; }' +
-'  h1 { color: #00f0ff; text-align: center; text-shadow: 0 0 10px #00f0ff80; }' +
-'  .box { background: #101a24; padding: 20px; border-radius: 12px; border: 1px solid #1a2a3d; margin-bottom: 20px; }' +
-'  input,select,button { padding: 10px; border-radius: 8px; border: 1px solid #2a3a4d; background: #0a0f17; color: #cfefff; font-size: 14px; outline: none; margin-bottom: 5px;}' +
-'  button { background: linear-gradient(135deg, #00f0ff, #0099cc); color: #001a22; font-weight: 800; cursor: pointer; border: none; transition: 0.2s;}' +
-'  button:hover { transform: scale(1.02); }' +
-'  .btn-gray { background: #2a3a4d; color: #fff; }' +
+'  * { box-sizing: border-box; font-family: "Segoe UI", system-ui, sans-serif; }' +
+'  body { background: #050a05; color: #d0ffd0; padding: 20px; max-width: 1000px; margin: auto; }' +
+'  h1 { color: #00ff88; text-align: center; text-shadow: 0 0 15px #00ff8880; letter-spacing: 2px; }' +
+'  .box { background: rgba(10, 30, 15, 0.8); padding: 20px; border-radius: 16px; border: 1px solid rgba(0, 255, 136, 0.2); margin-bottom: 20px; box-shadow: 0 0 20px rgba(0,255,136,0.1); }' +
+'  input,select,button { padding: 12px; border-radius: 8px; border: 1px solid rgba(0, 255, 136, 0.3); background: rgba(0,0,0,0.5); color: #fff; font-size: 14px; outline: none; margin-bottom: 5px; transition: 0.3s; }' +
+'  input:focus, select:focus { border-color: #00ff88; box-shadow: 0 0 10px rgba(0,255,136,0.3); }' +
+'  button { background: linear-gradient(135deg, #00ff88, #009944); color: #000; font-weight: 800; cursor: pointer; border: none; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;}' +
+'  button:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(0,255,136,0.6); }' +
+'  button:disabled { opacity: 0.5; cursor: not-allowed; }' +
+'  .btn-gray { background: rgba(255,255,255,0.1); color: #d0ffd0; border: 1px solid #555; }' +
+'  .btn-gray:hover { background: #fff; color: #000; }' +
 '  .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; align-items: flex-start; }' +
-'  table { width: 100%; border-collapse: collapse; font-size: 13px; overflow-x: auto; display: block; }' +
-'  th,td { padding: 10px; border-bottom: 1px solid #1a2a3d; text-align: left; white-space: nowrap; }' +
-'  .key { color: #00ff88; font-family: monospace; font-weight: bold; }' +
-'  .tabs { display:flex; flex-wrap: wrap; gap:10px; margin-bottom:20px; }' +
-'  .tab { padding:10px 20px; background:#1a2a3d; border-radius:8px; cursor:pointer; font-weight:bold;}' +
-'  .tab.active { background:#00f0ff; color:#000; }' +
+'  table { width: 100%; border-collapse: collapse; font-size: 13px; overflow-x: auto; display: block; margin-top: 10px;}' +
+'  th,td { padding: 12px 10px; border-bottom: 1px solid rgba(0, 255, 136, 0.1); text-align: left; white-space: nowrap; }' +
+'  th { color: #00ff88; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }' +
+'  .key { color: #00ff88; font-family: monospace; font-weight: bold; text-shadow: 0 0 5px rgba(0,255,136,0.5); }' +
+'  .tabs { display:flex; flex-wrap: wrap; gap:10px; margin-bottom:20px; padding-bottom: 5px;}' +
+'  .tab { padding:12px 20px; background:rgba(0,0,0,0.5); border: 1px solid rgba(0,255,136,0.2); border-radius:12px; cursor:pointer; font-weight:bold; white-space: nowrap; font-size: 13px; transition: 0.3s;}' +
+'  .tab:hover { background: rgba(0,255,136,0.1); }' +
+'  .tab.active { background:#00ff88; color:#000; box-shadow: 0 0 15px rgba(0,255,136,0.5); border-color: transparent; }' +
 '  .panel { display:none; }' +
-'  .panel.active { display:block; }' +
-'  .status-pending { color: #ffaa00; font-weight: bold; }' +
-'  .status-success { color: #00ff88; font-weight: bold; }' +
+'  .panel.active { display:block; animation: fadeIn 0.3s ease; }' +
+'  @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }' +
+'  .status-pending { color: #ffaa00; font-weight: bold; text-shadow: 0 0 5px rgba(255,170,0,0.5); }' +
+'  .status-success { color: #00ff88; font-weight: bold; text-shadow: 0 0 5px rgba(0,255,136,0.5); }' +
+'  .toast-msg { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 8px; font-weight: bold; z-index: 1000; box-shadow: 0 0 20px rgba(0,0,0,0.5); display: none; text-align: center; }' +
+'  .toast-msg.success { background: #00ff88; color: #000; display: block; }' +
+'  .toast-msg.error { background: #ff3366; color: #fff; display: block; }' +
 '</style></head><body>' +
-'<h1>⚡ INNOVA ADMIN ⚡</h1>' +
+'<div class="toast-msg" id="toastMsg"></div>' +
+'<h1>⚡ HEADLOCK ADMIN ⚡</h1>' +
 '<div class="row"><input id="pass" type="password" placeholder="Mật khẩu Admin..." style="flex:1"></div>' +
 '<div class="tabs">' +
 '  <div class="tab active" onclick="switchTab(this, \'tab-key\')">Quản Lý Key</div>' +
@@ -259,7 +274,7 @@ const adminHtml = '<!DOCTYPE html>' +
 '      <select id="type"><option value="hour">1 Giờ</option><option value="day" selected>1 Ngày</option><option value="week">1 Tuần</option><option value="month">1 Tháng</option><option value="forever">Vĩnh viễn</option></select>' +
 '      <input id="count" type="number" value="1" min="1" max="100" style="width:80px">' +
 '      <input id="note" type="text" placeholder="Ghi chú" style="flex:1">' +
-'      <button onclick="createKey()">TẠO KEY</button>' +
+'      <button onclick="createKey(this)">TẠO KEY</button>' +
 '      <button class="btn-gray" onclick="loadList()">LOAD DS</button>' +
 '    </div>' +
 '    <table id="tbl"><thead><tr><th>Key</th><th>Hạn</th><th>Thiết bị</th><th>Ghi chú</th><th>Xóa</th></tr></thead><tbody></tbody></table>' +
@@ -276,7 +291,7 @@ const adminHtml = '<!DOCTYPE html>' +
 '        <option value="forever">Key Vĩnh Viễn (200.000đ)</option>' +
 '      </select>' +
 '      <input id="s_count" type="number" value="1" min="1" max="100" style="width:100px" placeholder="Số lượng">' +
-'      <button onclick="addShopKey()">THÊM VÀO SHOP</button>' +
+'      <button onclick="addShopKey(this)">THÊM VÀO SHOP</button>' +
 '    </div>' +
 '  </div>' +
 '</div>' +
@@ -295,32 +310,46 @@ const adminHtml = '<!DOCTYPE html>' +
 '  </div>' +
 '</div>' +
 '<script>' +
-'function switchTab(el, id){' +
+'function showMsg(text, isError) {' +
+'  const el = document.getElementById("toastMsg");' +
+'  el.textContent = text;' +
+'  el.className = "toast-msg " + (isError ? "error" : "success");' +
+'  setTimeout(() => { el.className = "toast-msg"; }, 3000);' +
+'}' +
+'function switchTab(element, id){' +
 '  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));' +
 '  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));' +
-'  el.classList.add("active");' +
+'  element.classList.add("active");' +
 '  document.getElementById(id).classList.add("active");' +
 '}' +
 'function getPass(){ return document.getElementById("pass").value; }' +
-'async function createKey(){' +
-'  if(!getPass()) return alert("Nhập pass!");' +
-'  const r = await fetch("/api/create",{method:"POST",headers:{"Content-Type":"application/json","x-admin-pass":getPass()},body:JSON.stringify({type:document.getElementById("type").value,count:+document.getElementById("count").value,note:document.getElementById("note").value})});' +
-'  const d = await r.json();' +
-'  alert(d.ok ? "Tạo thành công!" : "Lỗi: "+d.error);' +
-'  if(d.ok) loadList();' +
+'async function createKey(btn){' +
+'  if(!getPass()) return showMsg("Vui lòng nhập mật khẩu Admin!", true);' +
+'  btn.disabled = true; btn.innerText = "ĐANG TẠO...";' +
+'  try {' +
+'    const r = await fetch("/api/create",{method:"POST",headers:{"Content-Type":"application/json","x-admin-pass":getPass()},body:JSON.stringify({type:document.getElementById("type").value,count:+document.getElementById("count").value,note:document.getElementById("note").value})});' +
+'    const d = await r.json();' +
+'    if(d.ok) { showMsg("Đã tạo "+d.created.length+" Key!", false); loadList(); }' +
+'    else showMsg("Lỗi: "+d.error, true);' +
+'  } catch(e) { showMsg("Lỗi kết nối Server!", true); }' +
+'  btn.disabled = false; btn.innerText = "TẠO KEY";' +
 '}' +
-'async function addShopKey(){' +
-'  if(!getPass()) return alert("Nhập pass!");' +
-'  const r = await fetch("/api/admin/add-shop-key",{method:"POST",headers:{"Content-Type":"application/json","x-admin-pass":getPass()},body:JSON.stringify({' +
-'    type: document.getElementById("s_type").value,' +
-'    count: document.getElementById("s_count").value,' +
-'    name: "Shop Item", image: "", price: 0' +
-'  })});' +
-'  const d = await r.json();' +
-'  alert(d.ok ? "Đã thêm "+d.count+" Key vào Shop!" : "Lỗi: "+d.error);' +
+'async function addShopKey(btn){' +
+'  if(!getPass()) return showMsg("Vui lòng nhập mật khẩu Admin!", true);' +
+'  btn.disabled = true; btn.innerText = "ĐANG THÊM...";' +
+'  try {' +
+'    const r = await fetch("/api/admin/add-shop-key",{method:"POST",headers:{"Content-Type":"application/json","x-admin-pass":getPass()},body:JSON.stringify({' +
+'      type: document.getElementById("s_type").value,' +
+'      count: document.getElementById("s_count").value' +
+'    })});' +
+'    const d = await r.json();' +
+'    if(d.ok) showMsg("Đã thêm "+d.count+" Key vào Shop!", false);' +
+'    else showMsg("Lỗi: "+d.error, true);' +
+'  } catch(e) { showMsg("Lỗi kết nối Server!", true); }' +
+'  btn.disabled = false; btn.innerText = "THÊM VÀO SHOP";' +
 '}' +
 'async function loadList(){' +
-'  if(!getPass()) return alert("Nhập pass!");' +
+'  if(!getPass()) return;' +
 '  const r = await fetch("/api/list?pass="+getPass());' +
 '  const d = await r.json();' +
 '  const tb=document.querySelector("#tbl tbody"); tb.innerHTML="";' +
@@ -337,14 +366,14 @@ const adminHtml = '<!DOCTYPE html>' +
 '  loadList();' +
 '}' +
 'async function loadUsers(){' +
-'  if(!getPass()) return alert("Nhập pass!");' +
+'  if(!getPass()) return;' +
 '  const r = await fetch("/api/admin/users?pass="+getPass());' +
 '  const d = await r.json();' +
 '  const tb=document.querySelector("#tbl-users tbody"); tb.innerHTML="";' +
 '  if(d.ok) d.users.forEach(u=>{ tb.innerHTML += "<tr><td>"+u.username+"</td><td style=\'color:#00ff88\'>"+u.balance.toLocaleString("vi-VN")+"đ</td></tr>"; });' +
 '}' +
 'async function loadTopups(){' +
-'  if(!getPass()) return alert("Nhập pass!");' +
+'  if(!getPass()) return;' +
 '  const r = await fetch("/api/admin/topups?pass="+getPass());' +
 '  const d = await r.json();' +
 '  const tb=document.querySelector("#tbl-topups tbody"); tb.innerHTML="";' +
@@ -355,17 +384,16 @@ const adminHtml = '<!DOCTYPE html>' +
 '  });' +
 '}' +
 'async function approveTopup(id, username, amount){' +
-'  if(!confirm("Xác nhận đã nhận được " + amount.toLocaleString("vi-VN") + " đ từ " + username + "?")) return;' +
 '  const r = await fetch("/api/admin/approve-topup", {' +
 '    method: "POST", headers: {"Content-Type": "application/json", "x-admin-pass": getPass()},' +
 '    body: JSON.stringify({ id, username, amount })' +
 '  });' +
 '  const d = await r.json();' +
-'  if(d.ok) { alert("Đã duyệt thành công!"); loadTopups(); } ' +
-'  else alert("Lỗi: " + d.error);' +
+'  if(d.ok) { showMsg("Đã duyệt thành công!", false); loadTopups(); } ' +
+'  else showMsg("Lỗi: " + d.error, true);' +
 '}' +
 '</script></body></html>';
 
 app.get('/admin', (req, res) => { res.send(adminHtml); });
-app.get('/', (req, res) => res.json({ ok: true, status: 'Running' }));
+app.get('/', (req, res) => { res.json({ ok: true, status: 'Running' }); });
 app.listen(PORT, () => console.log('Server chạy tại cổng ' + PORT));
