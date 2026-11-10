@@ -7,19 +7,18 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ✅ THÔNG TIN SUPABASE
-const SUPABASE_URL = 'https://llvlcqfievwtvylsqslm.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_37lYwmdntFwHgspQ7b3vgA_Jna_S5r1';
+const SUPABASE_URL = 'https://llvlcqfievwtvylsqslm.supabase.co'; 
+const SUPABASE_KEY = 'sb_publishable_37lYwmdntFwHgspQ7b3vgA_Jna_S5r1'; 
 
-// ✅ TOKEN ADMIN — BẮT BUỘC đặt biến môi trường trên Render
-// Nếu không đặt, mặc định dùng token dưới (KHÔNG AN TOÀN, chỉ để test local)
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'headlock-admin-2025';
+// ✅ TOKEN ADMIN (Đã fix cứng theo yêu cầu)
+const ADMIN_TOKEN = 'headlock-admin-2025';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
-// Giới hạn thực tế mỗi lần tạo key (tránh sập Supabase)
+// Giới hạn thực tế mỗi lần tạo (tránh sập DB), muốn thêm nhiều thì bấm nhiều lần
 const MAX_KEYS_PER_REQUEST = 10000;
 const INSERT_BATCH_SIZE = 500;
 
@@ -52,7 +51,7 @@ function adminAuth(req, res, next) {
   next();
 }
 
-// Hàm insert key theo batch, trả về số đã thêm + lỗi nếu có
+// Hàm insert key theo batch
 async function bulkInsertKeys(totalCount, buildRow) {
   let inserted = 0;
   for (let start = 0; start < totalCount; start += INSERT_BATCH_SIZE) {
@@ -185,17 +184,15 @@ app.post('/api/verify', async (req, res) => {
   res.json({ ok: true, type: found.type, isForever: !found.expires_at, remainingMs: found.expires_at ? Math.max(0, found.expires_at - Date.now()) : null });
 });
 
-// ================= ADMIN: THÊM KEY VÀO SHOP (ĐÃ SỬA) =================
+// ================= ADMIN API =================
+
+// 1. Thêm Key Vào Shop
 app.post('/api/admin/add-shop-key', adminAuth, async (req, res) => {
   try {
     const { type, count } = req.body;
     const n = Math.floor(Number(count));
-    if (!Number.isFinite(n) || n < 1) {
-      return res.json({ ok: false, error: 'Số lượng không hợp lệ' });
-    }
-    if (n > MAX_KEYS_PER_REQUEST) {
-      return res.json({ ok: false, error: `Tối đa ${MAX_KEYS_PER_REQUEST} key mỗi lần. Bạn yêu cầu ${n} — hãy chia nhỏ.` });
-    }
+    if (!Number.isFinite(n) || n < 1) return res.json({ ok: false, error: 'Số lượng không hợp lệ' });
+    if (n > MAX_KEYS_PER_REQUEST) return res.json({ ok: false, error: `Tối đa ${MAX_KEYS_PER_REQUEST} key mỗi lần.` });
 
     let price = 0, name = '';
     if      (type === 'day')     { price = 20000;  name = 'Key 1 Ngày'; }
@@ -205,15 +202,8 @@ app.post('/api/admin/add-shop-key', adminAuth, async (req, res) => {
     else return res.json({ ok: false, error: 'Loại key không hợp lệ' });
 
     const result = await bulkInsertKeys(n, () => ({
-      key: generateKey(),
-      type,
-      created_at: Date.now(),
-      expires_at: calcExpiry(type),
-      note: 'Shop Item',
-      device_id: null,
-      name,
-      image: '',
-      price
+      key: generateKey(), type, created_at: Date.now(), expires_at: calcExpiry(type),
+      note: 'Shop Item', device_id: null, name, image: '', price
     }));
 
     if (!result.ok) {
@@ -225,7 +215,7 @@ app.post('/api/admin/add-shop-key', adminAuth, async (req, res) => {
   }
 });
 
-// ================= ADMIN: NẠP TIỀN TRỰC TIẾP CHO USER (MỚI) =================
+// 2. Nạp Tiền Trực Tiếp Cho User
 app.post('/api/admin/grant-balance', adminAuth, async (req, res) => {
   try {
     const { username, amount } = req.body;
@@ -241,11 +231,8 @@ app.post('/api/admin/grant-balance', adminAuth, async (req, res) => {
     const { error: e2 } = await supabase.from('users').update({ balance: newBalance }).eq('username', username);
     if (e2) return res.json({ ok: false, error: e2.message });
 
-    // Ghi log vào bảng topups (bỏ qua nếu bảng chưa có cột note)
     try {
-      await supabase.from('topups').insert([{
-        username, amount: amt, created_at: Date.now(), status: 'success'
-      }]);
+      await supabase.from('topups').insert([{ username, amount: amt, created_at: Date.now(), status: 'success' }]);
     } catch (_) {}
 
     res.json({ ok: true, username, newBalance });
@@ -254,7 +241,7 @@ app.post('/api/admin/grant-balance', adminAuth, async (req, res) => {
   }
 });
 
-// ================= ADMIN: CÁC API KHÁC =================
+// 3. Các API Admin khác
 app.get('/api/admin/users', adminAuth, async (req, res) => {
   const { data } = await supabase.from('users').select('*');
   res.json({ ok: true, users: data || [] });
@@ -273,7 +260,7 @@ app.post('/api/admin/approve-topup', adminAuth, async (req, res) => {
   res.json({ ok: true });
 });
 
-// ================= TẠO KEY THƯỜNG (ĐÃ SỬA) =================
+// 4. Tạo Key Thường (Không qua Shop)
 app.post('/api/create', adminAuth, async (req, res) => {
   try {
     const { type = 'day', count = 1, note = '' } = req.body;
@@ -282,12 +269,8 @@ app.post('/api/create', adminAuth, async (req, res) => {
     if (n > MAX_KEYS_PER_REQUEST) return res.json({ ok: false, error: `Tối đa ${MAX_KEYS_PER_REQUEST} key mỗi lần.` });
 
     const result = await bulkInsertKeys(n, () => ({
-      key: generateKey(),
-      type,
-      created_at: Date.now(),
-      expires_at: calcExpiry(type),
-      note: String(note).slice(0, 100),
-      device_id: null
+      key: generateKey(), type, created_at: Date.now(), expires_at: calcExpiry(type),
+      note: String(note).slice(0, 100), device_id: null
     }));
 
     if (!result.ok) return res.json({ ok: false, error: `Đã thêm ${result.inserted} rồi lỗi: ${result.error}` });
@@ -351,7 +334,7 @@ const adminHtml = `<!DOCTYPE html>
 
 <div class="box">
   <div class="row">
-    <input id="adminToken" type="password" placeholder="Nhập Admin Token" style="flex:1">
+    <input id="adminToken" type="password" placeholder="Nhập Admin Token" value="headlock-admin-2025" style="flex:1">
     <button id="btnSaveToken">LƯU TOKEN</button>
   </div>
 </div>
@@ -402,7 +385,6 @@ const adminHtml = `<!DOCTYPE html>
       <input id="g_amount" type="number" min="1000" step="1000" placeholder="Số tiền (VNĐ)" style="width:180px">
       <button id="btnGrant">NẠP TIỀN</button>
     </div>
-    <div style="font-size:12px;color:#888;margin-top:8px">VD: gõ 50000 để cộng 50.000đ cho user</div>
   </div>
 </div>
 
@@ -432,7 +414,7 @@ function showMsg(text, isError) {
 }
 function adminFetch(url, opts) {
   opts = opts || {};
-  var token = localStorage.getItem('adminToken') || '';
+  var token = document.getElementById('adminToken').value.trim() || 'headlock-admin-2025';
   opts.headers = Object.assign({}, opts.headers || {}, { 'x-admin-token': token });
   return fetch(url, opts);
 }
@@ -564,11 +546,6 @@ async function loadTopups() {
   } catch(e) { showMsg("Lỗi kết nối Server! " + e.message, true); }
 }
 document.addEventListener("DOMContentLoaded", function() {
-  document.getElementById("adminToken").value = localStorage.getItem('adminToken') || '';
-  document.getElementById("btnSaveToken").addEventListener("click", function() {
-    localStorage.setItem('adminToken', document.getElementById('adminToken').value.trim());
-    showMsg('Đã lưu token', false);
-  });
   setupTabs();
   document.getElementById("btnCreateKey").addEventListener("click", createKey);
   document.getElementById("btnAddShopKey").addEventListener("click", addShopKey);
